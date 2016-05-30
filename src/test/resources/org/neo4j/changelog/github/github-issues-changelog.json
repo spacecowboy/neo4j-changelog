@@ -1,0 +1,826 @@
+[
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7179",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7179/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7179/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7179/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/7179",
+        "id": 155834677,
+        "number": 7179,
+        "title": "Removes the short-lived read locks on property reads",
+        "user": {
+            "login": "tinwelint",
+            "id": 187292,
+            "avatar_url": "https://avatars.githubusercontent.com/u/187292?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/tinwelint",
+            "html_url": "https://github.com/tinwelint",
+            "followers_url": "https://api.github.com/users/tinwelint/followers",
+            "following_url": "https://api.github.com/users/tinwelint/following{/other_user}",
+            "gists_url": "https://api.github.com/users/tinwelint/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/tinwelint/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/tinwelint/subscriptions",
+            "organizations_url": "https://api.github.com/users/tinwelint/orgs",
+            "repos_url": "https://api.github.com/users/tinwelint/repos",
+            "events_url": "https://api.github.com/users/tinwelint/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/tinwelint/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/2.3",
+                "name": "2.3",
+                "color": "5319e7"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/changelog",
+                "name": "changelog",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/kernel",
+                "name": "kernel",
+                "color": "0052cc"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": {
+            "login": "MishaDemianenko",
+            "id": 12656787,
+            "avatar_url": "https://avatars.githubusercontent.com/u/12656787?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/MishaDemianenko",
+            "html_url": "https://github.com/MishaDemianenko",
+            "followers_url": "https://api.github.com/users/MishaDemianenko/followers",
+            "following_url": "https://api.github.com/users/MishaDemianenko/following{/other_user}",
+            "gists_url": "https://api.github.com/users/MishaDemianenko/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/MishaDemianenko/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/MishaDemianenko/subscriptions",
+            "organizations_url": "https://api.github.com/users/MishaDemianenko/orgs",
+            "repos_url": "https://api.github.com/users/MishaDemianenko/repos",
+            "events_url": "https://api.github.com/users/MishaDemianenko/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/MishaDemianenko/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2016-05-19T21:04:02Z",
+        "updated_at": "2016-05-25T07:50:33Z",
+        "closed_at": "2016-05-25T07:50:33Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/7179",
+            "html_url": "https://github.com/neo4j/neo4j/pull/7179",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/7179.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/7179.patch"
+        },
+        "body": "in favor of the technique of tracking open transactions and freeing ids\r\nat safe points in time. All code for the read locks is now 
+removed\r\nand ConsistentPropertyReadTest shows that properties are still read\r\nconsistently.\r\n\r\nCHANGELOG:\r\nReading properties scales better by no longer 
+needing to acquire read locks.\r\nThis also removes `experimental.use_read_locks_on_property_reads` setting."
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7089",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7089/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7089/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7089/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/7089",
+        "id": 153769403,
+        "number": 7089,
+        "title": "More aggressive testing of inconsistent record reads, and fixing of surfaced issues",
+        "user": {
+            "login": "chrisvest",
+            "id": 7993,
+            "avatar_url": "https://avatars.githubusercontent.com/u/7993?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/chrisvest",
+            "html_url": "https://github.com/chrisvest",
+            "followers_url": "https://api.github.com/users/chrisvest/followers",
+            "following_url": "https://api.github.com/users/chrisvest/following{/other_user}",
+            "gists_url": "https://api.github.com/users/chrisvest/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/chrisvest/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/chrisvest/subscriptions",
+            "organizations_url": "https://api.github.com/users/chrisvest/orgs",
+            "repos_url": "https://api.github.com/users/chrisvest/repos",
+            "events_url": "https://api.github.com/users/chrisvest/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/chrisvest/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/3.0",
+                "name": "3.0",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/changelog",
+                "name": "changelog",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/kernel",
+                "name": "kernel",
+                "color": "0052cc"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": {
+            "login": "MishaDemianenko",
+            "id": 12656787,
+            "avatar_url": "https://avatars.githubusercontent.com/u/12656787?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/MishaDemianenko",
+            "html_url": "https://github.com/MishaDemianenko",
+            "followers_url": "https://api.github.com/users/MishaDemianenko/followers",
+            "following_url": "https://api.github.com/users/MishaDemianenko/following{/other_user}",
+            "gists_url": "https://api.github.com/users/MishaDemianenko/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/MishaDemianenko/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/MishaDemianenko/subscriptions",
+            "organizations_url": "https://api.github.com/users/MishaDemianenko/orgs",
+            "repos_url": "https://api.github.com/users/MishaDemianenko/repos",
+            "events_url": "https://api.github.com/users/MishaDemianenko/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/MishaDemianenko/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "milestone": null,
+        "comments": 2,
+        "created_at": "2016-05-09T12:52:55Z",
+        "updated_at": "2016-05-20T13:09:34Z",
+        "closed_at": "2016-05-20T13:09:34Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/7089",
+            "html_url": "https://github.com/neo4j/neo4j/pull/7089",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/7089.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/7089.patch"
+        },
+        "body": "We are not allowed to throw exceptions due to record decoding errors until we have verified that our read access to a page was consistent, wrt. 
+page locks and eviction.\r\n\r\nThis is solved by introducing a _cursor exception_ feature of the page cursors, whereby the decoding code can attach exceptions to 
+the cursor during the decoding of records. We will then check for the presence of such an exception after it has been verified that the page access was 
+consistent.\r\n\r\nThis PR also introduce a much more aggressive testing of inconsistent reads, by making the `AdversarialReadPageCursor` more devious: Instead of 
+returning zeros to the reading code upon an injected inconsistent read, the adversarial cursor will instead count the operations performed upon it, and choose one 
+at random. When that operation is later retried, the adversarial cursor will return random data from that point on. This allows more spectacular bugs to show up. 
+These bugs are also fixed in this PR.\r\n\r\nCHANGELOG SUMMARY:\r\nFix rare record decoding exceptions caused by page reads racing with page writes to the same 
+record, or page eviction."
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7009",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7009/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7009/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7009/events",
+        "html_url": "https://github.com/neo4j/neo4j/issues/7009",
+        "id": 150059610,
+        "number": 7009,
+        "title": "[3.0-RC1] Document changes of Neo4j status codes in Changelog",
+        "user": {
+            "login": "ikwattro",
+            "id": 1222009,
+            "avatar_url": "https://avatars.githubusercontent.com/u/1222009?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/ikwattro",
+            "html_url": "https://github.com/ikwattro",
+            "followers_url": "https://api.github.com/users/ikwattro/followers",
+            "following_url": "https://api.github.com/users/ikwattro/following{/other_user}",
+            "gists_url": "https://api.github.com/users/ikwattro/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/ikwattro/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/ikwattro/subscriptions",
+            "organizations_url": "https://api.github.com/users/ikwattro/orgs",
+            "repos_url": "https://api.github.com/users/ikwattro/repos",
+            "events_url": "https://api.github.com/users/ikwattro/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/ikwattro/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/bug",
+                "name": "bug",
+                "color": "fc2929"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/changelog",
+                "name": "changelog",
+                "color": "006b75"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2016-04-21T12:29:07Z",
+        "updated_at": "2016-04-22T08:31:41Z",
+        "closed_at": "2016-04-22T08:31:41Z",
+        "body": "Hi,\r\n\r\nMinor stuff but it broke one of my tests.\r\n\r\nBetween M05 and RC1, the \r\n\r\n`Neo.ClientError.Statement.InvalidSyntax` status 
+code\r\n\r\nhas been replaced by `Neo.ClientError.Statement.SyntaxError`\r\n\r\nPlease add it to the changelog for helping other devs.\r\n\r\nThanks !"
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/6935",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/6935/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/6935/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/6935/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/6935",
+        "id": 148272375,
+        "number": 6935,
+        "title": "Consistency checker defaults logs directory to db directory",
+        "user": {
+            "login": "tinwelint",
+            "id": 187292,
+            "avatar_url": "https://avatars.githubusercontent.com/u/187292?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/tinwelint",
+            "html_url": "https://github.com/tinwelint",
+            "followers_url": "https://api.github.com/users/tinwelint/followers",
+            "following_url": "https://api.github.com/users/tinwelint/following{/other_user}",
+            "gists_url": "https://api.github.com/users/tinwelint/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/tinwelint/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/tinwelint/subscriptions",
+            "organizations_url": "https://api.github.com/users/tinwelint/orgs",
+            "repos_url": "https://api.github.com/users/tinwelint/repos",
+            "events_url": "https://api.github.com/users/tinwelint/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/tinwelint/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/3.0",
+                "name": "3.0",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/changelog",
+                "name": "changelog",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/operability",
+                "name": "operability",
+                "color": "5319e7"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "milestone": null,
+        "comments": 2,
+        "created_at": "2016-04-14T07:14:17Z",
+        "updated_at": "2016-05-10T14:07:20Z",
+        "closed_at": "2016-05-10T14:07:20Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/6935",
+            "html_url": "https://github.com/neo4j/neo4j/pull/6935",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/6935.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/6935.patch"
+        },
+        "body": ""
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/6692",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/6692/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/6692/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/6692/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/6692",
+        "id": 140674075,
+        "number": 6692,
+        "title": "Fixed: some properties could get dropped during large imports",
+        "user": {
+            "login": "spacecowboy",
+            "id": 223655,
+            "avatar_url": "https://avatars.githubusercontent.com/u/223655?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/spacecowboy",
+            "html_url": "https://github.com/spacecowboy",
+            "followers_url": "https://api.github.com/users/spacecowboy/followers",
+            "following_url": "https://api.github.com/users/spacecowboy/following{/other_user}",
+            "gists_url": "https://api.github.com/users/spacecowboy/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/spacecowboy/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/spacecowboy/subscriptions",
+            "organizations_url": "https://api.github.com/users/spacecowboy/orgs",
+            "repos_url": "https://api.github.com/users/spacecowboy/repos",
+            "events_url": "https://api.github.com/users/spacecowboy/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/spacecowboy/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/2.2",
+                "name": "2.2",
+                "color": "bfd4f2"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/bug",
+                "name": "bug",
+                "color": "fc2929"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/changelog",
+                "name": "changelog",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/kernel",
+                "name": "kernel",
+                "color": "0052cc"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": {
+            "login": "maxsumrall",
+            "id": 628843,
+            "avatar_url": "https://avatars.githubusercontent.com/u/628843?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/maxsumrall",
+            "html_url": "https://github.com/maxsumrall",
+            "followers_url": "https://api.github.com/users/maxsumrall/followers",
+            "following_url": "https://api.github.com/users/maxsumrall/following{/other_user}",
+            "gists_url": "https://api.github.com/users/maxsumrall/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/maxsumrall/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/maxsumrall/subscriptions",
+            "organizations_url": "https://api.github.com/users/maxsumrall/orgs",
+            "repos_url": "https://api.github.com/users/maxsumrall/repos",
+            "events_url": "https://api.github.com/users/maxsumrall/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/maxsumrall/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2016-03-14T13:32:53Z",
+        "updated_at": "2016-03-15T14:16:00Z",
+        "closed_at": "2016-03-15T14:16:00Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/6692",
+            "html_url": "https://github.com/neo4j/neo4j/pull/6692",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/6692.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/6692.patch"
+        },
+        "body": "Importing many nodes (f.ex. 500M) with many properties each\r\n(f.ex. 20), resulted in some properties not being visible 
+after\r\nimport.\r\n\r\nchangelog: #import-tool"
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/6376",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/6376/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/6376/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/6376/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/6376",
+        "id": 132014123,
+        "number": 6376,
+        "title": "Trust final non-static fields",
+        "user": {
+            "login": "chrisvest",
+            "id": 7993,
+            "avatar_url": "https://avatars.githubusercontent.com/u/7993?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/chrisvest",
+            "html_url": "https://github.com/chrisvest",
+            "followers_url": "https://api.github.com/users/chrisvest/followers",
+            "following_url": "https://api.github.com/users/chrisvest/following{/other_user}",
+            "gists_url": "https://api.github.com/users/chrisvest/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/chrisvest/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/chrisvest/subscriptions",
+            "organizations_url": "https://api.github.com/users/chrisvest/orgs",
+            "repos_url": "https://api.github.com/users/chrisvest/repos",
+            "events_url": "https://api.github.com/users/chrisvest/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/chrisvest/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/3.0",
+                "name": "3.0",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/changelog",
+                "name": "changelog",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/core-edge",
+                "name": "core-edge",
+                "color": "207de5"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/kernel",
+                "name": "kernel",
+                "color": "0052cc"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": {
+            "login": "johan-neo",
+            "id": 582708,
+            "avatar_url": "https://avatars.githubusercontent.com/u/582708?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/johan-neo",
+            "html_url": "https://github.com/johan-neo",
+            "followers_url": "https://api.github.com/users/johan-neo/followers",
+            "following_url": "https://api.github.com/users/johan-neo/following{/other_user}",
+            "gists_url": "https://api.github.com/users/johan-neo/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/johan-neo/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/johan-neo/subscriptions",
+            "organizations_url": "https://api.github.com/users/johan-neo/orgs",
+            "repos_url": "https://api.github.com/users/johan-neo/repos",
+            "events_url": "https://api.github.com/users/johan-neo/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/johan-neo/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "milestone": null,
+        "comments": 3,
+        "created_at": "2016-02-07T21:21:51Z",
+        "updated_at": "2016-02-25T16:06:17Z",
+        "closed_at": "2016-02-18T09:15:13Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/6376",
+            "html_url": "https://github.com/neo4j/neo4j/pull/6376",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/6376.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/6376.patch"
+        },
+        "body": "* Un-final fields in classes that need to be `Serializable` – they don't need it because they're not used to publish state via a race.\r\n* 
+Remove `Serializable` from classes that don't need it.\r\n* Add a jQAssistant check that fails the (`mvn install`) build when we have final instance fields in 
+_our_ serializable classes – dependencies are unfortunately not checked.\r\n* Add off-by-default JVM options to trust non-static final fields – it's a turbo 
+button for when no dependency, plug-in or extension need to modify final instance fields via reflection or serialisation.\r\n\r\nThis modifies both kernel and 
+core-edge code, so review from both teams would be nice."
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/6353",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/6353/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/6353/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/6353/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/6353",
+        "id": 131333842,
+        "number": 6353,
+        "title": "Implements a record format with very high id limits",
+        "user": {
+            "login": "tinwelint",
+            "id": 187292,
+            "avatar_url": "https://avatars.githubusercontent.com/u/187292?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/tinwelint",
+            "html_url": "https://github.com/tinwelint",
+            "followers_url": "https://api.github.com/users/tinwelint/followers",
+            "following_url": "https://api.github.com/users/tinwelint/following{/other_user}",
+            "gists_url": "https://api.github.com/users/tinwelint/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/tinwelint/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/tinwelint/subscriptions",
+            "organizations_url": "https://api.github.com/users/tinwelint/orgs",
+            "repos_url": "https://api.github.com/users/tinwelint/repos",
+            "events_url": "https://api.github.com/users/tinwelint/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/tinwelint/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/3.0",
+                "name": "3.0",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/changelog",
+                "name": "changelog",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/kernel",
+                "name": "kernel",
+                "color": "0052cc"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": {
+            "login": "MishaDemianenko",
+            "id": 12656787,
+            "avatar_url": "https://avatars.githubusercontent.com/u/12656787?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/MishaDemianenko",
+            "html_url": "https://github.com/MishaDemianenko",
+            "followers_url": "https://api.github.com/users/MishaDemianenko/followers",
+            "following_url": "https://api.github.com/users/MishaDemianenko/following{/other_user}",
+            "gists_url": "https://api.github.com/users/MishaDemianenko/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/MishaDemianenko/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/MishaDemianenko/subscriptions",
+            "organizations_url": "https://api.github.com/users/MishaDemianenko/orgs",
+            "repos_url": "https://api.github.com/users/MishaDemianenko/repos",
+            "events_url": "https://api.github.com/users/MishaDemianenko/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/MishaDemianenko/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "milestone": null,
+        "comments": 3,
+        "created_at": "2016-02-04T12:37:59Z",
+        "updated_at": "2016-02-17T16:27:32Z",
+        "closed_at": "2016-02-17T16:27:31Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/6353",
+            "html_url": "https://github.com/neo4j/neo4j/pull/6353",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/6353.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/6353.patch"
+        },
+        "body": "although without increasing store size unnecessarily. Record sizes of all records\r\nare aligned to powers of two to be more page cache and cache 
+line friendly.\r\nTo support 59-bit IDs these pointers are compressed so that small IDs take less\r\nspace than big ones in the records and one \"logical\" record 
+may span two physical\r\nrecords for records that have most of its IDs very big, such that one record\r\nisn't enough to hold all data.\r\n\r\nThe new format is 
+implemented as a separate format, not plugged in by default,\r\nbut at least tested by RecordFormatTest. This commit also 
+introduces\r\nInternalRecordFormatSelector which has a default (the current one) and ability\r\nto be configured to use any format by specifying RecordFormats 
+(fully qualified)\r\nname pointing to a class implementing RecordFormats. With this a build can be\r\nset up to run with a custom format.\r\n"
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/6321",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/6321/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/6321/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/6321/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/6321",
+        "id": 129451154,
+        "number": 6321,
+        "title": "Handle leading/trailing whitespace in importer",
+        "user": {
+            "login": "spacecowboy",
+            "id": 223655,
+            "avatar_url": "https://avatars.githubusercontent.com/u/223655?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/spacecowboy",
+            "html_url": "https://github.com/spacecowboy",
+            "followers_url": "https://api.github.com/users/spacecowboy/followers",
+            "following_url": "https://api.github.com/users/spacecowboy/following{/other_user}",
+            "gists_url": "https://api.github.com/users/spacecowboy/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/spacecowboy/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/spacecowboy/subscriptions",
+            "organizations_url": "https://api.github.com/users/spacecowboy/orgs",
+            "repos_url": "https://api.github.com/users/spacecowboy/repos",
+            "events_url": "https://api.github.com/users/spacecowboy/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/spacecowboy/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/2.3",
+                "name": "2.3",
+                "color": "5319e7"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/changelog",
+                "name": "changelog",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/enhancement",
+                "name": "enhancement",
+                "color": "eb6420"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/kernel",
+                "name": "kernel",
+                "color": "0052cc"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": {
+            "login": "maxsumrall",
+            "id": 628843,
+            "avatar_url": "https://avatars.githubusercontent.com/u/628843?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/maxsumrall",
+            "html_url": "https://github.com/maxsumrall",
+            "followers_url": "https://api.github.com/users/maxsumrall/followers",
+            "following_url": "https://api.github.com/users/maxsumrall/following{/other_user}",
+            "gists_url": "https://api.github.com/users/maxsumrall/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/maxsumrall/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/maxsumrall/subscriptions",
+            "organizations_url": "https://api.github.com/users/maxsumrall/orgs",
+            "repos_url": "https://api.github.com/users/maxsumrall/repos",
+            "events_url": "https://api.github.com/users/maxsumrall/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/maxsumrall/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "milestone": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/milestones/5",
+            "html_url": "https://github.com/neo4j/neo4j/milestones/2.3",
+            "labels_url": "https://api.github.com/repos/neo4j/neo4j/milestones/5/labels",
+            "id": 1245902,
+            "number": 5,
+            "title": "2.3",
+            "description": null,
+            "creator": {
+                "login": "jakewins",
+                "id": 182752,
+                "avatar_url": "https://avatars.githubusercontent.com/u/182752?v=3",
+                "gravatar_id": "",
+                "url": "https://api.github.com/users/jakewins",
+                "html_url": "https://github.com/jakewins",
+                "followers_url": "https://api.github.com/users/jakewins/followers",
+                "following_url": "https://api.github.com/users/jakewins/following{/other_user}",
+                "gists_url": "https://api.github.com/users/jakewins/gists{/gist_id}",
+                "starred_url": "https://api.github.com/users/jakewins/starred{/owner}{/repo}",
+                "subscriptions_url": "https://api.github.com/users/jakewins/subscriptions",
+                "organizations_url": "https://api.github.com/users/jakewins/orgs",
+                "repos_url": "https://api.github.com/users/jakewins/repos",
+                "events_url": "https://api.github.com/users/jakewins/events{/privacy}",
+                "received_events_url": "https://api.github.com/users/jakewins/received_events",
+                "type": "User",
+                "site_admin": false
+            },
+            "open_issues": 2,
+            "closed_issues": 6,
+            "state": "open",
+            "created_at": "2015-08-07T18:19:42Z",
+            "updated_at": "2016-02-25T09:17:54Z",
+            "due_on": null,
+            "closed_at": null
+        },
+        "comments": 1,
+        "created_at": "2016-01-28T13:18:37Z",
+        "updated_at": "2016-01-29T15:15:22Z",
+        "closed_at": "2016-01-29T15:11:39Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/6321",
+            "html_url": "https://github.com/neo4j/neo4j/pull/6321",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/6321.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/6321.patch"
+        },
+        "body": "When the value is explicitly defined as a non-string, e.g. a number of a boolean, then\r\nleading/trailing whitespace can unambigiuously be 
+removed.\r\nIf we were using regular strings this change would simply amount to `val = val.trim()`.\r\n\r\nPreviously, we un-intentionally supported this for 
+Floats/Doubles, but not any other type.\r\nThese changes make behavior consistent, and adds tests (both positive and negative)."
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/6293",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/6293/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/6293/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/6293/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/6293",
+        "id": 128516186,
+        "number": 6293,
+        "title": "Add a timer to arbiter's shutdown hook in case of deadlock",
+        "user": {
+            "login": "spacecowboy",
+            "id": 223655,
+            "avatar_url": "https://avatars.githubusercontent.com/u/223655?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/spacecowboy",
+            "html_url": "https://github.com/spacecowboy",
+            "followers_url": "https://api.github.com/users/spacecowboy/followers",
+            "following_url": "https://api.github.com/users/spacecowboy/following{/other_user}",
+            "gists_url": "https://api.github.com/users/spacecowboy/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/spacecowboy/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/spacecowboy/subscriptions",
+            "organizations_url": "https://api.github.com/users/spacecowboy/orgs",
+            "repos_url": "https://api.github.com/users/spacecowboy/repos",
+            "events_url": "https://api.github.com/users/spacecowboy/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/spacecowboy/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/2.2",
+                "name": "2.2",
+                "color": "bfd4f2"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/changelog",
+                "name": "changelog",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/kernel",
+                "name": "kernel",
+                "color": "0052cc"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": {
+            "login": "chrisvest",
+            "id": 7993,
+            "avatar_url": "https://avatars.githubusercontent.com/u/7993?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/chrisvest",
+            "html_url": "https://github.com/chrisvest",
+            "followers_url": "https://api.github.com/users/chrisvest/followers",
+            "following_url": "https://api.github.com/users/chrisvest/following{/other_user}",
+            "gists_url": "https://api.github.com/users/chrisvest/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/chrisvest/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/chrisvest/subscriptions",
+            "organizations_url": "https://api.github.com/users/chrisvest/orgs",
+            "repos_url": "https://api.github.com/users/chrisvest/repos",
+            "events_url": "https://api.github.com/users/chrisvest/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/chrisvest/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2016-01-25T11:25:55Z",
+        "updated_at": "2016-01-28T14:20:10Z",
+        "closed_at": "2016-01-26T12:11:21Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/6293",
+            "html_url": "https://github.com/neo4j/neo4j/pull/6293",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/6293.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/6293.patch"
+        },
+        "body": "ClusterJoin blocks, which causes a deadlock with the stop method.\r\nTimer ensures a shutdown is possible without `kill -9 ...`."
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/6284",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/6284/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/6284/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/6284/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/6284",
+        "id": 128203423,
+        "number": 6284,
+        "title": "Ability to specify db config in import tool",
+        "user": {
+            "login": "tinwelint",
+            "id": 187292,
+            "avatar_url": "https://avatars.githubusercontent.com/u/187292?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/tinwelint",
+            "html_url": "https://github.com/tinwelint",
+            "followers_url": "https://api.github.com/users/tinwelint/followers",
+            "following_url": "https://api.github.com/users/tinwelint/following{/other_user}",
+            "gists_url": "https://api.github.com/users/tinwelint/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/tinwelint/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/tinwelint/subscriptions",
+            "organizations_url": "https://api.github.com/users/tinwelint/orgs",
+            "repos_url": "https://api.github.com/users/tinwelint/repos",
+            "events_url": "https://api.github.com/users/tinwelint/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/tinwelint/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/2.3",
+                "name": "2.3",
+                "color": "5319e7"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/changelog",
+                "name": "changelog",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/kernel",
+                "name": "kernel",
+                "color": "0052cc"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": {
+            "login": "jexp",
+            "id": 67427,
+            "avatar_url": "https://avatars.githubusercontent.com/u/67427?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/jexp",
+            "html_url": "https://github.com/jexp",
+            "followers_url": "https://api.github.com/users/jexp/followers",
+            "following_url": "https://api.github.com/users/jexp/following{/other_user}",
+            "gists_url": "https://api.github.com/users/jexp/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/jexp/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/jexp/subscriptions",
+            "organizations_url": "https://api.github.com/users/jexp/orgs",
+            "repos_url": "https://api.github.com/users/jexp/repos",
+            "events_url": "https://api.github.com/users/jexp/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/jexp/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "milestone": null,
+        "comments": 3,
+        "created_at": "2016-01-22T17:24:48Z",
+        "updated_at": "2016-02-09T12:17:06Z",
+        "closed_at": "2016-02-09T12:17:06Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/6284",
+            "html_url": "https://github.com/neo4j/neo4j/pull/6284",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/6284.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/6284.patch"
+        },
+        "body": "so that e.g array_block_size and string_block_size may be specified\r\nalong with creating the store."
+    }
+]

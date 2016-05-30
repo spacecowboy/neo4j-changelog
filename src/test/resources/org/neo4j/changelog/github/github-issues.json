@@ -1,0 +1,540 @@
+[
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7259",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7259/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7259/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7259/events",
+        "html_url": "https://github.com/neo4j/neo4j/issues/7259",
+        "id": 157489846,
+        "number": 7259,
+        "title": "Incorrect result when indexing and querying on index with a regexp",
+        "user": {
+            "login": "lilianaziolek",
+            "id": 271914,
+            "avatar_url": "https://avatars.githubusercontent.com/u/271914?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/lilianaziolek",
+            "html_url": "https://github.com/lilianaziolek",
+            "followers_url": "https://api.github.com/users/lilianaziolek/followers",
+            "following_url": "https://api.github.com/users/lilianaziolek/following{/other_user}",
+            "gists_url": "https://api.github.com/users/lilianaziolek/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/lilianaziolek/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/lilianaziolek/subscriptions",
+            "organizations_url": "https://api.github.com/users/lilianaziolek/orgs",
+            "repos_url": "https://api.github.com/users/lilianaziolek/repos",
+            "events_url": "https://api.github.com/users/lilianaziolek/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/lilianaziolek/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "milestone": null,
+        "comments": 3,
+        "created_at": "2016-05-30T12:03:44Z",
+        "updated_at": "2016-05-30T12:36:59Z",
+        "closed_at": "2016-05-30T12:14:09Z",
+        "body": "I came across a rather weird issue which seems to be some kind of race condition on indexing a property and I'd appreciate if you could first 
+confirm if you can reproduce it, and then fix it and/or recommend a workaround.\r\n\r\n- Neo4j version: 3.0.1\r\n- Operating system: Windows 8.1\r\n- API/Driver: 
+embedded GraphDatabaseService, but this happens also with in-memory instance used for tests\r\n\r\n- Steps to reproduce\r\nplease find the following code snippet 
+that shows the problem (at least on my machine it fails virtually every time)\r\nhttps://gist.github.com/lilianaziolek/81b1adcdb2c9b3f1c0812952da51cfa9\r\nThe 
+problem goes away if I either remove index (which results in a label-scan on search so obviously not a great idea) or introduce a sleep before the reading step. I 
+tried adding the \"await for indexes\" as you can see, but that doesn't seem to help either.-It seems that after adding the nodes the index isn't updated on time 
+but instead it's updated with an unknown (quite significant) delay.\r\n\r\n- Expected/actual behavior\r\nI would expect correct result of 3 nodes - either by 
+using index or, in the worst case, a slower result from a scan. Instead I get back all the nodes unless I introduce a sleep.\r\n\r\nIf I missed some step that 
+would enforce the update of the index please let me know - but I tried looking in the documentation and haven't found anything that would imply that anything 
+special needs to be done for index to be updated within the writing transaction."
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7256",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7256/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7256/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7256/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/7256",
+        "id": 157460804,
+        "number": 7256,
+        "title": "Move ulimit management, so it's respected on restart.",
+        "user": {
+            "login": "srbaker",
+            "id": 4538,
+            "avatar_url": "https://avatars.githubusercontent.com/u/4538?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/srbaker",
+            "html_url": "https://github.com/srbaker",
+            "followers_url": "https://api.github.com/users/srbaker/followers",
+            "following_url": "https://api.github.com/users/srbaker/following{/other_user}",
+            "gists_url": "https://api.github.com/users/srbaker/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/srbaker/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/srbaker/subscriptions",
+            "organizations_url": "https://api.github.com/users/srbaker/orgs",
+            "repos_url": "https://api.github.com/users/srbaker/repos",
+            "events_url": "https://api.github.com/users/srbaker/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/srbaker/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/operability",
+                "name": "operability",
+                "color": "5319e7"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2016-05-30T09:00:31Z",
+        "updated_at": "2016-05-30T09:24:01Z",
+        "closed_at": "2016-05-30T09:24:01Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/7256",
+            "html_url": "https://github.com/neo4j/neo4j/pull/7256",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/7256.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/7256.patch"
+        },
+        "body": ""
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7252",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7252/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7252/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7252/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/7252",
+        "id": 157427536,
+        "number": 7252,
+        "title": "Add special faster handling of IN when checking constant collections",
+        "user": {
+            "login": "systay",
+            "id": 402248,
+            "avatar_url": "https://avatars.githubusercontent.com/u/402248?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/systay",
+            "html_url": "https://github.com/systay",
+            "followers_url": "https://api.github.com/users/systay/followers",
+            "following_url": "https://api.github.com/users/systay/following{/other_user}",
+            "gists_url": "https://api.github.com/users/systay/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/systay/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/systay/subscriptions",
+            "organizations_url": "https://api.github.com/users/systay/orgs",
+            "repos_url": "https://api.github.com/users/systay/repos",
+            "events_url": "https://api.github.com/users/systay/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/systay/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2016-05-30T04:00:48Z",
+        "updated_at": "2016-05-30T04:00:55Z",
+        "closed_at": "2016-05-30T04:00:55Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/7252",
+            "html_url": "https://github.com/neo4j/neo4j/pull/7252",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/7252.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/7252.patch"
+        },
+        "body": ""
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7248",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7248/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7248/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7248/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/7248",
+        "id": 157330365,
+        "number": 7248,
+        "title": "Allow auto-parametrization to handle lists",
+        "user": {
+            "login": "systay",
+            "id": 402248,
+            "avatar_url": "https://avatars.githubusercontent.com/u/402248?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/systay",
+            "html_url": "https://github.com/systay",
+            "followers_url": "https://api.github.com/users/systay/followers",
+            "following_url": "https://api.github.com/users/systay/following{/other_user}",
+            "gists_url": "https://api.github.com/users/systay/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/systay/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/systay/subscriptions",
+            "organizations_url": "https://api.github.com/users/systay/orgs",
+            "repos_url": "https://api.github.com/users/systay/repos",
+            "events_url": "https://api.github.com/users/systay/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/systay/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/3.0",
+                "name": "3.0",
+                "color": "006b75"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/cypher",
+                "name": "cypher",
+                "color": "009800"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/enhancement",
+                "name": "enhancement",
+                "color": "eb6420"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2016-05-28T09:37:46Z",
+        "updated_at": "2016-05-30T11:51:29Z",
+        "closed_at": "2016-05-30T11:51:29Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/7248",
+            "html_url": "https://github.com/neo4j/neo4j/pull/7248",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/7248.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/7248.patch"
+        },
+        "body": "Part of a larger initiative to make IN predicates faster in Cypher\r\n\r\nThe query \r\n```\r\nMATCH (a)-[r]->(b)\r\nWHERE a IN [...] and b IN 
+[...]\r\n```\r\n\r\nwhere `[...]` is a list with one hundred values, went from an average time of around 6.5 s to 4.5 s (on my computer ™) with these changes"
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7246",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7246/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7246/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7246/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/7246",
+        "id": 157221209,
+        "number": 7246,
+        "title": "Fix credentials check on password change required",
+        "user": {
+            "login": "henriknyman",
+            "id": 13960026,
+            "avatar_url": "https://avatars.githubusercontent.com/u/13960026?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/henriknyman",
+            "html_url": "https://github.com/henriknyman",
+            "followers_url": "https://api.github.com/users/henriknyman/followers",
+            "following_url": "https://api.github.com/users/henriknyman/following{/other_user}",
+            "gists_url": "https://api.github.com/users/henriknyman/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/henriknyman/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/henriknyman/subscriptions",
+            "organizations_url": "https://api.github.com/users/henriknyman/orgs",
+            "repos_url": "https://api.github.com/users/henriknyman/repos",
+            "events_url": "https://api.github.com/users/henriknyman/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/henriknyman/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/3.1",
+                "name": "3.1",
+                "color": "00C075"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/bug",
+                "name": "bug",
+                "color": "fc2929"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/security",
+                "name": "security",
+                "color": "934837"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2016-05-27T14:38:37Z",
+        "updated_at": "2016-05-30T08:56:22Z",
+        "closed_at": "2016-05-30T08:56:22Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/7246",
+            "html_url": "https://github.com/neo4j/neo4j/pull/7246",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/7246.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/7246.patch"
+        },
+        "body": "In the ShiroAuthManager internal FileUserRealm, when the user is\r\nrequired to change password we need to first assert that the\r\ncredentials 
+are valid before requesting a password change."
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7244",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7244/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7244/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7244/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/7244",
+        "id": 157168958,
+        "number": 7244,
+        "title": "Log if a core is a non-voting one when trying to catchup with leader",
+        "user": {
+            "login": "davidegrohmann",
+            "id": 6573166,
+            "avatar_url": "https://avatars.githubusercontent.com/u/6573166?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/davidegrohmann",
+            "html_url": "https://github.com/davidegrohmann",
+            "followers_url": "https://api.github.com/users/davidegrohmann/followers",
+            "following_url": "https://api.github.com/users/davidegrohmann/following{/other_user}",
+            "gists_url": "https://api.github.com/users/davidegrohmann/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/davidegrohmann/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/davidegrohmann/subscriptions",
+            "organizations_url": "https://api.github.com/users/davidegrohmann/orgs",
+            "repos_url": "https://api.github.com/users/davidegrohmann/repos",
+            "events_url": "https://api.github.com/users/davidegrohmann/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/davidegrohmann/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/3.1",
+                "name": "3.1",
+                "color": "00C075"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/core-edge",
+                "name": "core-edge",
+                "color": "207de5"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2016-05-27T09:43:56Z",
+        "updated_at": "2016-05-30T08:08:10Z",
+        "closed_at": "2016-05-30T08:08:10Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/7244",
+            "html_url": "https://github.com/neo4j/neo4j/pull/7244",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/7244.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/7244.patch"
+        },
+        "body": ""
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7243",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7243/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7243/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7243/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/7243",
+        "id": 157168248,
+        "number": 7243,
+        "title": "Updated contrib file",
+        "user": {
+            "login": "nigelsmall",
+            "id": 275311,
+            "avatar_url": "https://avatars.githubusercontent.com/u/275311?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/nigelsmall",
+            "html_url": "https://github.com/nigelsmall",
+            "followers_url": "https://api.github.com/users/nigelsmall/followers",
+            "following_url": "https://api.github.com/users/nigelsmall/following{/other_user}",
+            "gists_url": "https://api.github.com/users/nigelsmall/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/nigelsmall/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/nigelsmall/subscriptions",
+            "organizations_url": "https://api.github.com/users/nigelsmall/orgs",
+            "repos_url": "https://api.github.com/users/nigelsmall/repos",
+            "events_url": "https://api.github.com/users/nigelsmall/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/nigelsmall/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "milestone": null,
+        "comments": 1,
+        "created_at": "2016-05-27T09:40:02Z",
+        "updated_at": "2016-05-27T13:15:31Z",
+        "closed_at": "2016-05-27T13:15:30Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/7243",
+            "html_url": "https://github.com/neo4j/neo4j/pull/7243",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/7243.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/7243.patch"
+        },
+        "body": ""
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7240",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7240/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7240/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7240/events",
+        "html_url": "https://github.com/neo4j/neo4j/issues/7240",
+        "id": 157116148,
+        "number": 7240,
+        "title": "Neo4j 3.0.1 load csv error",
+        "user": {
+            "login": "xjianster",
+            "id": 7235146,
+            "avatar_url": "https://avatars.githubusercontent.com/u/7235146?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/xjianster",
+            "html_url": "https://github.com/xjianster",
+            "followers_url": "https://api.github.com/users/xjianster/followers",
+            "following_url": "https://api.github.com/users/xjianster/following{/other_user}",
+            "gists_url": "https://api.github.com/users/xjianster/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/xjianster/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/xjianster/subscriptions",
+            "organizations_url": "https://api.github.com/users/xjianster/orgs",
+            "repos_url": "https://api.github.com/users/xjianster/repos",
+            "events_url": "https://api.github.com/users/xjianster/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/xjianster/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "milestone": null,
+        "comments": 2,
+        "created_at": "2016-05-27T02:13:00Z",
+        "updated_at": "2016-05-30T08:06:21Z",
+        "closed_at": "2016-05-30T08:06:21Z",
+        "body": "LOAD CSV WITH HEADERS FROM \"file:///C:/test.csv\" has error. When this command looks for the file, it always start from the position where 
+database file stored."
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7239",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7239/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7239/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7239/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/7239",
+        "id": 157099661,
+        "number": 7239,
+        "title": "Use basic auth manager by default",
+        "user": {
+            "login": "henriknyman",
+            "id": 13960026,
+            "avatar_url": "https://avatars.githubusercontent.com/u/13960026?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/henriknyman",
+            "html_url": "https://github.com/henriknyman",
+            "followers_url": "https://api.github.com/users/henriknyman/followers",
+            "following_url": "https://api.github.com/users/henriknyman/following{/other_user}",
+            "gists_url": "https://api.github.com/users/henriknyman/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/henriknyman/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/henriknyman/subscriptions",
+            "organizations_url": "https://api.github.com/users/henriknyman/orgs",
+            "repos_url": "https://api.github.com/users/henriknyman/repos",
+            "events_url": "https://api.github.com/users/henriknyman/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/henriknyman/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/3.1",
+                "name": "3.1",
+                "color": "00C075"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/security",
+                "name": "security",
+                "color": "934837"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2016-05-26T23:19:11Z",
+        "updated_at": "2016-05-27T07:45:28Z",
+        "closed_at": "2016-05-27T07:45:27Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/7239",
+            "html_url": "https://github.com/neo4j/neo4j/pull/7239",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/7239.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/7239.patch"
+        },
+        "body": "This turns off the Shiro-based enterprise auth manager as the default in\r\nenterprise edition."
+    },
+    {
+        "url": "https://api.github.com/repos/neo4j/neo4j/issues/7238",
+        "repository_url": "https://api.github.com/repos/neo4j/neo4j",
+        "labels_url": "https://api.github.com/repos/neo4j/neo4j/issues/7238/labels{/name}",
+        "comments_url": "https://api.github.com/repos/neo4j/neo4j/issues/7238/comments",
+        "events_url": "https://api.github.com/repos/neo4j/neo4j/issues/7238/events",
+        "html_url": "https://github.com/neo4j/neo4j/pull/7238",
+        "id": 157088938,
+        "number": 7238,
+        "title": "Fix password change in enterprise auth manager",
+        "user": {
+            "login": "henriknyman",
+            "id": 13960026,
+            "avatar_url": "https://avatars.githubusercontent.com/u/13960026?v=3",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/henriknyman",
+            "html_url": "https://github.com/henriknyman",
+            "followers_url": "https://api.github.com/users/henriknyman/followers",
+            "following_url": "https://api.github.com/users/henriknyman/following{/other_user}",
+            "gists_url": "https://api.github.com/users/henriknyman/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/henriknyman/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/henriknyman/subscriptions",
+            "organizations_url": "https://api.github.com/users/henriknyman/orgs",
+            "repos_url": "https://api.github.com/users/henriknyman/repos",
+            "events_url": "https://api.github.com/users/henriknyman/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/henriknyman/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "labels": [
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/3.1",
+                "name": "3.1",
+                "color": "00C075"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/bug",
+                "name": "bug",
+                "color": "fc2929"
+            },
+            {
+                "url": "https://api.github.com/repos/neo4j/neo4j/labels/security",
+                "name": "security",
+                "color": "934837"
+            }
+        ],
+        "state": "closed",
+        "locked": false,
+        "assignee": null,
+        "milestone": null,
+        "comments": 0,
+        "created_at": "2016-05-26T22:00:43Z",
+        "updated_at": "2016-05-27T12:39:25Z",
+        "closed_at": "2016-05-27T12:39:25Z",
+        "pull_request": {
+            "url": "https://api.github.com/repos/neo4j/neo4j/pulls/7238",
+            "html_url": "https://github.com/neo4j/neo4j/pull/7238",
+            "diff_url": "https://github.com/neo4j/neo4j/pull/7238.diff",
+            "patch_url": "https://github.com/neo4j/neo4j/pull/7238.patch"
+        },
+        "body": "Authentication with ShiroAuthManager is throwing ExpiredCredentialsException\r\n(if a password change is required) before an identifying 
+principal is assigned.\r\nIn this case we have to assign a principal identity with the username to allow\r\nthe user to change her password through the 
+changePassword procedure.\r\nAt this point we know the username is valid."
+    }
+]
