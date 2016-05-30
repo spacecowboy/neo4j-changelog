@@ -68,3 +68,4 @@ offlineimap2.py
 # Idea
 .idea
 *.iml
+.gradle
