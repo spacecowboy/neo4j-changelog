@@ -1,0 +1,70 @@
+#### Emacs stuff ####
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+.elc
+auto-save-list
+tramp
+.\#*
+
+# Org-mode
+.org-id-locations
+*_archive
+
+#### Eclipse stuff ####
+*.pydevproject
+.project
+.metadata
+#bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+.classpath
+.settings/
+.loadpath
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# CDT-specific
+.cproject
+
+# PDT-specific
+.buildpath
+
+#### OS X ####
+.DS_Store
+
+#### Latex stuff ####
+*.aux
+*.dvi
+*.log
+*.nav
+*.out
+*.toc
+*.vrb
+*.snm
+
+.ssh/authorized_keys
+.ssh/known_hosts
+
+# Python stuff
+*.pyc
+*.pyg
+offlineimap2.py
+.ipynb_checkpoints
+
+
+# Systemd
+*.wants
+*.orig
+# Idea
+.idea
+*.iml
