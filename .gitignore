@@ -69,3 +69,5 @@ offlineimap2.py
 .idea
 *.iml
 .gradle
+.okhttpcache
+build
