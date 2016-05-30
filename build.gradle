@@ -1,15 +1,18 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'java'
 
-buildscript {
-  repositories {
-    jcenter()
-  }
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+  jcenter()
 }
 
-allprojects {
-  repositories {
-    jcenter()
-  }
+dependencies {
+  compile 'com.squareup.retrofit2:retrofit:2.0.2'
+  compile 'com.squareup.retrofit2:converter-gson:2.0.2'
+  compile 'com.squareup.okhttp:okhttp:2.7.5'
+
+  testCompile 'junit:junit:4.12'
 }
 
 task wrapper(type: Wrapper) {
