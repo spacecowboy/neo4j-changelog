@@ -7,53 +7,39 @@ import java.util.List;
 public class Main {
 
     /**
-     * Generate changelog for current branch
-     * @param changeLogFilePath
-     */
-    public void run(@Nonnull String changeLogFilePath) {
-        // We want to generate changelog based on the branch we are on by default
-        String branch = getCurrentBranch();
-        run(branch, changeLogFilePath);
-    }
-
-    /**
-     * Generate changelog for the specified branch
-     * @param branch
-     * @param changeLogFilePath
-     */
-    private void run(@Nonnull String branch, @Nonnull String changeLogFilePath) {
-        // Get the default upstream for this branch
-        String upstream = getUpstreamFor(branch);
-        run(branch, upstream, changeLogFilePath);
-    }
-
-    /**
      * Generate changelog for the specific branch and specified upstream
-     * @param branch
-     * @param upstream
      */
-    private void run(@Nonnull String branch, @Nonnull String upstream, @Nonnull String changeLogFilePath) {
-        if (!isGitHubRepo(upstream)) {
+    private void run(@Nonnull String nextVersion,
+                     @Nonnull String localDir,
+                     @Nonnull String branch,
+                     @Nonnull String repo,
+                     @Nonnull String changeLogFilePath) {
+        if (!isGitHubRepo(repo)) {
             throw new IllegalArgumentException("Only supports GitHub repositories");
         }
 
-        List<String> tags = getTagsForBranch(upstream, branch);
-        ChangeLog changeLog = new ChangeLog(tags);
+        List<String> versionTags = getVersionTags(localDir);
+        ChangeLog changeLog = new ChangeLog(versionTags);
 
-        getPullRequests(upstream).stream()
-                .filter(pr -> branch.equals(pr.getBaseBranch()) && isChangeLogWorthy(pr))
-                .map(Main::convertToChange)
+        getPullRequests(repo).stream()
+                .filter(pr -> isChangeLogWorthy(pr) && isAncestorOf(pr, branch))
+                .map(pr -> convertToChange(pr, versionTags, nextVersion))
                 .sorted()
                 .forEach(changeLog::addToChangeLog);
 
         changeLog.write(changeLogFilePath);
     }
 
-    private List<String> getTagsForBranch(String upstream, String branch) {
+    private boolean isAncestorOf(@Nonnull PullRequest pr, @Nonnull String branch) {
+        return false;
+    }
+
+    private List<String> getVersionTags(@Nonnull String localDir) {
         return null;
     }
 
-    private static Change convertToChange(PullRequest pullRequest) {
+    private static Change convertToChange(@Nonnull PullRequest pullRequest, @Nonnull List<String> versionTags,
+                                          @Nonnull String nextVersion) {
         return null;
     }
 
@@ -73,14 +59,6 @@ public class Main {
 
     private boolean isGitHubRepo(@Nonnull String upstream) {
         return false;
-    }
-
-    private String getUpstreamFor(@Nonnull String branch) {
-        return null;
-    }
-
-    private String getCurrentBranch() {
-        return null;
     }
 
     interface PullRequest {
