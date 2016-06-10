@@ -22,11 +22,12 @@ public class Main {
                      @Nonnull String ref,
                      @Nonnull String repo,
                      @Nonnull String changeLogFilePath) throws GitAPIException, IOException {
-        List<Ref> versionTags = GitHelper.getVersionTags(new File(localDir));
+        File clone = new File(localDir);
+        List<Ref> versionTags = GitHelper.getVersionTags(clone);
         ChangeLog changeLog = new ChangeLog(versionTags);
 
         getPullRequests(repo).stream()
-                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) && GitHelper.isAncestorOf(pr.getCommit(), ref))
+                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) && GitHelper.isAncestorOf(clone, pr.getCommit(), ref))
                 .map(pr -> convertToChange(pr, versionTags, nextVersion))
                 .sorted()
                 .forEach(changeLog::addToChangeLog);

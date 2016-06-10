@@ -3,7 +3,13 @@ package org.neo4j.changelog.git;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
+import org.eclipse.jgit.lib.AnyObjectId;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
+import org.eclipse.jgit.revwalk.DepthWalk;
+import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import javax.annotation.Nonnull;
@@ -43,9 +49,16 @@ public class GitHelper {
     }
 
     /**
-     * Check if commit is an ancestor of ref.
+     * Check if base is an ancestor of tip.
      */
-    public static boolean isAncestorOf(@Nonnull String commit, @Nonnull String ref) {
-        return false;
+    public static boolean isAncestorOf(@Nonnull File localDir, @Nonnull String base, @Nonnull String tip) {
+        try {
+            Git git = getGit(localDir.getAbsoluteFile());
+            RevWalk walk = new RevWalk(git.getRepository());
+            return walk.isMergedInto(walk.parseCommit(ObjectId.fromString(base)),
+                    walk.parseCommit(ObjectId.fromString(tip)));
+        } catch (IOException e) {
+            return false;
+        }
     }
 }
