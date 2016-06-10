@@ -7,7 +7,6 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,23 +20,23 @@ public class Handler {
         this.service = service;
     }
 
-    public @Nonnull List<PullRequest> getPullRequests(@Nonnull String user, @Nonnull String repo) throws IOException {
-        List<PullRequest> pullRequests = new LinkedList<>();
+    public @Nonnull List<GitHubService.PR> getPullRequests(@Nonnull String user, @Nonnull String repo) throws IOException {
+        List<GitHubService.PR> PRs = new LinkedList<>();
 
         OptionalInt nextPage = OptionalInt.of(1);
         while (nextPage.isPresent()) {
-            Response<List<PullRequest>> response = getPullRequests(user, repo, nextPage.getAsInt());
-            pullRequests.addAll(response.body());
+            Response<List<GitHubService.PR>> response = getPullRequests(user, repo, nextPage.getAsInt());
+            PRs.addAll(response.body());
             nextPage = getNextPage(response);
         }
 
-        return pullRequests;
+        return PRs;
     }
 
-    Response<List<PullRequest>> getPullRequests(@Nonnull String user, @Nonnull String repo, int page) throws IOException {
-        Call<List<PullRequest>> call = service.listPullRequests(user, repo, page);
+    Response<List<GitHubService.PR>> getPullRequests(@Nonnull String user, @Nonnull String repo, int page) throws IOException {
+        Call<List<GitHubService.PR>> call = service.listPRs(user, repo, page);
 
-        Response<List<PullRequest>> result = call.execute();
+        Response<List<GitHubService.PR>> result = call.execute();
 
         if (!result.isSuccessful()) {
             throw new RuntimeException(result.errorBody().string());
@@ -48,7 +47,7 @@ public class Handler {
 
     private
     @Nonnull
-    OptionalInt getNextPage(@Nonnull Response<List<PullRequest>> result) {
+    OptionalInt getNextPage(@Nonnull Response<List<GitHubService.PR>> result) {
         if (result.headers().get("Link") != null) {
             String link = result.headers().get("Link");
             String parsedPage = null;

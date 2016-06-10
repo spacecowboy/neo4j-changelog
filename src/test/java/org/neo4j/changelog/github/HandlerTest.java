@@ -32,11 +32,11 @@ public class HandlerTest {
 
     @Test
     public void getPullRequests() throws Exception {
-        Response<List<PullRequest>> response = handler.getPullRequests("neo4j", "neo4j", 1);
+        Response<List<GitHubService.PR>> response = handler.getPullRequests("neo4j", "neo4j", 1);
 
         assertTrue(response.isSuccessful());
 
-        List<PullRequest> pullRequests = response.body();
+        List<GitHubService.PR> pullRequests = response.body();
 
         assertFalse(pullRequests.isEmpty());
     }

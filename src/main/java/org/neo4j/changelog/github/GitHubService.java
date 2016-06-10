@@ -19,7 +19,7 @@ public interface GitHubService {
 
 
     @GET("/repos/{user}/{repo}/pulls?state=closed&per_page=100")
-    Call<List<PullRequest>> listPullRequests(@Path("user") String user, @Path("repo") String repo, @Query("page") int page);
+    Call<List<PR>> listPRs(@Path("user") String user, @Path("repo") String repo, @Query("page") int page);
 
 
     static GitHubService GetService(@Nonnull String token) {
@@ -65,5 +65,24 @@ public interface GitHubService {
                 .client(httpBuilder.build()).build();
 
         return retrofit.create(GitHubService.class);
+    }
+
+    class PR {
+        public int number;
+        public String title;
+        public String body;
+        public String html_url;
+        public String merged_at;
+        public String merge_commit_sha;
+        public Base base;
+
+        public boolean isMerged() {
+            return merged_at != null;
+        }
+
+        public static class Base {
+            public String ref;
+            public String sha;
+        }
     }
 }

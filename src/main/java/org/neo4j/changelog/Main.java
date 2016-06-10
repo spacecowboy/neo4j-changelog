@@ -2,10 +2,10 @@ package org.neo4j.changelog;
 
 
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.errors.RepositoryNotFoundException;
 import org.eclipse.jgit.lib.Ref;
 import org.neo4j.changelog.git.GitHelper;
 import org.neo4j.changelog.github.GitHubHelper;
+import org.neo4j.changelog.github.PullRequest;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -26,7 +26,7 @@ public class Main {
         ChangeLog changeLog = new ChangeLog(versionTags);
 
         getPullRequests(repo).stream()
-                .filter(pr -> isChangeLogWorthy(pr) && isAncestorOf(pr, branch))
+                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) && isAncestorOf(pr, branch))
                 .map(pr -> convertToChange(pr, versionTags, nextVersion))
                 .sorted()
                 .forEach(changeLog::addToChangeLog);
@@ -60,10 +60,6 @@ public class Main {
 
     private boolean isGitHubRepo(@Nonnull String upstream) {
         return false;
-    }
-
-    interface PullRequest {
-        String getBaseBranch();
     }
 
     interface Change extends Comparable {
