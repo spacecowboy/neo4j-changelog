@@ -5,6 +5,6 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 public interface PullRequest {
-    @Nonnull String getBaseBranch();
     @Nonnull List<String> getGitHubTags();
+    @Nonnull String getCommit();
 }

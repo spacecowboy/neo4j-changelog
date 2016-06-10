@@ -41,4 +41,11 @@ public class GitHelper {
         }
         return Git.wrap(builder.build());
     }
+
+    /**
+     * Check if commit is an ancestor of ref.
+     */
+    public static boolean isAncestorOf(@Nonnull String commit, @Nonnull String ref) {
+        return false;
+    }
 }

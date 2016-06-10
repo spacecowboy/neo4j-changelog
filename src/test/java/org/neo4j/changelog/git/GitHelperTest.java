@@ -38,4 +38,10 @@ public class GitHelperTest {
         Pattern pattern = Pattern.compile("^v?[\\d\\.]+$");
         tags.stream().allMatch(ref -> pattern.asPredicate().test(ref.getName()));
     }
+
+    @Test
+    public void shouldBeAncestor() throws Exception {
+        assertTrue(GitHelper.isAncestorOf("627b3755c221bc4239238941c7fa38663c1e874f",
+                "33cd4f62a27d5b67eef82b00be4c7d84df3a2fdd"));
+    }
 }

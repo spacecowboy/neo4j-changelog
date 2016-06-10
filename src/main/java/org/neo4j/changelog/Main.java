@@ -15,18 +15,18 @@ import java.util.List;
 public class Main {
 
     /**
-     * Generate changelog for the specific branch and specified upstream
+     * Generate changelog for the specific ref and specified upstream
      */
     private void run(@Nonnull String nextVersion,
                      @Nonnull String localDir,
-                     @Nonnull String branch,
+                     @Nonnull String ref,
                      @Nonnull String repo,
                      @Nonnull String changeLogFilePath) throws GitAPIException, IOException {
         List<Ref> versionTags = GitHelper.getVersionTags(new File(localDir));
         ChangeLog changeLog = new ChangeLog(versionTags);
 
         getPullRequests(repo).stream()
-                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) && isAncestorOf(pr, branch))
+                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) && GitHelper.isAncestorOf(pr.getCommit(), ref))
                 .map(pr -> convertToChange(pr, versionTags, nextVersion))
                 .sorted()
                 .forEach(changeLog::addToChangeLog);
@@ -34,7 +34,7 @@ public class Main {
         changeLog.write(changeLogFilePath);
     }
 
-    private boolean isAncestorOf(@Nonnull PullRequest pr, @Nonnull String branch) {
+    private boolean isAncestorOf(@Nonnull String commit, @Nonnull String ref) {
         return false;
     }
 
