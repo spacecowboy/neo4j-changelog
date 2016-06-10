@@ -11,6 +11,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.neo4j.changelog.Util;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -36,8 +37,8 @@ public class GitHelper {
 
     static boolean isVersionTag(@Nonnull Ref ref) {
         // Name is like refs/tags/0.0.0
-        int i = ref.getName().lastIndexOf("/");
-        return VERSION_TAG_PATTERN.asPredicate().test(ref.getName().substring(i + 1));
+        String tag = Util.getTagName(ref);
+        return VERSION_TAG_PATTERN.asPredicate().test(tag);
     }
 
     private static Git getGit(@Nonnull File localDir) throws IOException {

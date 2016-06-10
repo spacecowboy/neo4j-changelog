@@ -15,30 +15,27 @@ import java.util.List;
 public class Main {
 
     /**
-     * Generate changelog for the specific ref and specified upstream
+     * Generate changelog for the specific commit and specified upstream
      */
     private void run(@Nonnull String nextVersion,
                      @Nonnull String localDir,
-                     @Nonnull String ref,
+                     @Nonnull String commit,
                      @Nonnull String repo,
-                     @Nonnull String changeLogFilePath) throws GitAPIException, IOException {
+                     @Nonnull File changeLogFile,
+                     @Nonnull List<String> headers) throws GitAPIException, IOException {
         File clone = new File(localDir);
         List<Ref> versionTags = GitHelper.getVersionTags(clone);
-        ChangeLog changeLog = new ChangeLog(versionTags);
+        ChangeLog changeLog = new ChangeLog(versionTags, headers);
 
         getPullRequests(repo).stream()
-                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) && GitHelper.isAncestorOf(clone, pr.getCommit(), ref))
+                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) &&
+                        GitHelper.isAncestorOf(clone, pr.getCommit(), commit))
                 .map(pr -> convertToChange(pr, versionTags, nextVersion))
                 .sorted()
                 .forEach(changeLog::addToChangeLog);
 
-        changeLog.write(changeLogFilePath);
+        changeLog.write(changeLogFile);
     }
-
-    private boolean isAncestorOf(@Nonnull String commit, @Nonnull String ref) {
-        return false;
-    }
-
 
     private static Change convertToChange(@Nonnull PullRequest pullRequest, @Nonnull List<Ref> versionTags,
                                           @Nonnull String nextVersion) {
@@ -65,5 +62,9 @@ public class Main {
 
     interface Change extends Comparable {
 
+        @Nonnull
+        List<String> getLabels();
+        @Nonnull
+        String getVersion();
     }
 }

@@ -47,6 +47,13 @@ public class GitHelperTest {
     }
 
     @Test
+    public void shouldBeAncestor2() throws Exception {
+        File file = new File("./");
+        assertTrue(GitHelper.isAncestorOf(file, "627b3755c221bc4239238941c7fa38663c1e874f",
+                "master"));
+    }
+
+    @Test
     public void shouldNotBeAncestor() throws Exception {
         File file = new File("./");
         assertFalse(GitHelper.isAncestorOf(file, "737cfe197a30bef5a7f256fce26f518aabe9f6ee",
