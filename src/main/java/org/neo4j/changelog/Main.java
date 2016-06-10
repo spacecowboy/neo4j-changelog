@@ -1,7 +1,15 @@
 package org.neo4j.changelog;
 
 
+import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.errors.RepositoryNotFoundException;
+import org.eclipse.jgit.lib.Ref;
+import org.neo4j.changelog.git.GitHelper;
+import org.neo4j.changelog.github.GitHubHelper;
+
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class Main {
@@ -13,12 +21,8 @@ public class Main {
                      @Nonnull String localDir,
                      @Nonnull String branch,
                      @Nonnull String repo,
-                     @Nonnull String changeLogFilePath) {
-        if (!isGitHubRepo(repo)) {
-            throw new IllegalArgumentException("Only supports GitHub repositories");
-        }
-
-        List<String> versionTags = getVersionTags(localDir);
+                     @Nonnull String changeLogFilePath) throws GitAPIException, IOException {
+        List<Ref> versionTags = GitHelper.getVersionTags(new File(localDir));
         ChangeLog changeLog = new ChangeLog(versionTags);
 
         getPullRequests(repo).stream()
@@ -34,11 +38,8 @@ public class Main {
         return false;
     }
 
-    private List<String> getVersionTags(@Nonnull String localDir) {
-        return null;
-    }
 
-    private static Change convertToChange(@Nonnull PullRequest pullRequest, @Nonnull List<String> versionTags,
+    private static Change convertToChange(@Nonnull PullRequest pullRequest, @Nonnull List<Ref> versionTags,
                                           @Nonnull String nextVersion) {
         return null;
     }
