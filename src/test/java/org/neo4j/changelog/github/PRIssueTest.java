@@ -10,7 +10,11 @@ import static org.junit.Assert.*;
 public class PRIssueTest {
     @Test
     public void addLink() throws Exception {
-        fail("Not implemented yet");
+        PRIssue pr = getPrIssue(1243, "    This is the title    ", "   This is the body   ",
+                "http://test.com/test");
+
+        // Should have link appended at end
+        assertEquals("This is the title [#1243](http://test.com/test)", pr.addLink(pr.title));
     }
 
     @Test
@@ -18,7 +22,7 @@ public class PRIssueTest {
         PRIssue pr = getPrIssue(1, "title", "body");
 
         assertTrue(pr.getVersionFilter().isEmpty());
-        assertEquals(pr.title, pr.getChangeText());
+        assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
     }
 
     @Test
@@ -29,7 +33,7 @@ public class PRIssueTest {
 
         assertArrayEquals(new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
-        assertEquals(pr.title, pr.getChangeText());
+        assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
     }
 
     @Test
@@ -40,7 +44,7 @@ public class PRIssueTest {
 
         assertArrayEquals(new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
-        assertEquals(pr.title, pr.getChangeText());
+        assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
     }
 
     @Test
@@ -51,7 +55,7 @@ public class PRIssueTest {
 
         assertArrayEquals(new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
-        assertEquals(pr.title, pr.getChangeText());
+        assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
 
         pr = getPrIssue(1, "", "Blab la\n" +
                 "balb lba\n" +
@@ -59,7 +63,7 @@ public class PRIssueTest {
 
         assertArrayEquals(new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
-        assertEquals(pr.title, pr.getChangeText());
+        assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
 
         pr = getPrIssue(1, "", "Blab la\n" +
                 "balb lba\n" +
@@ -67,7 +71,7 @@ public class PRIssueTest {
 
         assertArrayEquals(new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
-        assertEquals(pr.title, pr.getChangeText());
+        assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
     }
 
     @Test
@@ -77,7 +81,7 @@ public class PRIssueTest {
                 "CL: Body text \n");
 
         assertTrue(pr.getVersionFilter().isEmpty());
-        assertEquals("Body text", pr.getChangeText());
+        assertEquals("Body text [#1](http://test.com/link)", pr.getChangeText());
     }
 
     @Test
@@ -87,7 +91,7 @@ public class PRIssueTest {
                 "changelog: Body text \n");
 
         assertTrue(pr.getVersionFilter().isEmpty());
-        assertEquals("Body text", pr.getChangeText());
+        assertEquals("Body text [#1](http://test.com/link)", pr.getChangeText());
     }
 
     @Test
@@ -97,7 +101,7 @@ public class PRIssueTest {
                 "CL: Really tricky text: with a colon \n");
 
         assertTrue(pr.getVersionFilter().isEmpty());
-        assertEquals("Really tricky text: with a colon", pr.getChangeText());
+        assertEquals("Really tricky text: with a colon [#1](http://test.com/link)", pr.getChangeText());
     }
 
     @Test
@@ -113,7 +117,7 @@ public class PRIssueTest {
 
         assertArrayEquals(new String[]{"2.1", "2.2", "2.3"},
                 pr.getVersionFilter().toArray());
-        assertEquals("My change text follows here", pr.getChangeText());
+        assertEquals("My change text follows here [#1](http://test.com/link)", pr.getChangeText());
     }
 
     @Test
@@ -129,7 +133,7 @@ public class PRIssueTest {
 
         assertArrayEquals(new String[]{"2.1", "2.2", "2.3"},
                 pr.getVersionFilter().toArray());
-        assertEquals("Really tricky text: with a colon", pr.getChangeText());
+        assertEquals("Really tricky text: with a colon [#1](http://test.com/link)", pr.getChangeText());
     }
 
     @Test
@@ -145,10 +149,14 @@ public class PRIssueTest {
 
         assertArrayEquals(new String[]{"2.1", "2.2", "2.3"},
                 pr.getVersionFilter().toArray());
-        assertEquals("My change text follows here", pr.getChangeText());
+        assertEquals("My change text follows here [#1](http://test.com/link)", pr.getChangeText());
     }
 
     private PRIssue getPrIssue(int number, String title, String body) {
-        return new PRIssue(number, title, body, "", "", "", "", new ArrayList<>());
+        return getPrIssue(number, title, body, "http://test.com/link");
+    }
+
+    private PRIssue getPrIssue(int number, String title, String body, String html_url) {
+        return new PRIssue(number, title, body, html_url, "", "", "", new ArrayList<>());
     }
 }

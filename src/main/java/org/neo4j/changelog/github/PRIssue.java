@@ -98,13 +98,13 @@ public class PRIssue implements PullRequest {
             String[] parts = cl.split(":");
 
             if (parts.length < 2) {
-                return title.trim();
+                return addLink(title);
             }
 
             List<String> versions = getVersionFilter();
 
             if (parts.length == 2 && !versions.isEmpty()) {
-                return title.trim();
+                return addLink(title);
             }
 
             final int skipCount = versions.isEmpty() ? 1 : 2;
@@ -115,13 +115,13 @@ public class PRIssue implements PullRequest {
                 text = String.join(":", text, parts[i]);
             }
 
-            return text.isEmpty() ? title.trim() : text.trim();
+            return addLink(text.isEmpty() ? title : text);
         }
 
-        return title.trim();
+        return addLink(title);
     }
 
     String addLink(@Nonnull String text) {
-        return String.format("%s [%d](%s)", text.trim(), number, html_url);
+        return String.format("%s [#%d](%s)", text.trim(), number, html_url);
     }
 }
