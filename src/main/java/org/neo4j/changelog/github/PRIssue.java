@@ -11,21 +11,36 @@ import java.util.stream.Collectors;
 
 public class PRIssue implements PullRequest {
 
-    public static final Pattern CHANGELOG_PATTERN = Pattern.compile("^(cl|changelog).*$", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+    public static final Pattern CHANGELOG_PATTERN = Pattern.compile("^(cl|changelog).*$",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
     public static final Pattern VERSION_PATTERN = Pattern.compile("^\\s*\\d+\\.\\d+\\s*$", Pattern.CASE_INSENSITIVE);
 
-    public int number;
-    public String title;
-    public String body;
-    public String html_url;
-    public String merged_at;
-    public Ref head;
-    public Ref base;
-    public List<Label> labels;
+    final int number;
+    final String title;
+    final String body;
+    final String html_url;
+    final String merged_at;
+    final String head;
+    final String base;
+    final List<String> labels;
     private ArrayList<String> versionFilter = null;
 
-    public boolean isMerged() {
-        return merged_at != null;
+    public PRIssue(int number, String title, String body, String html_url, String merged_at,
+                   String head, String base, List<String> labels) {
+
+        this.number = number;
+        this.title = title;
+        this.body = body;
+        this.html_url = html_url;
+        this.merged_at = merged_at;
+        this.head = head;
+        this.base = base;
+        this.labels = labels;
+    }
+
+    public PRIssue(GitHubService.Issue issue, GitHubService.PR pr) {
+        this(pr.number, pr.title, pr.body, pr.html_url, pr.merged_at, pr.head.sha, pr.base.sha,
+                issue.labels.stream().map(l -> l.name).collect(Collectors.toList()));
     }
 
     @Nonnull
@@ -34,13 +49,13 @@ public class PRIssue implements PullRequest {
         if (labels == null) {
             return new ArrayList<>();
         }
-        return labels.stream().map(l -> l.name).collect(Collectors.toList());
+        return labels;
     }
 
     @Nonnull
     @Override
     public String getCommit() {
-        return head.sha;
+        return head;
     }
 
     @Nonnull
@@ -106,12 +121,7 @@ public class PRIssue implements PullRequest {
         return title.trim();
     }
 
-    public static class Label {
-        public String name;
-    }
-
-    public static class Ref {
-        public String ref;
-        public String sha;
+    String addLink(@Nonnull String text) {
+        return String.format("%s [%d](%s)", text.trim(), number, html_url);
     }
 }

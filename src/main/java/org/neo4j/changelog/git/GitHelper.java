@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * Miscellaneous utility functions related to Git specific things.
  */
 public class GitHelper {
-    static Pattern VERSION_TAG_PATTERN = Pattern.compile("^v?[\\d\\.]+$");
+    static Pattern VERSION_TAG_PATTERN = Pattern.compile("^v?[\\d\\.]+");
     private final Git git;
     private final Repository repo;
 
@@ -58,8 +58,11 @@ public class GitHelper {
 
     public static boolean isVersionTag(@Nonnull Ref ref) {
         // Name is like refs/tags/0.0.0
-        String tag = Util.getTagName(ref);
-        return VERSION_TAG_PATTERN.asPredicate().test(tag);
+        return isVersionTag(Util.getTagName(ref));
+    }
+
+    static boolean isVersionTag(@Nonnull String tagName) {
+        return VERSION_TAG_PATTERN.asPredicate().test(tagName);
     }
 
     public static Git getGit(@Nonnull File localDir) throws IOException {

@@ -111,4 +111,15 @@ public class GitHelperTest {
         assertEquals("0.0.3",
                 gitHelper.getFirstVersionOf("2bf464ebf41d5986bc18158ccdef87c5ba080198", tags, fallback));
     }
+
+    @Test
+    public void isVersionTag() throws Exception {
+        assertTrue(GitHelper.isVersionTag("1.3"));
+        assertTrue(GitHelper.isVersionTag("2.0.0"));
+        assertTrue(GitHelper.isVersionTag("3.0.0-M04"));
+        assertTrue(GitHelper.isVersionTag("1.8.M07"));
+        assertTrue(GitHelper.isVersionTag("2.1.0-RC2"));
+
+        assertFalse(GitHelper.isVersionTag("bob"));
+    }
 }

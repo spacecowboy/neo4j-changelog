@@ -38,6 +38,8 @@ public class UtilTest {
         assertTrue(Util.isSameMajorMinorVersion("1.1", "1.1"));
         assertTrue(Util.isSameMajorMinorVersion("1.1", "1.1.3"));
         assertTrue(Util.isSameMajorMinorVersion("1.1.2", "1.1"));
+        assertTrue(Util.isSameMajorMinorVersion("3.1.0-M01", "3.1.0-M03"));
+        assertTrue(Util.isSameMajorMinorVersion("3.1.0", "3.1.0-M03"));
 
         assertFalse(Util.isSameMajorMinorVersion("1", "1.1"));
         assertFalse(Util.isSameMajorMinorVersion("1.1", "1"));

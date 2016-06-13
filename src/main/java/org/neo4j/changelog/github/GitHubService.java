@@ -17,6 +17,11 @@ import java.util.List;
 public interface GitHubService {
     String API_URL = "https://api.github.com";
 
+    @GET("/repos/{user}/{repo}/issues?state=closed&per_page=100&labels=changelog")
+    Call<List<Issue>> listChangeLogIssues(@Path("user") String user, @Path("repo") String repo, @Query("page") int page);
+
+    @GET("/repos/{user}/{repo}/pulls/{number}")
+    Call<PR> getPR(@Path("user") String user, @Path("repo") String repo, @Path("number") int number);
 
     @GET("/repos/{user}/{repo}/pulls?state=closed&per_page=100")
     Call<List<PR>> listPRs(@Path("user") String user, @Path("repo") String repo, @Query("page") int page);
@@ -68,7 +73,11 @@ public interface GitHubService {
     }
 
     class Issue {
-
+        public int number;
+        public String title;
+        public String body;
+        public List<Label> labels;
+        public UrlHolder pull_request;
     }
 
     class PR {
@@ -77,16 +86,20 @@ public interface GitHubService {
         public String body;
         public String html_url;
         public String merged_at;
-        public String merge_commit_sha;
-        public Base base;
+        public Ref head;
+        public Ref base;
+    }
 
-        public boolean isMerged() {
-            return merged_at != null;
-        }
+    class UrlHolder {
+        public String url;
+    }
 
-        public static class Base {
-            public String ref;
-            public String sha;
-        }
+    class Label {
+        public String name;
+    }
+
+    class Ref {
+        public String ref;
+        public String sha;
     }
 }
