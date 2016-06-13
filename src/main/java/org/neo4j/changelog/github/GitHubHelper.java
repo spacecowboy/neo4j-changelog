@@ -51,8 +51,7 @@ public class GitHubHelper {
 
             @Override
             public String toString() {
-                // TODO check for CL message, otherwise do title
-                return "TITLE GOES HERE!";
+                return pr.getChangeText();
             }
         };
     }

@@ -10,15 +10,17 @@ import java.util.Random;
  * Some utilities
  */
 public class Util {
-    public static @Nonnull String randomHex() {
-        Random r = new Random();
-        return Integer.toHexString(r.nextInt(Integer.MAX_VALUE));
+    public static boolean isSameMajorMinorVersion(@Nonnull String v1, @Nonnull String v2) {
+        String[] first = v1.split("\\.");
+        String[] second = v2.split("\\.");
+
+        return first.length >= 2 && second.length >= 2 && first[0].equals(second[0]) && first[1].equals(second[1]);
     }
 
     /**
      * Indicate sort order of two Refs according to semantic versioning rules
      */
-    public static int SemanticCompare(Ref ref1, Ref ref2) {
+    public static int SemanticCompare(@Nonnull Ref ref1, @Nonnull Ref ref2) {
         return SemanticCompare(getTagName(ref1), getTagName(ref2));
     }
 
@@ -27,7 +29,7 @@ public class Util {
      *
      * v1.0.0 is considered equivalent to 1.0.0
      */
-    public static int SemanticCompare(String semanticVersion1, String semanticVersion2) {
+    public static int SemanticCompare(@Nonnull String semanticVersion1, @Nonnull String semanticVersion2) {
         String[] semanticVersion1Parts = splitSemanticVersion(semanticVersion1);
         String[] semanticVersion2Parts = splitSemanticVersion(semanticVersion2);
 
@@ -93,7 +95,8 @@ public class Util {
         return 0;
     }
 
-    private static String[] splitSemanticVersion(String semanticVersion) {
+    @Nonnull
+    private static String[] splitSemanticVersion(@Nonnull String semanticVersion) {
         int metaDataStart = !semanticVersion.contains("+") ? semanticVersion.length() : semanticVersion.indexOf("+");
         int start = 0;
         if (semanticVersion.toLowerCase().startsWith("v")) {
@@ -102,11 +105,13 @@ public class Util {
         return semanticVersion.substring(start, metaDataStart).split("[.|-]");
     }
 
-    public static String getTagName(Ref ref) {
+    @Nonnull
+    public static String getTagName(@Nonnull Ref ref) {
         int i = ref.getName().lastIndexOf("/");
         return ref.getName().substring(i + 1);
     }
 
+    @Nonnull
     public static Comparator<Ref> SemanticComparator() {
         return Util::SemanticCompare;
     }

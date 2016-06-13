@@ -32,4 +32,15 @@ public class UtilTest {
         assertEquals(-1, Util.SemanticCompare("1.0.0-alpha", "1.0.0-alpha.1"));
         assertEquals(-1, Util.SemanticCompare("1.0.0-alpha.1", "1.0.0-alpha.10"));
     }
+
+    @Test
+    public void isSameMajorMinorVersion() throws Exception {
+        assertTrue(Util.isSameMajorMinorVersion("1.1", "1.1"));
+        assertTrue(Util.isSameMajorMinorVersion("1.1", "1.1.3"));
+        assertTrue(Util.isSameMajorMinorVersion("1.1.2", "1.1"));
+
+        assertFalse(Util.isSameMajorMinorVersion("1", "1.1"));
+        assertFalse(Util.isSameMajorMinorVersion("1.1", "1"));
+        assertFalse(Util.isSameMajorMinorVersion("1", "1"));
+    }
 }

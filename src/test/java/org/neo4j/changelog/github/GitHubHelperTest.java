@@ -72,6 +72,12 @@ public class GitHubHelperTest {
             public List<String> getVersionFilter() {
                 return Arrays.asList(versions);
             }
+
+            @Nonnull
+            @Override
+            public String getChangeText() {
+                return "bah";
+            }
         };
     }
 
@@ -97,6 +103,12 @@ public class GitHubHelperTest {
             @Override
             public List<String> getVersionFilter() {
                 return new ArrayList<>();
+            }
+
+            @Nonnull
+            @Override
+            public String getChangeText() {
+                return "bah";
             }
         };
     }

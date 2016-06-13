@@ -67,6 +67,10 @@ public interface GitHubService {
         return retrofit.create(GitHubService.class);
     }
 
+    class Issue {
+
+    }
+
     class PR {
         public int number;
         public String title;
