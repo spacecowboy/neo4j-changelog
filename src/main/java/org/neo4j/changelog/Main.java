@@ -28,7 +28,7 @@ public class Main {
         ChangeLog changeLog = new ChangeLog(versionTags, headers);
 
         getPullRequests(repo).stream()
-                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) &&
+                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) && GitHubHelper.isIncluded(pr, nextVersion) &&
                         GitHelper.isAncestorOf(clone, pr.getCommit(), commit))
                 .map(pr -> convertToChange(pr, versionTags, nextVersion))
                 .sorted()

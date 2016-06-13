@@ -15,4 +15,18 @@ public class GitHubHelper {
     public static <T> boolean isChangeLogWorthy(@Nonnull PullRequest pr, @Nonnull List<String> tagStrings) {
         return pr.getGitHubTags().stream().anyMatch(tagStrings::contains);
     }
+
+    public static boolean isIncluded(@Nonnull PullRequest pr, @Nonnull String nextVersion) {
+        // Special case if no filter, then always true
+        if (pr.getVersionFilter().isEmpty()) {
+            return true;
+        }
+
+        for (String version: pr.getVersionFilter()) {
+            if (nextVersion.startsWith(version)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
