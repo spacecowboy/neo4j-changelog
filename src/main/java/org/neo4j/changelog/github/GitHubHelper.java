@@ -1,8 +1,12 @@
 package org.neo4j.changelog.github;
 
+import org.eclipse.jgit.lib.Ref;
+import org.neo4j.changelog.Change;
+
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
+
 
 /**
  * Miscellaneous utility functions related to GitHub specific things.
@@ -28,5 +32,28 @@ public class GitHubHelper {
             }
         }
         return false;
+    }
+
+    @Nonnull
+    public static Change convertToChange(@Nonnull PullRequest pr, @Nonnull String version) {
+        return new Change() {
+            @Nonnull
+            @Override
+            public List<String> getLabels() {
+                return pr.getGitHubTags();
+            }
+
+            @Nonnull
+            @Override
+            public String getVersion() {
+                return version;
+            }
+
+            @Override
+            public String toString() {
+                // TODO check for CL message, otherwise do title
+                return "TITLE GOES HERE!";
+            }
+        };
     }
 }

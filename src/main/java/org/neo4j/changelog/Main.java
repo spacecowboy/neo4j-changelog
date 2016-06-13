@@ -1,6 +1,7 @@
 package org.neo4j.changelog;
 
 
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.neo4j.changelog.git.GitHelper;
@@ -10,6 +11,7 @@ import org.neo4j.changelog.github.PullRequest;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 public class Main {
@@ -21,25 +23,23 @@ public class Main {
                      @Nonnull String localDir,
                      @Nonnull String commit,
                      @Nonnull String repo,
-                     @Nonnull File changeLogFile,
+                     @Nonnull Path changeLogPath,
                      @Nonnull List<String> headers) throws GitAPIException, IOException {
         File clone = new File(localDir);
+        Git git = GitHelper.getGit(clone);
         List<Ref> versionTags = GitHelper.getVersionTags(clone);
         ChangeLog changeLog = new ChangeLog(versionTags, headers);
 
+
         getPullRequests(repo).stream()
                 .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) && GitHubHelper.isIncluded(pr, nextVersion) &&
-                        GitHelper.isAncestorOf(clone, pr.getCommit(), commit))
-                .map(pr -> convertToChange(pr, versionTags, nextVersion))
+                        GitHelper.isAncestorOf(git.getRepository(), pr.getCommit(), commit))
+                .map(pr -> GitHubHelper.convertToChange(pr,
+                        GitHelper.getFirstVersionOf(git.getRepository(), pr.getCommit(), versionTags, nextVersion)))
                 .sorted()
                 .forEach(changeLog::addToChangeLog);
 
-        changeLog.write(changeLogFile);
-    }
-
-    private static Change convertToChange(@Nonnull PullRequest pullRequest, @Nonnull List<Ref> versionTags,
-                                          @Nonnull String nextVersion) {
-        return null;
+        changeLog.write(changeLogPath);
     }
 
     /**
@@ -52,6 +52,7 @@ public class Main {
         return false;
     }
 
+    @Nonnull
     private List<PullRequest> getPullRequests(String upstream) {
         return null;
     }
@@ -60,11 +61,4 @@ public class Main {
         return false;
     }
 
-    interface Change extends Comparable {
-
-        @Nonnull
-        List<String> getLabels();
-        @Nonnull
-        String getVersion();
-    }
 }

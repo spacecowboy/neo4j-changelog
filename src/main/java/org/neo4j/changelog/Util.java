@@ -3,6 +3,7 @@ package org.neo4j.changelog;
 import org.eclipse.jgit.lib.Ref;
 
 import javax.annotation.Nonnull;
+import java.util.Comparator;
 import java.util.Random;
 
 /**
@@ -104,5 +105,9 @@ public class Util {
     public static String getTagName(Ref ref) {
         int i = ref.getName().lastIndexOf("/");
         return ref.getName().substring(i + 1);
+    }
+
+    public static Comparator<Ref> SemanticComparator() {
+        return Util::SemanticCompare;
     }
 }
