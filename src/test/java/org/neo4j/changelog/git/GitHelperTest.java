@@ -1,6 +1,7 @@
 package org.neo4j.changelog.git;
 
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.junit.Before;
@@ -66,6 +67,14 @@ public class GitHelperTest {
                                      .collect(Collectors.toList());
         assertArrayEquals(tags.toArray(),
                 new String[]{"0.0.0", "0.0.1", "0.0.2"});
+    }
+
+    @Test
+    public void testGetLatestMergeCommit() throws Exception {
+        ObjectId result = gitHelper.getLatestMergeCommit("5af80e3ad05b2d1a7df7d18bf877caaaafd75806",
+                "test-C");
+        assertEquals("3f744d08ed4cb84200eb5ea733490a95f9bf0777",
+                result.getName());
     }
 
     @Test

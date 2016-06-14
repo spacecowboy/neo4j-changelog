@@ -2,13 +2,13 @@ package org.neo4j.changelog.git;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.errors.InvalidObjectIdException;
-import org.eclipse.jgit.errors.RepositoryNotFoundException;
+import org.eclipse.jgit.errors.*;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
+import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.neo4j.changelog.Util;
 
@@ -99,6 +99,44 @@ public class GitHelper {
             return false;
         }
         return false;
+    }
+
+    /**
+     * Get the merge commit which contains {sha}, which is on the same "branch" as {tip}
+     */
+    public ObjectId getLatestMergeCommit(@Nonnull String sha, @Nonnull String tip) throws IOException {
+        RevWalk walk = new RevWalk(repo);
+
+        RevCommit from = walk.parseCommit(getCommitFromString(sha));
+        RevCommit to = walk.parseCommit(getCommitFromString(tip));
+
+        walk.markStart(to);
+        walk.markUninteresting(from);
+
+        //walk.setRetainBody(false);
+        walk.setRevFilter(new RevFilter() {
+            @Override
+            public boolean include(RevWalk walker, RevCommit commit) throws StopWalkException, IOException {
+                // Merge commits have more than 1 parent
+                return (commit.getParentCount() > 1 &&
+                        // make sure it is on the ancestry path
+                        walk.isMergedInto(from, commit));
+            }
+
+            @Override
+            public RevFilter clone() {
+                return this;
+            }
+        });
+
+        RevCommit lastMerge = null;
+        for (RevCommit commit: walk) {
+            String msg = commit.getShortMessage();
+                // Is a merge commit?
+                lastMerge = commit;
+        }
+        ObjectId mergeCommit = lastMerge.toObjectId();
+        return mergeCommit;
     }
 
     /**
