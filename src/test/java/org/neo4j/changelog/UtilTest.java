@@ -45,4 +45,29 @@ public class UtilTest {
         assertFalse(Util.isSameMajorMinorVersion("1.1", "1"));
         assertFalse(Util.isSameMajorMinorVersion("1", "1"));
     }
+
+    @Test
+    public void versionLiesBetween() {
+        assertTrue(Util.versionLiesBetween("3.0", "2.0", "4.0"));
+        assertTrue(Util.versionLiesBetween("3.0.3", "3.0.3", "3.0.3"));
+        assertTrue(Util.versionLiesBetween("3.0.3", "3.0.1", "3.0.5"));
+        assertTrue(Util.versionLiesBetween("3.1.3", "3.0.3", "3.2.3"));
+        assertTrue(Util.versionLiesBetween("3.0.3", "2.0.3", "5.0.3"));
+
+
+        assertFalse(Util.versionLiesBetween("3.0.3", "3.0.4", "3.0.4"));
+        assertFalse(Util.versionLiesBetween("3.0.3", "3.0.4", "3.0.5"));
+        assertFalse(Util.versionLiesBetween("3.0.3", "3.0.1", "3.0.2"));
+
+        assertFalse(Util.versionLiesBetween("3.0.3", "3.1.3", "3.2.3"));
+        assertFalse(Util.versionLiesBetween("3.2.3", "3.0.3", "3.1.3"));
+
+        assertFalse(Util.versionLiesBetween("3.1.3", "4.1.3", "5.1.3"));
+        assertFalse(Util.versionLiesBetween("4.1.3", "2.1.3", "3.1.3"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void versionLiesBetweenFromMustBeLessOrEqualThanTo() {
+        assertTrue(Util.versionLiesBetween("3.0.3", "3.0.4", "3.0.0"));
+    }
 }

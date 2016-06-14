@@ -7,12 +7,14 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.neo4j.changelog.Util;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -46,6 +48,24 @@ public class GitHelperTest {
         // either 1.2.3 or v1.2.3 is ok
         Pattern pattern = Pattern.compile("^v?[\\d\\.]+$");
         tags.stream().allMatch(ref -> pattern.asPredicate().test(ref.getName()));
+    }
+
+    @Test
+    public void testGetVersionTags() throws Exception {
+        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.3").stream()
+                                     .map(Util::getTagName)
+                                     .collect(Collectors.toList());
+        assertArrayEquals(tags.toArray(),
+                new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"});
+    }
+
+    @Test
+    public void testGetVersionTagsSubset() throws Exception {
+        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.2").stream()
+                                     .map(Util::getTagName)
+                                     .collect(Collectors.toList());
+        assertArrayEquals(tags.toArray(),
+                new String[]{"0.0.0", "0.0.1", "0.0.2"});
     }
 
     @Test

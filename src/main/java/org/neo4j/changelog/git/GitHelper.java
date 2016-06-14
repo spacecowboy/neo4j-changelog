@@ -45,6 +45,17 @@ public class GitHelper {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Returns the version tags which belongs between the specified versions (inclusive): Example: 2.3.0 - 3.0.9 could
+     * return 2.3.0, 2.3.1, 2.3.2,...., 3.0.7, 3.0.8, 3.0.8
+     */
+    @Nonnull
+    public List<Ref> getVersionTags(@Nonnull String from, @Nonnull String to) throws IOException, GitAPIException {
+        return getVersionTags().stream()
+                               .filter(ref -> Util.versionLiesBetween(Util.getTagName(ref), from, to))
+                               .collect(Collectors.toList());
+    }
+
     @Nonnull
     public List<Ref> getVersionTags() throws IOException, GitAPIException {
         return git.tagList().call().stream()

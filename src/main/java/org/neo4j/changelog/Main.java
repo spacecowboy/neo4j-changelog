@@ -22,28 +22,32 @@ public class Main {
         return gitHubHelper.getChangeLogPullRequests();
     }
 
-    private static void generateChangelog(@Nonnull String nextVersion,
-                                          @Nonnull File localDir,
-                                          @Nonnull String branchRoot,
-                                          @Nonnull String gitRef,
-                                          @Nonnull Path changeLogPath,
-                                          @Nonnull List<String> categories,
-                                          @Nonnull Stream<PullRequest> pullRequests) throws GitAPIException, IOException {
+    private static void generateChangelog(
+            @Nonnull String fromRef,
+            @Nonnull String toRef,
+            @Nonnull String version,
+            @Nonnull File localDir,
+            @Nonnull Path changeLogPath,
+            @Nonnull List<String> categories,
+            @Nonnull Stream<PullRequest> pullRequests) throws GitAPIException, IOException {
         GitHelper gitHelper = new GitHelper(localDir);
-        List<Ref> versionTags = gitHelper.getVersionTags(nextVersion);
-        ChangeLog changeLog = new ChangeLog(versionTags, categories);
+        List<Ref> versionTags = gitHelper.getVersionTags(fromRef, toRef);
+        ChangeLog changeLog = new ChangeLog(versionTags, version, categories);
 
         System.out.println("Version tags:");
         versionTags.forEach(t -> System.out.println(Util.getTagName(t)));
 
-        // pr.getCommit might not work for this?
-        //  gitHelper.isAncestorOf(branchRoot, pr.getCommit())
+        if (!gitHelper.isAncestorOf(fromRef, toRef)) {
+            throw new RuntimeException(
+                    String.format("%s is not an ancestor of %s, can't generate changelog", fromRef, toRef));
+        }
 
         pullRequests
-                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) && GitHubHelper.isIncluded(pr, nextVersion) &&
-                        gitHelper.isAncestorOf(pr.getCommit(), gitRef))
+                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) && GitHubHelper.isIncluded(pr, version) &&
+                        gitHelper.isAncestorOf(fromRef, pr.getCommit()) &&
+                        gitHelper.isAncestorOf(pr.getCommit(), toRef))
                 .map(pr -> GitHubHelper.convertToChange(pr,
-                        gitHelper.getFirstVersionOf(pr.getCommit(), versionTags, nextVersion)))
+                        gitHelper.getFirstVersionOf(pr.getCommit(), versionTags, version)))
                 .forEach(changeLog::addToChangeLog);
 
         changeLog.write(changeLogPath);
@@ -53,13 +57,13 @@ public class Main {
         Options options = new Options();
 
         options.addOption("h", "help", false, "Print help")
-                .addOption("t", "token", true, "GitHub Token (not required but heavily recommended)")
-                .addOption("b", "branch", true, "Branch to generate changelog for")
-                .addOption("br", "branch-root", true,
-                        "Root of branch. Example if branch is 3.0: git log 2.3..3.0 --oneline | tail -n 1\n")
+                .addOption("ght", "token", true, "GitHub Token (not required but heavily recommended)")
+                .addOption("t", "to", true, "Gitref up to which the changelog will be generated")
+                .addOption("f", "from", true,
+                        "Gitref starting from which the changelog is generated")
                 .addOption("d", "directory", true, "Directory of local git repo")
                 .addOption("o", "output", true, "Path to output file")
-                .addOption("nv", "next-version", true, "Latest/next version of branch");
+                .addOption("v", "version", true, "Latest/next semantic version of branch");
 
         CommandLineParser parser = new DefaultParser();
 
@@ -77,7 +81,7 @@ public class Main {
             System.exit(0);
         }
 
-        List<PullRequest> pullRequests = getPullRequests(cmd.getOptionValue("t", ""));
+        List<PullRequest> pullRequests = getPullRequests(cmd.getOptionValue("ght", ""));
 
         if (pullRequests.isEmpty()) {
             System.err.println("No pull requests found!");
@@ -86,10 +90,11 @@ public class Main {
             System.out.println("PRs: " + pullRequests.size());
         }
 
-        generateChangelog(required(cmd, "nv"),
+        generateChangelog(
+                required(cmd, "f"),
+                required(cmd, "t"),
+                required(cmd, "v"),
                 new File(required(cmd, "d")),
-                required(cmd, "br"),
-                required(cmd, "b"),
                 new File(required(cmd, "o")).toPath(),
                 Arrays.asList("Kernel", "Cypher", "Packaging", "HA", "Core-Edge"),
                 pullRequests.stream());

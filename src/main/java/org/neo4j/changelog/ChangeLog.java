@@ -1,6 +1,7 @@
 package org.neo4j.changelog;
 
 
+import org.eclipse.jgit.annotations.Nullable;
 import org.eclipse.jgit.lib.Ref;
 
 import javax.annotation.Nonnull;
@@ -9,11 +10,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class ChangeLog {
 
@@ -21,31 +20,39 @@ public class ChangeLog {
     private static final String CATEGORY_FMT = "#### %s\n";
     private static final String CHANGE_FMT = "- %s\n";
     private final Map<String, Map<String, List<Change>>> versions = new HashMap<>();
-    private final List<Ref> tags;
-    private final ArrayList<String> subHeaders = new ArrayList<>();
+    private final ArrayList<String> tags = new ArrayList<>();
+    private final ArrayList<String> categories = new ArrayList<>();
     private String catchAllSubHeader = "Misc";
 
-    public ChangeLog(@Nonnull List<Ref> tags, @Nonnull List<String> subHeaders) {
-        this.subHeaders.addAll(subHeaders);
-        this.tags = tags;
-        this.tags.sort(Util::SemanticCompare);
+    public ChangeLog(@Nonnull List<Ref> tags, @Nonnull List<String> categories) {
+        this(tags, null, categories);
+    }
+
+    public ChangeLog(@Nonnull List<Ref> tags, @Nullable String version, @Nonnull List<String> categories) {
+        this.categories.addAll(categories);
+
+        this.tags.addAll(tags.stream().map(Util::getTagName).collect(Collectors.toList()));
+        if (version != null) {
+            this.tags.add(version);
+        }
+        this.tags.sort((t1, t2) -> -Util.SemanticCompare(t1, t2));
     }
 
     public void addToChangeLog(@Nonnull Change change) {
         String version = change.getVersion();
-        String subheader = getSubHeaderFor(change);
+        String subheader = getCategoryFor(change);
 
         Map<String, List<Change>> headers = defaultGet(versions, version, HashMap::new);
         defaultGet(headers, subheader, ArrayList::new).add(change);
     }
 
     @Nonnull
-    private String getSubHeaderFor(@Nonnull Change change) {
+    private String getCategoryFor(@Nonnull Change change) {
         List<String> labels = change.getLabels();
 
-        for (String subHeader: subHeaders) {
-            if (labels.contains(subHeader)) {
-                return subHeader;
+        for (String category: categories) {
+            if (labels.stream().anyMatch(s -> s.equalsIgnoreCase(category))) {
+                return category;
             }
         }
         return catchAllSubHeader;
@@ -58,16 +65,15 @@ public class ChangeLog {
     }
 
     void writeTo(@Nonnull Writer w) throws IOException {
-        for (Ref tag: tags) {
-            String version = Util.getTagName(tag);
+        for (String version: tags) {
             w.write(String.format(VERSION_FMT, version));
 
             Map<String, List<Change>> catMap = defaultGet(versions, version, HashMap::new);
 
-            if (!subHeaders.contains(catchAllSubHeader)) {
-                subHeaders.add(catchAllSubHeader);
+            if (!categories.contains(catchAllSubHeader)) {
+                categories.add(catchAllSubHeader);
             }
-            for (String category: subHeaders) {
+            for (String category: categories) {
                 List<Change> changes = defaultGet(catMap, category, ArrayList::new);
                 if (changes.isEmpty()) {
                     continue;

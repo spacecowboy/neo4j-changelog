@@ -17,6 +17,13 @@ public class Util {
         return first.length >= 2 && second.length >= 2 && first[0].equals(second[0]) && first[1].equals(second[1]);
     }
 
+    public static boolean versionLiesBetween(@Nonnull String version, @Nonnull String from, @Nonnull String to) {
+        if (SemanticCompare(from, to) > 0) {
+            throw new IllegalArgumentException("From must be Less or Equal than To");
+        }
+        return SemanticCompare(version, from) >= 0 && SemanticCompare(version, to) <= 0;
+    }
+
     /**
      * Indicate sort order of two Refs according to semantic versioning rules
      */
