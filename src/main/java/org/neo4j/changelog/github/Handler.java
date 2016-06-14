@@ -5,9 +5,8 @@ import retrofit2.Response;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +21,7 @@ public class Handler {
     }
 
     public @Nonnull List<PullRequest> getPullRequests(@Nonnull String user, @Nonnull String repo) throws IOException {
-        List<PullRequest> pullRequests = new LinkedList<>();
+        List<PullRequest> pullRequests = new ArrayList<>();
 
         OptionalInt nextPage = OptionalInt.of(1);
         while (nextPage.isPresent()) {
@@ -46,9 +45,34 @@ public class Handler {
         return result;
     }
 
+    public @Nonnull List<Issue> getIssues(@Nonnull String user, @Nonnull String repo) throws IOException {
+        List<Issue> Issues = new ArrayList<>();
+
+        OptionalInt nextPage = OptionalInt.of(1);
+        while (nextPage.isPresent()) {
+            Response<List<Issue>> response = getIssues(user, repo, nextPage.getAsInt());
+            Issues.addAll(response.body());
+            nextPage = getNextPage(response);
+        }
+
+        return Issues;
+    }
+
+    Response<List<Issue>> getIssues(@Nonnull String user, @Nonnull String repo, int page) throws IOException {
+        Call<List<Issue>> call = service.listIssues(user, repo, page);
+
+        Response<List<Issue>> result = call.execute();
+
+        if (!result.isSuccessful()) {
+            throw new RuntimeException(result.errorBody().string());
+        }
+
+        return result;
+    }
+
     private
     @Nonnull
-    OptionalInt getNextPage(@Nonnull Response<List<PullRequest>> result) {
+    OptionalInt getNextPage(@Nonnull Response result) {
         if (result.headers().get("Link") != null) {
             String link = result.headers().get("Link");
             String parsedPage = null;

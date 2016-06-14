@@ -1,18 +1,20 @@
 package org.neo4j.changelog.github;
 
-import okhttp3.*;
+import java.io.File;
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import okhttp3.Cache;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import java.io.File;
-import java.util.List;
 
 public interface GitHubService {
     String API_URL = "https://api.github.com";
@@ -21,6 +23,8 @@ public interface GitHubService {
     @GET("/repos/{user}/{repo}/pulls?state=closed&per_page=100")
     Call<List<PullRequest>> listPullRequests(@Path("user") String user, @Path("repo") String repo, @Query("page") int page);
 
+    @GET("/repos/{user}/{repo}/issues?state=closed&per_page=100")
+    Call<List<Issue>> listIssues(@Path("user") String user, @Path("repo") String repo, @Query("page") int page);
 
     static GitHubService GetService(@Nonnull String token) {
         return GetService(API_URL, token);
