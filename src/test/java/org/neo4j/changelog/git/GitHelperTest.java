@@ -71,10 +71,45 @@ public class GitHelperTest {
 
     @Test
     public void testGetLatestMergeCommit() throws Exception {
-        ObjectId result = gitHelper.getLatestMergeCommit("5af80e3ad05b2d1a7df7d18bf877caaaafd75806",
-                "test-C");
+        assertEquals("9e8068925d368ce543a879092abad9178e8bf761",
+                gitHelper.getLatestMergeCommit("78b320f",
+                        "test-C")
+                         .getName());
+
+        assertEquals("9e8068925d368ce543a879092abad9178e8bf761",
+                gitHelper.getLatestMergeCommit("99cff2f",
+                        "test-C")
+                         .getName());
+
+        assertEquals("99cff2f46bda9ad2fa6f0161590fe31777b1cd45",
+                gitHelper.getLatestMergeCommit("78b320f",
+                        "test-B")
+                         .getName());
+
         assertEquals("3f744d08ed4cb84200eb5ea733490a95f9bf0777",
-                result.getName());
+                gitHelper.getLatestMergeCommit("602ed15",
+                        "test-C")
+                         .getName());
+
+        assertEquals("3f744d08ed4cb84200eb5ea733490a95f9bf0777",
+                gitHelper.getLatestMergeCommit("5af80e3",
+                        "test-C")
+                         .getName());
+
+        assertEquals("602ed15dbfc223f715f421bbf910bac6b7eacf13",
+                gitHelper.getLatestMergeCommit("5af80e3",
+                        "test-B")
+                         .getName());
+
+        assertEquals("e39bef2",
+                gitHelper.getLatestMergeCommit("7f5d283",
+                        "test-C")
+                         .getName());
+
+        assertEquals("618c1ce",
+                gitHelper.getLatestMergeCommit("276e502",
+                        "test-B")
+                         .getName());
     }
 
     @Test

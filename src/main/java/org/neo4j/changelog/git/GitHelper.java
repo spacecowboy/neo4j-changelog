@@ -7,6 +7,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -17,6 +18,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Stack;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -107,20 +109,18 @@ public class GitHelper {
     public ObjectId getLatestMergeCommit(@Nonnull String sha, @Nonnull String tip) throws IOException {
         RevWalk walk = new RevWalk(repo);
 
-        RevCommit from = walk.parseCommit(getCommitFromString(sha));
-        RevCommit to = walk.parseCommit(getCommitFromString(tip));
+        final ObjectId from = getCommitFromString(sha);
+        final ObjectId to = getCommitFromString(tip);
 
-        walk.markStart(to);
-        walk.markUninteresting(from);
+        walk.markStart(walk.parseCommit(to));
+        walk.markUninteresting(walk.parseCommit(from));
 
-        //walk.setRetainBody(false);
+        walk.setRetainBody(false);
         walk.setRevFilter(new RevFilter() {
             @Override
             public boolean include(RevWalk walker, RevCommit commit) throws StopWalkException, IOException {
-                // Merge commits have more than 1 parent
-                return (commit.getParentCount() > 1 &&
-                        // make sure it is on the ancestry path
-                        walk.isMergedInto(from, commit));
+                // Merge commits have more than 1 parent, and we only care about certain paths
+                return commit.getParentCount() > 1 && isMergeDecendentOf(commit, from);
             }
 
             @Override
@@ -129,14 +129,34 @@ public class GitHelper {
             }
         });
 
-        RevCommit lastMerge = null;
         for (RevCommit commit: walk) {
-            String msg = commit.getShortMessage();
-                // Is a merge commit?
-                lastMerge = commit;
+            return commit.toObjectId();
         }
-        ObjectId mergeCommit = lastMerge.toObjectId();
-        return mergeCommit;
+
+        throw new IllegalArgumentException("No merge commit could be found");
+    }
+
+    /**
+     * Returns true if there is a linear line of merge-commits between from and commit.
+     */
+    private boolean isMergeDecendentOf(@Nonnull ObjectId commit, @Nonnull ObjectId from) throws IOException {
+        if (from.equals(commit.toObjectId())) {
+            return true;
+        }
+
+        RevWalk walk = new RevWalk(repo);
+        RevCommit revCommit = walk.parseCommit(commit);
+
+        if (revCommit.getParentCount() > 1 && isAncestorOf(from.getName(), commit.getName())) {
+            boolean result = false;
+            for (int i = 0; i < revCommit.getParentCount(); i++) {
+                result |= isMergeDecendentOf(revCommit.getParent(i), from);
+                if (result) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -165,6 +185,8 @@ public class GitHelper {
     @Nullable
     public ObjectId getCommitFromString(@Nonnull String base) throws IOException {
         // Try raw commit first
+        return repo.resolve(base);
+        /*
         try {
             return ObjectId.fromString(base);
         } catch (InvalidObjectIdException e) {
@@ -173,7 +195,7 @@ public class GitHelper {
                 return ref.getObjectId();
             }
         }
-        return null;
+        return null;*/
     }
 
     @Nonnull
