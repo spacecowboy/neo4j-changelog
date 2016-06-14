@@ -101,12 +101,12 @@ public class GitHelperTest {
                         "test-B")
                          .getName());
 
-        assertEquals("e39bef2",
+        assertEquals("e39bef273e6e0947510b6d50b3b4c5ad3066c2b1",
                 gitHelper.getLatestMergeCommit("7f5d283",
                         "test-C")
                          .getName());
 
-        assertEquals("618c1ce",
+        assertEquals("618c1ced7e2e2165e1188c07037c5c2d95f68d93",
                 gitHelper.getLatestMergeCommit("276e502",
                         "test-B")
                          .getName());

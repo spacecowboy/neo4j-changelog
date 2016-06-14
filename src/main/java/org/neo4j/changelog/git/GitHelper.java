@@ -147,16 +147,12 @@ public class GitHelper {
         RevWalk walk = new RevWalk(repo);
         RevCommit revCommit = walk.parseCommit(commit);
 
-        if (revCommit.getParentCount() > 1 && isAncestorOf(from.getName(), commit.getName())) {
-            boolean result = false;
-            for (int i = 0; i < revCommit.getParentCount(); i++) {
-                result |= isMergeDecendentOf(revCommit.getParent(i), from);
-                if (result) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        // Walking the path of both parents will always lead to the root commit, but typically it will take
+        // a path we don't care about. Instead, force a specific direction. The correct merge commit will be
+        // reached by always going "right" (or "left", depending on how you graph looks).
+        return (revCommit.getParentCount() > 1 &&
+                isAncestorOf(from.getName(), commit.getName()) &&
+                isMergeDecendentOf(revCommit.getParent(1), from));
     }
 
     /**
