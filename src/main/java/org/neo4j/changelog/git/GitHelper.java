@@ -4,14 +4,11 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.InvalidObjectIdException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
-import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.revwalk.DepthWalk;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
-import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.neo4j.changelog.Util;
 
@@ -20,7 +17,6 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -92,6 +88,29 @@ public class GitHelper {
             return false;
         }
         return false;
+    }
+
+    /**
+     * Get the first (chronologically) commit which the second ref can reach, which the first cannot.
+     * Equivalent to `git log test-A..test-B --oneline | tail -n 1
+     */
+    public ObjectId getRoot(@Nonnull String base, @Nonnull String tip) throws IOException, GitAPIException {
+        ObjectId baseCommit = getCommitFromString(base);
+        ObjectId tipCommit = getCommitFromString(tip);
+
+        if (baseCommit != null && tipCommit != null) {
+            ObjectId result = null;
+            // Want the last commit
+            Iterable<RevCommit> commits = git.log().addRange(baseCommit, tipCommit).call();
+            for (RevCommit commit : commits) {
+                result = commit.toObjectId();
+            }
+
+            if (result != null) {
+                return result;
+            }
+        }
+        throw new RuntimeException("No root could be found");
     }
 
     @Nullable

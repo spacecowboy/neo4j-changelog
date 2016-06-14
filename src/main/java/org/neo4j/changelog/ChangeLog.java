@@ -59,13 +59,16 @@ public class ChangeLog {
     }
 
     void writeTo(@Nonnull Writer w) throws IOException {
-        for (String version: versions.keySet()) {
+        for (Ref tag: tags) {
+            String version = Util.getTagName(tag);
             w.write(String.format(VERSION_FMT, version));
 
-            for (String category: versions.get(version).keySet()) {
+            Map<String, List<Change>> catMap = defaultGet(versions, version, HashMap::new);
+
+            for (String category: catMap.keySet()) {
                 w.write(String.format(CATEGORY_FMT, category));
 
-                for (Change change: versions.get(version).get(category)) {
+                for (Change change: defaultGet(catMap, category, ArrayList::new)) {
                     w.write(String.format(CHANGE_FMT, change.toString()));
                 }
             }

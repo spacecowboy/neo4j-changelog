@@ -45,8 +45,8 @@ public class Handler {
         return result;
     }
 
-    private
     @Nonnull
+    private
     OptionalInt getNextPage(@Nonnull Response<List<GitHubService.PR>> result) {
         if (result.headers().get("Link") != null) {
             String link = result.headers().get("Link");

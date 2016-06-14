@@ -10,7 +10,6 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -121,5 +120,35 @@ public class GitHelperTest {
         assertTrue(GitHelper.isVersionTag("2.1.0-RC2"));
 
         assertFalse(GitHelper.isVersionTag("bob"));
+    }
+
+    @Test
+    public void shouldFindRoot() throws Exception {
+        assertEquals("40d7de280bf5e534d0aba00a101e27ec17f1ed38",
+                gitHelper.getRoot("test-A", "test-B").getName());
+
+        assertEquals("40d7de280bf5e534d0aba00a101e27ec17f1ed38",
+                gitHelper.getRoot("test-A", "test-C").getName());
+
+        assertEquals("630609cce2b03d73ee6b271c4344beac36cbf01e",
+                gitHelper.getRoot("test-B", "test-C").getName());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldNotFindRoot1() throws Exception {
+        assertEquals("40d7de280bf5e534d0aba00a101e27ec17f1ed38",
+                gitHelper.getRoot("test-B", "test-A").getName());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldNotFindRoot2() throws Exception {
+        assertEquals("630609cce2b03d73ee6b271c4344beac36cbf01e",
+                gitHelper.getRoot("test-C", "test-A").getName());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void shouldNotFindRoot3() throws Exception {
+        assertEquals("630609cce2b03d73ee6b271c4344beac36cbf01e",
+                gitHelper.getRoot("test-C", "test-B").getName());
     }
 }
