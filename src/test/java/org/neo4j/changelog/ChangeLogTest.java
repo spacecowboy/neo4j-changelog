@@ -1,10 +1,11 @@
 package org.neo4j.changelog;
 
+import org.eclipse.jgit.lib.ObjectId;
+import org.eclipse.jgit.lib.Ref;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,7 +26,47 @@ public class ChangeLogTest {
     }
 
     private ChangeLog simpleChangeLog() {
-        ChangeLog cl = new ChangeLog(new ArrayList<>(),
+        ChangeLog cl = new ChangeLog(Arrays.asList(new Ref() {
+            @Override
+            public String getName() {
+                return "1.0.0";
+            }
+
+            @Override
+            public boolean isSymbolic() {
+                return false;
+            }
+
+            @Override
+            public Ref getLeaf() {
+                return null;
+            }
+
+            @Override
+            public Ref getTarget() {
+                return null;
+            }
+
+            @Override
+            public ObjectId getObjectId() {
+                return null;
+            }
+
+            @Override
+            public ObjectId getPeeledObjectId() {
+                return null;
+            }
+
+            @Override
+            public boolean isPeeled() {
+                return false;
+            }
+
+            @Override
+            public Storage getStorage() {
+                return null;
+            }
+        }),
                 Arrays.asList("Kernel", "Cypher"));
 
         cl.addToChangeLog(simpleChange("Kernel", "Fix the kernel [#3]"));
@@ -47,7 +88,7 @@ public class ChangeLogTest {
             @Nonnull
             @Override
             public String getVersion() {
-                return "0.0.0";
+                return "1.0.0";
             }
 
             @Override
@@ -58,7 +99,7 @@ public class ChangeLogTest {
     }
 
     private static final String SIMPLE_CHANGELOG =
-            "### 1.0\n" +
+            "### 1.0.0\n" +
             "#### Kernel\n" +
             "- Add a kernel [#1]\n" +
             "- Fix the kernel [#3]\n" +

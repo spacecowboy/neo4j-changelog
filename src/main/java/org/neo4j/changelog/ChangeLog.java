@@ -20,16 +20,15 @@ public class ChangeLog {
     private static final String VERSION_FMT = "### %s\n";
     private static final String CATEGORY_FMT = "#### %s\n";
     private static final String CHANGE_FMT = "- %s\n";
-    private final Map<String, Map<String, List<Change>>> versions;
+    private final Map<String, Map<String, List<Change>>> versions = new HashMap<>();
     private final List<Ref> tags;
-    private final List<String> subHeaders;
+    private final ArrayList<String> subHeaders = new ArrayList<>();
     private String catchAllSubHeader = "Misc";
 
     public ChangeLog(@Nonnull List<Ref> tags, @Nonnull List<String> subHeaders) {
-        this.subHeaders = subHeaders;
+        this.subHeaders.addAll(subHeaders);
         this.tags = tags;
         this.tags.sort(Util::SemanticCompare);
-        versions = new HashMap<>();
     }
 
     public void addToChangeLog(@Nonnull Change change) {
@@ -65,10 +64,18 @@ public class ChangeLog {
 
             Map<String, List<Change>> catMap = defaultGet(versions, version, HashMap::new);
 
-            for (String category: catMap.keySet()) {
+            if (!subHeaders.contains(catchAllSubHeader)) {
+                subHeaders.add(catchAllSubHeader);
+            }
+            for (String category: subHeaders) {
+                List<Change> changes = defaultGet(catMap, category, ArrayList::new);
+                if (changes.isEmpty()) {
+                    continue;
+                }
+
                 w.write(String.format(CATEGORY_FMT, category));
 
-                for (Change change: defaultGet(catMap, category, ArrayList::new)) {
+                for (Change change: changes) {
                     w.write(String.format(CHANGE_FMT, change.toString()));
                 }
             }
