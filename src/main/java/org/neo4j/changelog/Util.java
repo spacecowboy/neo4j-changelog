@@ -11,6 +11,13 @@ import java.util.Random;
  */
 public class Util {
     public static boolean isSameMajorMinorVersion(@Nonnull String v1, @Nonnull String v2) {
+        if (v1.startsWith("v")) {
+            v1 = v1.substring(1);
+        }
+        if (v2.startsWith("v")) {
+            v2 = v2.substring(1);
+        }
+
         String[] first = v1.split("\\.");
         String[] second = v2.split("\\.");
 

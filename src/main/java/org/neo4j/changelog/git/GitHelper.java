@@ -43,8 +43,8 @@ public class GitHelper {
     @Nonnull
     public List<Ref> getVersionTags(@Nonnull String version) throws IOException, GitAPIException {
         return getVersionTags().stream()
-                        .filter(ref -> Util.isSameMajorMinorVersion(Util.getTagName(ref), version))
-                .collect(Collectors.toList());
+                               .filter(ref -> Util.isSameMajorMinorVersion(Util.getTagName(ref), version))
+                               .collect(Collectors.toList());
     }
 
     /**
@@ -53,16 +53,26 @@ public class GitHelper {
      */
     @Nonnull
     public List<Ref> getVersionTags(@Nonnull String from, @Nonnull String to) throws IOException, GitAPIException {
+        // To is either a ref, or a version
+        ObjectId toCommit = getCommitFromString(to);
+
         return getVersionTags().stream()
-                               .filter(ref -> Util.versionLiesBetween(Util.getTagName(ref), from, to))
+                               .filter(ref -> isAncestorOf(from, ref.getName()))
+                               .filter(ref -> {
+                                   if (toCommit == null) {
+                                       return Util.isSameMajorMinorVersion(Util.getTagName(ref), to);
+                                   } else {
+                                       return isAncestorOf(ref.getName(), to);
+                                   }
+                               })
                                .collect(Collectors.toList());
     }
 
     @Nonnull
     public List<Ref> getVersionTags() throws IOException, GitAPIException {
         return git.tagList().call().stream()
-                .filter(GitHelper::isVersionTag)
-                .collect(Collectors.toList());
+                  .filter(GitHelper::isVersionTag)
+                  .collect(Collectors.toList());
     }
 
     public static boolean isVersionTag(@Nonnull Ref ref) {
@@ -106,6 +116,7 @@ public class GitHelper {
     /**
      * Get the merge commit which contains {sha}, which is on the same "branch" as {tip}
      */
+    @Nullable
     public ObjectId getLatestMergeCommit(@Nonnull String sha, @Nonnull String tip) throws IOException {
         RevWalk walk = new RevWalk(repo);
 
@@ -129,11 +140,11 @@ public class GitHelper {
             }
         });
 
-        for (RevCommit commit: walk) {
+        for (RevCommit commit : walk) {
             return commit.toObjectId();
         }
 
-        throw new IllegalArgumentException("No merge commit could be found");
+        return null;
     }
 
     /**
@@ -200,7 +211,7 @@ public class GitHelper {
                                     @Nonnull String fallback) {
         versionTags.sort(Util.SemanticComparator());
 
-        for (Ref tag: versionTags) {
+        for (Ref tag : versionTags) {
             if (isAncestorOf(commit, tag.getName())) {
                 return getTagName(tag);
             }

@@ -52,12 +52,31 @@ public class GitHelperTest {
     }
 
     @Test
+    public void testGetVersionTagsWithFantasyVersion() throws Exception {
+        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.99").stream()
+                                     .map(Util::getTagName)
+                                     .collect(Collectors.toList());
+        assertArrayEquals(new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"},
+                tags.toArray());
+    }
+
+    @Test
+    public void testGetVersionTagsWithRefs() throws Exception {
+        List<String> tags = gitHelper.getVersionTags("8449d26", "2bf464ebf").stream()
+                                     .map(Util::getTagName)
+                                     .collect(Collectors.toList());
+        assertArrayEquals(new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"},
+                tags.toArray());
+    }
+
+    @Test
     public void testGetVersionTags() throws Exception {
         List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.3").stream()
                                      .map(Util::getTagName)
                                      .collect(Collectors.toList());
-        assertArrayEquals(tags.toArray(),
-                new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"});
+        assertArrayEquals(
+                new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"},
+                tags.toArray());
     }
 
     @Test
@@ -65,8 +84,9 @@ public class GitHelperTest {
         List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.2").stream()
                                      .map(Util::getTagName)
                                      .collect(Collectors.toList());
-        assertArrayEquals(tags.toArray(),
-                new String[]{"0.0.0", "0.0.1", "0.0.2"});
+        assertArrayEquals(
+                new String[]{"0.0.0", "0.0.1", "0.0.2"},
+                tags.toArray());
     }
 
     @Test
@@ -110,6 +130,47 @@ public class GitHelperTest {
                 gitHelper.getLatestMergeCommit("276e502",
                         "test-B")
                          .getName());
+    }
+
+    @Test
+    public void testshouldBeAncestors() throws Exception {
+        assertTrue(gitHelper.isAncestorOf("78b320f",
+                "test-C"));
+
+        assertTrue(
+                gitHelper.isAncestorOf("99cff2f",
+                        "test-C")
+                  );
+
+        assertTrue(
+                gitHelper.isAncestorOf("78b320f",
+                        "test-B")
+                  );
+
+        assertTrue(
+                gitHelper.isAncestorOf("602ed15",
+                        "test-C")
+                  );
+
+        assertTrue(
+                gitHelper.isAncestorOf("5af80e3",
+                        "test-C")
+                  );
+
+        assertTrue(
+                gitHelper.isAncestorOf("5af80e3",
+                        "test-B")
+                  );
+
+        assertTrue(
+                gitHelper.isAncestorOf("7f5d283",
+                        "test-C")
+                  );
+
+        assertTrue(
+                gitHelper.isAncestorOf("276e502",
+                        "test-B")
+                  );
     }
 
     @Test

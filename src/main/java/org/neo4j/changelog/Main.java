@@ -31,7 +31,7 @@ public class Main {
             @Nonnull List<String> categories,
             @Nonnull Stream<PullRequest> pullRequests) throws GitAPIException, IOException {
         GitHelper gitHelper = new GitHelper(localDir);
-        List<Ref> versionTags = gitHelper.getVersionTags(fromRef, toRef);
+        List<Ref> versionTags = gitHelper.getVersionTags(fromRef, version);
         ChangeLog changeLog = new ChangeLog(versionTags, version, categories);
 
         System.out.println("Version tags:");
