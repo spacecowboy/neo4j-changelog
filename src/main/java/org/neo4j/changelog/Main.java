@@ -96,7 +96,8 @@ public class Main {
                 required(cmd, "v"),
                 new File(required(cmd, "d")),
                 new File(required(cmd, "o")).toPath(),
-                Arrays.asList("Kernel", "Cypher", "Packaging", "HA", "Core-Edge"),
+                Arrays.asList("Kernel", "Cypher", "Packaging", "HA", "Core-Edge", "Import Tool", "Concistency Checker",
+                        "Metrics", "Server", "Shell", "Browser"),
                 pullRequests.stream());
     }
 
