@@ -44,8 +44,8 @@ public class Main {
 
         pullRequests
                 .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) && GitHubHelper.isIncluded(pr, version) &&
-                        gitHelper.isAncestorOf(fromRef, pr.getCommit()) &&
-                        gitHelper.isAncestorOf(pr.getCommit(), toRef))
+                        gitHelper.isAncestorOf(pr.getCommit(), toRef) &&
+                        !gitHelper.isAncestorOf(pr.getCommit(), fromRef))
                 .map(pr -> GitHubHelper.convertToChange(pr,
                         gitHelper.getFirstVersionOf(pr.getCommit(), versionTags, version)))
                 .forEach(changeLog::addToChangeLog);
