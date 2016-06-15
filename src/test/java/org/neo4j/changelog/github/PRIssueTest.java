@@ -20,6 +20,18 @@ public class PRIssueTest {
     }
 
     @Test
+    public void defaultValuesIfNoOverrides() throws Exception {
+        PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
+                        "balb lba",
+                Arrays.asList("kernel", "cypher"));
+
+        assertTrue(pr.getVersionFilter().isEmpty());
+        assertArrayEquals(new String[]{"kernel", "cypher"},
+                pr.getLabelFilter().toArray());
+        assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
+    }
+
+    @Test
     public void getVersionAndChangeTextNoCL() throws Exception {
         PRIssue pr = getPrIssue(1, "title", "body");
 

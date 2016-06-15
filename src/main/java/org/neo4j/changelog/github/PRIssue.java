@@ -77,33 +77,32 @@ public class PRIssue implements PullRequest {
         changeText = addLink(title);
 
         Matcher matcher = CHANGELOG_PATTERN.matcher(body);
-        if (!matcher.find()) {
-            return;
-        }
+        if (matcher.find()) {
 
-        String rest = matcher.group(2);
+            String rest = matcher.group(2);
 
-        // Look for custom message
-        Matcher msgMatch = MESSAGE_PATTERN.matcher(rest);
+            // Look for custom message
+            Matcher msgMatch = MESSAGE_PATTERN.matcher(rest);
 
-        if (msgMatch.find()) {
-            String msg = msgMatch.group(1);
-            if (!msg.trim().isEmpty()) {
-                changeText = addLink(msg);
+            if (msgMatch.find()) {
+                String msg = msgMatch.group(1);
+                if (!msg.trim().isEmpty()) {
+                    changeText = addLink(msg);
+                }
             }
-        }
 
-        // Look for meta data
-        Matcher metaMatch = METADATA_PATTERN.matcher(rest);
-        if (metaMatch.find()) {
-            String meta = metaMatch.group(1);
-            String[] metaParts = meta.split(",");
+            // Look for meta data
+            Matcher metaMatch = METADATA_PATTERN.matcher(rest);
+            if (metaMatch.find()) {
+                String meta = metaMatch.group(1);
+                String[] metaParts = meta.split(",");
 
-            for (String metaPart : metaParts) {
-                if (isVersion(metaPart)) {
-                    versionFilter.add(metaPart.trim());
-                } else if (!metaPart.trim().isEmpty()) {
-                    labelFilter.add(metaPart.trim());
+                for (String metaPart : metaParts) {
+                    if (isVersion(metaPart)) {
+                        versionFilter.add(metaPart.trim());
+                    } else if (!metaPart.trim().isEmpty()) {
+                        labelFilter.add(metaPart.trim());
+                    }
                 }
             }
         }
