@@ -3,6 +3,8 @@ package org.neo4j.changelog.github;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -29,10 +31,64 @@ public class PRIssueTest {
     public void getVersionAndChangeTextChangeLogVersions() throws Exception {
         PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
                 "balb lba\n" +
-                "changelog: 2.2, 2.3  \n");
+                "changelog: [2.2, 2.3]  \n");
 
         assertArrayEquals(new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
+    }
+
+    @Test
+    public void changeLogMessageOnNewLine() throws Exception {
+        PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
+                "balb lba\n" +
+                "changelog:\n" +
+                "Message follows");
+
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertTrue(pr.getVersionFilter().isEmpty());
+        assertEquals("Message follows" + " [#1](http://test.com/link)", pr.getChangeText());
+    }
+
+    @Test
+    public void changeLogVersionOnNewLine() throws Exception {
+        PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
+                "balb lba\n" +
+                "changelog:\n" +
+                "[2.2, 2.3]");
+
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertArrayEquals(new String[]{"2.2", "2.3"},
+                pr.getVersionFilter().toArray());
+        assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
+    }
+
+    @Test
+    public void changeLogVersionAndMessageOnNewLine() throws Exception {
+        PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
+                "balb lba\n" +
+                "changelog:\n" +
+                "[2.2, 2.3]\n" +
+                "Message follows");
+
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertArrayEquals(new String[]{"2.2", "2.3"},
+                pr.getVersionFilter().toArray());
+        assertEquals("Message follows" + " [#1](http://test.com/link)", pr.getChangeText());
+    }
+
+    @Test
+    public void getVersionAndChangeTextChangeLogVersionsWithGHTags() throws Exception {
+        PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
+                "balb lba\n" +
+                "changelog: [2.2, 2.3]  \n",
+                Arrays.asList("kernel", "cypher"));
+
+        assertArrayEquals(new String[]{"2.2", "2.3"},
+                pr.getVersionFilter().toArray());
+        assertArrayEquals(new String[]{"kernel", "cypher"},
+                pr.getLabelFilter().toArray());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
     }
 
@@ -40,10 +96,35 @@ public class PRIssueTest {
     public void getVersionAndChangeTextCLVersions() throws Exception {
         PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
                 "balb lba\n" +
-                "cl: 2.2, 2.3  \n");
+                "cl: [2.2, 2.3  ]\n");
 
         assertArrayEquals(new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
+    }
+
+    @Test
+    public void getVersionAndChangeTextChangeLogVersionsNoColon() throws Exception {
+        PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
+                "balb lba\n" +
+                "changelog [2.2, 2.3]  \n");
+
+        assertArrayEquals(new String[]{"2.2", "2.3"},
+                pr.getVersionFilter().toArray());
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
+    }
+
+    @Test
+    public void getVersionAndChangeTextCLVersionsNoColon() throws Exception {
+        PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
+                "balb lba\n" +
+                "cl [2.2, 2.3  ]\n");
+
+        assertArrayEquals(new String[]{"2.2", "2.3"},
+                pr.getVersionFilter().toArray());
+        assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
     }
 
@@ -51,26 +132,29 @@ public class PRIssueTest {
     public void getVersionAndChangeTextDifferentCase() throws Exception {
         PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
                 "balb lba\n" +
-                "CL  : 2.2, 2.3  \n");
+                "CL[ 2.2, 2.3 ]  \n");
 
         assertArrayEquals(new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
+        assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
 
         pr = getPrIssue(1, "", "Blab la\n" +
                 "balb lba\n" +
-                "cHanGeLoG : 2.2, 2.3  \n");
+                "cHanGeLoG :[ 2.2, 2.3  ]\n");
 
         assertArrayEquals(new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
+        assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
 
         pr = getPrIssue(1, "", "Blab la\n" +
                 "balb lba\n" +
-                "CHANGELOG: 2.2, 2.3  \n");
+                "CHANGELOG[ 2.2, 2.3]  \n");
 
         assertArrayEquals(new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
+        assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
     }
 
@@ -81,6 +165,40 @@ public class PRIssueTest {
                 "CL: Body text \n");
 
         assertTrue(pr.getVersionFilter().isEmpty());
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertEquals("Body text [#1](http://test.com/link)", pr.getChangeText());
+    }
+
+    @Test
+    public void getVersionAndChangeTextCLTitleNoColon() throws Exception {
+        PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
+                "balb lba\n" +
+                "CL Body text \n");
+
+        assertTrue(pr.getVersionFilter().isEmpty());
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertEquals("Body text [#1](http://test.com/link)", pr.getChangeText());
+    }
+
+    @Test
+    public void getVersionAndChangeTextCLTitleNoColonEmptyBrackets() throws Exception {
+        PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
+                "balb lba\n" +
+                "CL [] Body text \n");
+
+        assertTrue(pr.getVersionFilter().isEmpty());
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertEquals("Body text [#1](http://test.com/link)", pr.getChangeText());
+    }
+
+    @Test
+    public void getVersionAndChangeTextCLTitleNoColonEmptyBracketsNoSpacing() throws Exception {
+        PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
+                "balb lba\n" +
+                "CL[]Body text \n");
+
+        assertTrue(pr.getVersionFilter().isEmpty());
+        assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals("Body text [#1](http://test.com/link)", pr.getChangeText());
     }
 
@@ -91,6 +209,7 @@ public class PRIssueTest {
                 "changelog: Body text \n");
 
         assertTrue(pr.getVersionFilter().isEmpty());
+        assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals("Body text [#1](http://test.com/link)", pr.getChangeText());
     }
 
@@ -98,10 +217,11 @@ public class PRIssueTest {
     public void getVersionAndChangeTextTrickyTitle() throws Exception {
         PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
                 "balb lba\n" +
-                "CL: Really tricky text: with a colon \n");
+                "CL: Really tricky text: with colon [and] brackets \n");
 
         assertTrue(pr.getVersionFilter().isEmpty());
-        assertEquals("Really tricky text: with a colon [#1](http://test.com/link)", pr.getChangeText());
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertEquals("Really tricky text: with colon [and] brackets [#1](http://test.com/link)", pr.getChangeText());
     }
 
     @Test
@@ -109,14 +229,17 @@ public class PRIssueTest {
         PRIssue pr = getPrIssue(1, "", "");
 
         assertTrue(pr.getVersionFilter().isEmpty());
+        assertTrue(pr.getLabelFilter().isEmpty());
 
         pr = getPrIssue(1, "", "Bla bla bla\n" +
                 "blala bla\n" +
                 "bal\n" +
-                "changelog: 2.1 ,2.2, 2.3 : My change text follows here\n");
+                "changelog: [2.1, kernel ,2.2, cypher, 2.3] My change text follows here\n");
 
         assertArrayEquals(new String[]{"2.1", "2.2", "2.3"},
                 pr.getVersionFilter().toArray());
+        assertArrayEquals(new String[]{"kernel", "cypher"},
+                pr.getLabelFilter().toArray());
         assertEquals("My change text follows here [#1](http://test.com/link)", pr.getChangeText());
     }
 
@@ -129,11 +252,12 @@ public class PRIssueTest {
         pr = getPrIssue(1, "", "Bla bla bla\n" +
                 "blala bla\n" +
                 "bal\n" +
-                "changelog: 2.1 ,2.2, 2.3 : Really tricky text: with a colon\n");
+                "changelog [2.1 ,2.2, 2.3]  Really tricky text: with [a] bracket\n");
 
         assertArrayEquals(new String[]{"2.1", "2.2", "2.3"},
                 pr.getVersionFilter().toArray());
-        assertEquals("Really tricky text: with a colon [#1](http://test.com/link)", pr.getChangeText());
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertEquals("Really tricky text: with [a] bracket [#1](http://test.com/link)", pr.getChangeText());
     }
 
     @Test
@@ -145,10 +269,11 @@ public class PRIssueTest {
         pr = getPrIssue(1, "", "Bla bla bla\n" +
                 "blala bla\n" +
                 "bal\n" +
-                "cl: 2.1 ,2.2, 2.3 : My change text follows here\n");
+                "cl: [2.1 ,2.2, 2.3]My change text follows here\n");
 
         assertArrayEquals(new String[]{"2.1", "2.2", "2.3"},
                 pr.getVersionFilter().toArray());
+        assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals("My change text follows here [#1](http://test.com/link)", pr.getChangeText());
     }
 
@@ -156,7 +281,15 @@ public class PRIssueTest {
         return getPrIssue(number, title, body, "http://test.com/link");
     }
 
+    private PRIssue getPrIssue(int number, String title, String body, List<String> tags) {
+        return getPrIssue(number, title, body, "http://test.com/link", tags);
+    }
+
     private PRIssue getPrIssue(int number, String title, String body, String html_url) {
-        return new PRIssue(number, title, body, html_url, "", "", "", new ArrayList<>());
+        return getPrIssue(number, title, body, html_url, new ArrayList<>());
+    }
+
+    private PRIssue getPrIssue(int number, String title, String body, String html_url, List<String> tags) {
+        return new PRIssue(number, title, body, html_url, "", "", "", tags);
     }
 }

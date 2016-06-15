@@ -75,6 +75,12 @@ public class GitHubHelperTest {
 
             @Nonnull
             @Override
+            public List<String> getLabelFilter() {
+                return new ArrayList<>();
+            }
+
+            @Nonnull
+            @Override
             public String getChangeText() {
                 return "bah";
             }
@@ -102,6 +108,12 @@ public class GitHubHelperTest {
             @Nonnull
             @Override
             public List<String> getVersionFilter() {
+                return new ArrayList<>();
+            }
+
+            @Nonnull
+            @Override
+            public List<String> getLabelFilter() {
                 return new ArrayList<>();
             }
 

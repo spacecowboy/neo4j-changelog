@@ -136,7 +136,7 @@ public class GitHubHelper {
             @Nonnull
             @Override
             public List<String> getLabels() {
-                return pr.getGitHubTags();
+                return pr.getLabelFilter();
             }
 
             @Nonnull

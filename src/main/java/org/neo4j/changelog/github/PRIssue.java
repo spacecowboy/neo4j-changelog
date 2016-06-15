@@ -11,9 +11,11 @@ import java.util.stream.Collectors;
 
 public class PRIssue implements PullRequest {
 
-    public static final Pattern CHANGELOG_PATTERN = Pattern.compile("^(cl|changelog).*$",
-            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-    public static final Pattern VERSION_PATTERN = Pattern.compile("^\\s*\\d+\\.\\d+\\s*$", Pattern.CASE_INSENSITIVE);
+    public static final Pattern CHANGELOG_PATTERN = Pattern.compile("^(cl|changelog)\\s*:?\\s*(.*)$",
+            Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
+    public static final Pattern METADATA_PATTERN = Pattern.compile("^\\[(.*?)\\]");
+    public static final Pattern VERSION_PATTERN = Pattern.compile("^\\s*\\d+\\.\\d+\\s*$");
+    public static final Pattern MESSAGE_PATTERN = Pattern.compile("^(?:\\[.*?\\])?\\s*(.*?)\\s*$");
 
     final int number;
     final String title;
@@ -24,6 +26,8 @@ public class PRIssue implements PullRequest {
     final String base;
     final List<String> labels;
     private ArrayList<String> versionFilter = null;
+    private ArrayList<String> labelFilter = null;
+    private String changeText = null;
 
     public PRIssue(int number, String title, String body, String html_url, String merged_at,
                    String head, String base, List<String> labels) {
@@ -61,67 +65,77 @@ public class PRIssue implements PullRequest {
     @Nonnull
     @Override
     public List<String> getVersionFilter() {
-        if (versionFilter != null) {
-            return versionFilter;
-        }
-        versionFilter = new ArrayList<>();
-
-        Matcher matcher = CHANGELOG_PATTERN.matcher(body);
-        if (matcher.find()) {
-            String cl = matcher.group();
-            String[] parts = cl.split(":");
-
-            if (parts.length < 2) {
-                return versionFilter;
-            }
-
-            String[] versions = parts[1].split(",");
-            if (containsVersions(versions)) {
-                for (String version: versions) {
-                    versionFilter.add(version.trim());
-                }
-            }
+        if (versionFilter == null) {
+            parseMetaData();
         }
         return versionFilter;
     }
 
-    private boolean containsVersions(@Nonnull String[] versions) {
-        return Arrays.stream(versions).allMatch(VERSION_PATTERN.asPredicate());
+    private void parseMetaData() {
+        versionFilter = new ArrayList<>();
+        labelFilter = new ArrayList<>();
+        changeText = addLink(title);
+
+        Matcher matcher = CHANGELOG_PATTERN.matcher(body);
+        if (!matcher.find()) {
+            return;
+        }
+
+        String rest = matcher.group(2);
+
+        // Look for custom message
+        Matcher msgMatch = MESSAGE_PATTERN.matcher(rest);
+
+        if (msgMatch.find()) {
+            String msg = msgMatch.group(1);
+            if (!msg.trim().isEmpty()) {
+                changeText = addLink(msg);
+            }
+        }
+
+        // Look for meta data
+        Matcher metaMatch = METADATA_PATTERN.matcher(rest);
+        if (metaMatch.find()) {
+            String meta = metaMatch.group(1);
+            String[] metaParts = meta.split(",");
+
+            for (String metaPart : metaParts) {
+                if (isVersion(metaPart)) {
+                    versionFilter.add(metaPart.trim());
+                } else if (!metaPart.trim().isEmpty()) {
+                    labelFilter.add(metaPart.trim());
+                }
+            }
+        }
+
+        if (labelFilter.isEmpty()) {
+            labelFilter.addAll(getGitHubTags());
+        }
+    }
+
+    private boolean isVersion(@Nonnull String meta) {
+        return VERSION_PATTERN.asPredicate().test(meta);
     }
 
     @Nonnull
     @Override
     public String getChangeText() {
-        Matcher matcher = CHANGELOG_PATTERN.matcher(body);
-        if (matcher.find()) {
-            String cl = matcher.group();
-            String[] parts = cl.split(":");
-
-            if (parts.length < 2) {
-                return addLink(title);
-            }
-
-            List<String> versions = getVersionFilter();
-
-            if (parts.length == 2 && !versions.isEmpty()) {
-                return addLink(title);
-            }
-
-            final int skipCount = versions.isEmpty() ? 1 : 2;
-
-            // Recombine possible split again
-            String text = parts[skipCount];
-            for (int i = skipCount + 1; i < parts.length; i++) {
-                text = String.join(":", text, parts[i]);
-            }
-
-            return addLink(text.isEmpty() ? title : text);
+        if (changeText == null) {
+            parseMetaData();
         }
-
-        return addLink(title);
+        return changeText;
     }
 
     String addLink(@Nonnull String text) {
         return String.format("%s [#%d](%s)", text.trim(), number, html_url);
+    }
+
+    @Nonnull
+    @Override
+    public ArrayList<String> getLabelFilter() {
+        if (labelFilter == null) {
+            parseMetaData();
+        }
+        return labelFilter;
     }
 }
