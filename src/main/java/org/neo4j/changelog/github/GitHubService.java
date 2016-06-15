@@ -4,9 +4,7 @@ import okhttp3.*;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
+import retrofit2.http.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,6 +23,12 @@ public interface GitHubService {
 
     @GET("/repos/{user}/{repo}/pulls?state=closed&per_page=100")
     Call<List<PR>> listPRs(@Path("user") String user, @Path("repo") String repo, @Query("page") int page);
+
+    @PATCH("/repos/{user}/{repo}/issues/{number}")
+    Call<Issue> editIssueLabels(@Path("user") String user, @Path("repo") String repo, @Path("number") int number, @Body IssueLabels issue);
+
+    @GET("/repos/{user}/{repo}/issues/{number}")
+    Call<Issue> getIssue(@Path("user") String user, @Path("repo") String repo, @Path("number") int number);
 
 
     static GitHubService GetService(@Nonnull String token) {
@@ -70,6 +74,10 @@ public interface GitHubService {
                 .client(httpBuilder.build()).build();
 
         return retrofit.create(GitHubService.class);
+    }
+
+    class IssueLabels {
+        public List<String> labels;
     }
 
     class Issue {

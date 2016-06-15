@@ -151,4 +151,8 @@ public class GitHubHelper {
             }
         };
     }
+
+    public GitHubService getService() {
+        return service;
+    }
 }
