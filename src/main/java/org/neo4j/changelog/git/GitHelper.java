@@ -92,6 +92,18 @@ public class GitHelper {
         return Git.wrap(builder.build());
     }
 
+    @Nonnull
+    public ObjectId getOldestCommit() throws GitAPIException {
+        RevCommit last = null;
+        for (RevCommit commit: git.log().call()) {
+            last = commit;
+        }
+        if (last == null) {
+            throw new NullPointerException("Oldest commit could not be found. Is it an empty repo?");
+        }
+        return last.toObjectId();
+    }
+
     /**
      * Check if base is an ancestor of tip.
      */

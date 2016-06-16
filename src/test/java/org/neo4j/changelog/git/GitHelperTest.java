@@ -1,5 +1,6 @@
 package org.neo4j.changelog.git;
 
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
@@ -58,6 +59,12 @@ public class GitHelperTest {
                                      .collect(Collectors.toList());
         assertArrayEquals(new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"},
                 tags.toArray());
+    }
+
+    @Test
+    public void testOldestCommit() throws Exception {
+        assertEquals("8449d265e41e0933731f49ba046af6965a2e6dac",
+                gitHelper.getOldestCommit().getName());
     }
 
     @Test
