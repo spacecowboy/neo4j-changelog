@@ -128,6 +128,12 @@ public class Main {
             System.exit(1);
         }
 
+        String version = ns.getString("version");
+        if (!Util.isSemanticVersion(version)) {
+            System.err.printf("\nError: Version is not a semantic version: %s\n", version);
+            System.exit(1);
+        }
+
         List<PullRequest> pullRequests = null;
         try {
             System.out.printf("Fetching pull requests from github.com/%s/%s\n", ns.getString("githubuser"),
@@ -141,7 +147,6 @@ public class Main {
             System.exit(1);
         }
 
-        String version = ns.getString("version");
         try {
             System.out.printf("Generating changelog between %s and %s for %s\n", fromRef, toRef, version);
             generateChangelog(fromRef, toRef, version, gitHelper, ns.getString("output"),
@@ -149,6 +154,7 @@ public class Main {
             System.out.printf("\nDone. Changelog written to %s\n", ns.getString("output"));
         } catch (Exception e) {
             System.err.printf("\nError: An error occurred while building changelog: %s\n", e.getMessage());
+            e.printStackTrace();
             System.exit(1);
         }
     }

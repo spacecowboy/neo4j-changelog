@@ -44,69 +44,29 @@ public class Util {
      * v1.0.0 is considered equivalent to 1.0.0
      */
     public static int SemanticCompare(@Nonnull String semanticVersion1, @Nonnull String semanticVersion2) {
-        String[] semanticVersion1Parts = splitSemanticVersion(semanticVersion1);
-        String[] semanticVersion2Parts = splitSemanticVersion(semanticVersion2);
-
-        //compare major versions
-        int majorComparison = Integer.compare(Integer.parseInt(semanticVersion1Parts[0]),
-                Integer.parseInt(semanticVersion2Parts[0]));
-        if (majorComparison != 0) {
-            return majorComparison;
+        SemanticVersion v1;
+        try {
+            v1 = asSemanticVersion(semanticVersion1);
+        } catch (IllegalArgumentException e) {
+            v1 = null;
         }
 
-        if (semanticVersion1Parts.length > 1 && semanticVersion2Parts.length > 1) {
-            //compare minor versions
-            int minorComparison = Integer.compare(Integer.parseInt(semanticVersion1Parts[1]),
-                    Integer.parseInt(semanticVersion2Parts[1]));
-            if (minorComparison != 0) {
-                return minorComparison;
-            }
-        } else if (semanticVersion1Parts.length > semanticVersion2Parts.length) {
+        SemanticVersion v2;
+        try {
+            v2 = asSemanticVersion(semanticVersion2);
+        } catch (IllegalArgumentException e) {
+            v2 = null;
+        }
+
+        if (v1 == null && v2 == null) {
+            throw new IllegalArgumentException("At least ONE of the arguments must be a semantic version");
+        } else if (v1 == null) {
             return 1;
-        } else if (semanticVersion1Parts.length < semanticVersion2Parts.length) {
+        } else if (v2 == null) {
             return -1;
+        } else {
+            return v1.compareTo(v2);
         }
-
-        if (semanticVersion1Parts.length > 2 && semanticVersion2Parts.length > 2) {
-            //compare patches
-            int patchComparison = Integer.compare(Integer.parseInt(semanticVersion1Parts[2]),
-                    Integer.parseInt(semanticVersion2Parts[2]));
-            if (patchComparison != 0) {
-                return patchComparison;
-            }
-        } else if (semanticVersion1Parts.length > semanticVersion2Parts.length) {
-            return 1;
-        } else if (semanticVersion1Parts.length < semanticVersion2Parts.length) {
-            return -1;
-        }
-
-        if (semanticVersion1Parts.length > 3 && semanticVersion2Parts.length > 3) {
-            //compare labels
-            int labelComparison = semanticVersion1Parts[3].compareTo(semanticVersion2Parts[3]);
-            if (labelComparison != 0) {
-                return labelComparison;
-            }
-        } else if (semanticVersion1Parts.length < semanticVersion2Parts.length) {
-            return 1;
-        } else if (semanticVersion1Parts.length > semanticVersion2Parts.length) {
-            return -1;
-        }
-
-        if (semanticVersion1Parts.length > 4 && semanticVersion2Parts.length > 4) {
-            //compare beta number
-            int patchComparison = Integer.compare(Integer.parseInt(semanticVersion1Parts[4]),
-                    Integer.parseInt(semanticVersion2Parts[4]));
-            if (patchComparison != 0) {
-                return patchComparison;
-            }
-        } else if (semanticVersion1Parts.length > semanticVersion2Parts.length) {
-            return 1;
-        } else if (semanticVersion1Parts.length < semanticVersion2Parts.length) {
-            return -1;
-        }
-
-        // Will not check more parts
-        return 0;
     }
 
     @Nonnull
@@ -128,5 +88,112 @@ public class Util {
     @Nonnull
     public static Comparator<Ref> SemanticComparator() {
         return Util::SemanticCompare;
+    }
+
+    @Nonnull
+    public static SemanticVersion asSemanticVersion(@Nonnull String version) throws IllegalArgumentException {
+        String[] parts = splitSemanticVersion(version);
+
+        try {
+            SemanticVersion sv = new SemanticVersion();
+
+            sv.major = Integer.parseInt(parts[0]);
+
+            if (parts.length > 1) {
+                sv.minor = Integer.parseInt(parts[1]);
+            }
+
+            if (parts.length > 2) {
+                sv.patch = Integer.parseInt(parts[2]);
+            }
+
+            if (parts.length > 3) {
+                sv.label = parts[3];
+            }
+
+            if (parts.length > 4) {
+                sv.labelNumber = Integer.parseInt(parts[4]);
+            }
+
+            if (parts.length > 5) {
+                throw new IllegalArgumentException("Not a semantic version");
+            }
+
+            return sv;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Not a semantic version");
+        }
+    }
+
+    public static boolean isSemanticVersion(@Nonnull String version) {
+        try {
+            asSemanticVersion(version);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static class SemanticVersion implements Comparable<SemanticVersion> {
+        int major = -1;
+        int minor = -1;
+        int patch = -1;
+        String label = "";
+        int labelNumber = -1;
+
+        public int getMajor() {
+            return major;
+        }
+
+        public int getMinor() {
+            return minor;
+        }
+
+        public int getPatch() {
+            return patch;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public int getLabelNumber() {
+            return labelNumber;
+        }
+
+        @Override
+        public int compareTo(SemanticVersion v) {
+            int comp;
+
+            comp = Integer.compare(major, v.major);
+            if (comp != 0) {
+                return comp;
+            }
+
+            comp = Integer.compare(minor, v.minor);
+            if (comp != 0) {
+                return comp;
+            }
+
+            comp = Integer.compare(patch, v.patch);
+            if (comp != 0) {
+                return comp;
+            }
+
+            // Special case, no label should be sorted after non-empty label
+            if (label.isEmpty() && !v.label.isEmpty()) {
+                return 1;
+            } else if (!label.isEmpty() && v.label.isEmpty()) {
+                return -1;
+            } else {
+                comp = label.compareTo(v.label);
+                if (comp != 0) {
+                    return comp;
+                }
+            }
+
+            comp = Integer.compare(labelNumber, v.labelNumber);
+            return comp;
+        }
     }
 }

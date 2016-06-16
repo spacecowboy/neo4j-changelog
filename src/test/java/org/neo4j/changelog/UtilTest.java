@@ -70,4 +70,32 @@ public class UtilTest {
     public void versionLiesBetweenFromMustBeLessOrEqualThanTo() {
         assertTrue(Util.versionLiesBetween("3.0.3", "3.0.4", "3.0.0"));
     }
+
+    @Test
+    public void nonSemanticVersionPlacedLast() {
+        assertEquals(1, Util.SemanticCompare("Next Version", "99.99.99"));
+        assertEquals(-1, Util.SemanticCompare("99.99.99", "Next Version"));
+
+        assertEquals(1, Util.SemanticCompare("Next Version", "0.0.0"));
+        assertEquals(-1, Util.SemanticCompare("0.0.0", "Next Version"));
+    }
+
+    @Test
+    public void asSemanticVersion() {
+        assertNotNull(Util.asSemanticVersion("1"));
+        assertNotNull(Util.asSemanticVersion("1.2"));
+        assertNotNull(Util.asSemanticVersion("1.2.3"));
+        assertNotNull(Util.asSemanticVersion("1.2.3-M01"));
+        assertNotNull(Util.asSemanticVersion("1.2.3-M01.5"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void asSemanticVersionFail1() {
+        Util.asSemanticVersion("1.2.3-M01.5.6");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void asSemanticVersionFail2() {
+        Util.asSemanticVersion("Bob");
+    }
 }
