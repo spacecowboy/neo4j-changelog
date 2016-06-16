@@ -1,4 +1,9 @@
 apply plugin: 'java'
+apply plugin: 'application'
+
+group = 'org.neo4j.changelog'
+
+mainClassName = 'org.neo4j.changelog.Main'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
