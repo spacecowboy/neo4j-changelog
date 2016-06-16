@@ -55,6 +55,11 @@ public class GitHubHelperTest {
 
     private PullRequest FilteredPullRequest(String... versions) {
         return new PullRequest() {
+            @Override
+            public int getNumber() {
+                return 0;
+            }
+
             @Nonnull
             @Override
             public List<String> getGitHubTags() {
@@ -93,6 +98,11 @@ public class GitHubHelperTest {
 
     private PullRequest PullRequest(String val, List<String> tags) {
         return new PullRequest() {
+            @Override
+            public int getNumber() {
+                return 0;
+            }
+
             @Nonnull
             @Override
             public List<String> getGitHubTags() {

@@ -81,6 +81,16 @@ public class ChangeLog {
 
                 w.write(String.format(CATEGORY_FMT, category));
 
+                changes.sort((c1, c2) -> {
+                    if (c1.getSortingNumber() == c2.getSortingNumber()) {
+                        return 0;
+                    } else if (c1.getSortingNumber() < c2.getSortingNumber()) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+
                 for (Change change: changes) {
                     w.write(String.format(CHANGE_FMT, change.toString()));
                 }

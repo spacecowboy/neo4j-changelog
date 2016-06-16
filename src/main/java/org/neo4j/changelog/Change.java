@@ -8,6 +8,8 @@ import java.util.List;
  */
 public interface Change {
 
+    int getSortingNumber();
+
     @Nonnull
     List<String> getLabels();
 

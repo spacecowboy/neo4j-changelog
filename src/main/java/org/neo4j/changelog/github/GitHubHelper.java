@@ -133,6 +133,11 @@ public class GitHubHelper {
     @Nonnull
     public static Change convertToChange(@Nonnull PullRequest pr, @Nonnull String version) {
         return new Change() {
+            @Override
+            public int getSortingNumber() {
+                return pr.getNumber();
+            }
+
             @Nonnull
             @Override
             public List<String> getLabels() {

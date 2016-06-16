@@ -69,16 +69,21 @@ public class ChangeLogTest {
         }),
                 Arrays.asList("Kernel", "Cypher"));
 
-        cl.addToChangeLog(simpleChange("Kernel", "Fix the kernel [#3]"));
-        cl.addToChangeLog(simpleChange("Changelog", "Added a changelog [#2]"));
-        cl.addToChangeLog(simpleChange("Cypher", "Add a query language [#4]"));
-        cl.addToChangeLog(simpleChange("Kernel", "Add a kernel [#1]"));
+        cl.addToChangeLog(simpleChange(3, "Kernel", "Fix the kernel [#3]"));
+        cl.addToChangeLog(simpleChange(2, "Changelog", "Added a changelog [#2]"));
+        cl.addToChangeLog(simpleChange(4, "Cypher", "Add a query language [#4]"));
+        cl.addToChangeLog(simpleChange(1, "Kernel", "Add a kernel [#1]"));
 
         return cl;
     }
 
-    private Change simpleChange(@Nonnull String label, @Nonnull String changeText) {
+    private Change simpleChange(int number, @Nonnull String label, @Nonnull String changeText) {
         return new Change() {
+            @Override
+            public int getSortingNumber() {
+                return number;
+            }
+
             @Nonnull
             @Override
             public List<String> getLabels() {
@@ -99,12 +104,12 @@ public class ChangeLogTest {
     }
 
     private static final String SIMPLE_CHANGELOG =
-            "### 1.0.0\n" +
-            "#### Kernel\n" +
+            "\n### 1.0.0\n\n" +
+            "\n#### Kernel\n\n" +
             "- Add a kernel [#1]\n" +
             "- Fix the kernel [#3]\n" +
-            "#### Cypher\n" +
+            "\n#### Cypher\n\n" +
             "- Add a query language [#4]\n" +
-            "#### Misc\n" +
+            "\n#### Misc\n\n" +
             "- Added a changelog [#2]\n";
 }

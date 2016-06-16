@@ -47,6 +47,11 @@ public class PRIssue implements PullRequest {
                 issue.labels.stream().map(l -> l.name).collect(Collectors.toList()));
     }
 
+    @Override
+    public int getNumber() {
+        return number;
+    }
+
     @Nonnull
     @Override
     public List<String> getGitHubTags() {
