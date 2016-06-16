@@ -25,10 +25,10 @@ public class GitHubHelper {
     private final String user;
     private final String repo;
 
-    public GitHubHelper(@Nonnull String token) {
+    public GitHubHelper(@Nonnull String token, @Nonnull String user, @Nonnull String repo) {
         service = GitHubService.GetService(token);
-        user = "neo4j";
-        repo = "neo4j";
+        this.user = user;
+        this.repo = repo;
     }
 
     @Nonnull
