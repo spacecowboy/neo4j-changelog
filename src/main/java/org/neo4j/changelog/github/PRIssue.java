@@ -15,7 +15,7 @@ public class PRIssue implements PullRequest {
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
     public static final Pattern METADATA_PATTERN = Pattern.compile("^\\[(.*?)\\]");
     public static final Pattern VERSION_PATTERN = Pattern.compile("^\\s*\\d+\\.\\d+\\s*$");
-    public static final Pattern MESSAGE_PATTERN = Pattern.compile("^(?:\\[.*?\\])?\\s*(.*?)\\s*$");
+    public static final Pattern MESSAGE_PATTERN = Pattern.compile("^(?:\\[.*?\\])?\\s*(.*?)\\s*$", Pattern.DOTALL);
 
     final int number;
     final String title;
@@ -92,7 +92,8 @@ public class PRIssue implements PullRequest {
             if (msgMatch.find()) {
                 String msg = msgMatch.group(1);
                 if (!msg.trim().isEmpty()) {
-                    changeText = addLink(msg);
+                    // In case of multiple lines, only use first one
+                    changeText = addLink(msg.split("\n")[0]);
                 }
             }
 

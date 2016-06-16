@@ -64,6 +64,19 @@ public class PRIssueTest {
     }
 
     @Test
+    public void changeLogMessageOnNewLineOnlyFirstLineShouldBeUsed() throws Exception {
+        PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
+                "balb lba\n" +
+                "changelog:\n" +
+                "Message follows\n" +
+                "This piece should be ignored");
+
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertTrue(pr.getVersionFilter().isEmpty());
+        assertEquals("Message follows" + " [#1](http://test.com/link)", pr.getChangeText());
+    }
+
+    @Test
     public void changeLogVersionOnNewLine() throws Exception {
         PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
                 "balb lba\n" +
