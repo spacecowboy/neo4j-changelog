@@ -15,8 +15,15 @@ import static org.junit.Assert.*;
 public class ChangeLogTest {
 
     @Test
-    public void simpleChangeLogGeneration() throws Exception {
-        ChangeLog cl = simpleChangeLog();
+    public void whenTagEqualsVersion() throws Exception {
+        ChangeLog cl = new ChangeLog(Arrays.asList(v1),
+                "1.0.0",
+                Arrays.asList("Kernel", "Cypher"));
+
+        cl.addToChangeLog(simpleChange(3, "Kernel", "Fix the kernel [#3]"));
+        cl.addToChangeLog(simpleChange(2, "Changelog", "Added a changelog [#2]"));
+        cl.addToChangeLog(simpleChange(4, "Cypher", "Add a query language [#4]"));
+        cl.addToChangeLog(simpleChange(1, "Kernel", "Add a kernel [#1]"));
 
         StringWriter sw = new StringWriter();
 
@@ -25,48 +32,9 @@ public class ChangeLogTest {
         assertEquals(SIMPLE_CHANGELOG, sw.toString());
     }
 
-    private ChangeLog simpleChangeLog() {
-        ChangeLog cl = new ChangeLog(Arrays.asList(new Ref() {
-            @Override
-            public String getName() {
-                return "1.0.0";
-            }
-
-            @Override
-            public boolean isSymbolic() {
-                return false;
-            }
-
-            @Override
-            public Ref getLeaf() {
-                return null;
-            }
-
-            @Override
-            public Ref getTarget() {
-                return null;
-            }
-
-            @Override
-            public ObjectId getObjectId() {
-                return null;
-            }
-
-            @Override
-            public ObjectId getPeeledObjectId() {
-                return null;
-            }
-
-            @Override
-            public boolean isPeeled() {
-                return false;
-            }
-
-            @Override
-            public Storage getStorage() {
-                return null;
-            }
-        }),
+    @Test
+    public void simpleChangeLogGeneration() throws Exception {
+        ChangeLog cl = new ChangeLog(Arrays.asList(v1),
                 Arrays.asList("Kernel", "Cypher"));
 
         cl.addToChangeLog(simpleChange(3, "Kernel", "Fix the kernel [#3]"));
@@ -74,7 +42,11 @@ public class ChangeLogTest {
         cl.addToChangeLog(simpleChange(4, "Cypher", "Add a query language [#4]"));
         cl.addToChangeLog(simpleChange(1, "Kernel", "Add a kernel [#1]"));
 
-        return cl;
+        StringWriter sw = new StringWriter();
+
+        cl.writeTo(sw);
+
+        assertEquals(SIMPLE_CHANGELOG, sw.toString());
     }
 
     private Change simpleChange(int number, @Nonnull String label, @Nonnull String changeText) {
@@ -112,4 +84,46 @@ public class ChangeLogTest {
             "- Add a query language [#4]\n" +
             "\n#### Misc\n\n" +
             "- Added a changelog [#2]\n";
+
+    Ref v1 = new Ref() {
+        @Override
+        public String getName() {
+            return "1.0.0";
+        }
+
+        @Override
+        public boolean isSymbolic() {
+            return false;
+        }
+
+        @Override
+        public Ref getLeaf() {
+            return null;
+        }
+
+        @Override
+        public Ref getTarget() {
+            return null;
+        }
+
+        @Override
+        public ObjectId getObjectId() {
+            return null;
+        }
+
+        @Override
+        public ObjectId getPeeledObjectId() {
+            return null;
+        }
+
+        @Override
+        public boolean isPeeled() {
+            return false;
+        }
+
+        @Override
+        public Storage getStorage() {
+            return null;
+        }
+    };
 }
