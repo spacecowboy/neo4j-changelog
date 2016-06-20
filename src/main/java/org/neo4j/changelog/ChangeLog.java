@@ -32,7 +32,7 @@ public class ChangeLog {
         this.categories.addAll(categories);
 
         this.tags.addAll(tags.stream().map(Util::getTagName).collect(Collectors.toList()));
-        if (version != null) {
+        if (version != null && !this.tags.contains(version)) {
             this.tags.add(version);
         }
         this.tags.sort((t1, t2) -> -Util.SemanticCompare(t1, t2));
