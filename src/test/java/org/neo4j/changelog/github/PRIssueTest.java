@@ -302,6 +302,18 @@ public class PRIssueTest {
         assertEquals("My change text follows here [#1](http://test.com/link)", pr.getChangeText());
     }
 
+    @Test
+    public void dontCatchCloses() throws Exception {
+        PRIssue pr = getPrIssue(1, "pr title", "Bla bla bla\n" +
+                "blala bla\n" +
+                "bal\n" +
+                "closes #99\n");
+
+        assertTrue(pr.getVersionFilter().isEmpty());
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertEquals("pr title [#1](http://test.com/link)", pr.getChangeText());
+    }
+
     private PRIssue getPrIssue(int number, String title, String body) {
         return getPrIssue(number, title, body, "http://test.com/link");
     }
