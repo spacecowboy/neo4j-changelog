@@ -8,6 +8,17 @@ The major feature of `neo4j-changelog` is the ability to deal with
 parallel versions, where a change might occur in all major.minor
 versions, or just subset of them.
 
+## How to build
+
+Use `./gradlew tasks` to list possible tasks. But you probably want either
+
+*  `installDist`
+   which will build a runnable script for you at `build/install/neo4j-changelog`
+
+* `distTar` or `distZip`
+   which builds a runnable script and packages it up for you under `build/distributions`
+
+You can then just run the executable under `bin/neo4j-changelog`.
 
 ### How to use
 
@@ -237,15 +248,3 @@ Cl
 ChAngELog []
 cL[]
 ```
-
-## How to build
-
-Use `./gradlew tasks` to list possible tasks. But you probably want either
-
-*  `installDist`
-   which will build a runnable script for you at `build/install/neo4j-changelog`
-
-* `distTar` or `distZip`
-   which builds a runnable script and packages it up for you under `build/distributions`
-
-You can then just run the executable under `bin/neo4j-changelog`.
