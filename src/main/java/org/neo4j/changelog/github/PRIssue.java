@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class PRIssue implements PullRequest {
 
-    public static final Pattern CHANGELOG_PATTERN = Pattern.compile("^(cl|changelog)\\s*:?\\s*(.*)$",
+    public static final Pattern CHANGELOG_PATTERN = Pattern.compile("^(cl|changelog)\\b[\\s:]*(.*)$",
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
     public static final Pattern METADATA_PATTERN = Pattern.compile("^\\[(.*?)\\]");
     public static final Pattern VERSION_PATTERN = Pattern.compile("^\\s*\\d+\\.\\d+\\s*$");
