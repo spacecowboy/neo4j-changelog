@@ -26,7 +26,7 @@ public class PRIssueTest {
                 Arrays.asList("kernel", "cypher"));
 
         assertTrue(pr.getVersionFilter().isEmpty());
-        assertArrayEquals(new String[]{"kernel", "cypher"},
+        assertArrayEquals("Unexpected label array", new String[]{"kernel", "cypher"},
                 pr.getLabelFilter().toArray());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
     }
@@ -45,7 +45,7 @@ public class PRIssueTest {
                 "balb lba\n" +
                 "changelog: [2.2, 2.3]  \n");
 
-        assertArrayEquals(new String[]{"2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
         assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
@@ -84,7 +84,7 @@ public class PRIssueTest {
                 "[2.2, 2.3]");
 
         assertTrue(pr.getLabelFilter().isEmpty());
-        assertArrayEquals(new String[]{"2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
     }
@@ -98,7 +98,7 @@ public class PRIssueTest {
                 "Message follows");
 
         assertTrue(pr.getLabelFilter().isEmpty());
-        assertArrayEquals(new String[]{"2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
         assertEquals("Message follows" + " [#1](http://test.com/link)", pr.getChangeText());
     }
@@ -110,9 +110,9 @@ public class PRIssueTest {
                 "changelog: [2.2, 2.3]  \n",
                 Arrays.asList("kernel", "cypher"));
 
-        assertArrayEquals(new String[]{"2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
-        assertArrayEquals(new String[]{"kernel", "cypher"},
+        assertArrayEquals("Unexpected label array", new String[]{"kernel", "cypher"},
                 pr.getLabelFilter().toArray());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
     }
@@ -123,7 +123,7 @@ public class PRIssueTest {
                 "balb lba\n" +
                 "cl: [2.2, 2.3  ]\n");
 
-        assertArrayEquals(new String[]{"2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
         assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
@@ -135,7 +135,7 @@ public class PRIssueTest {
                 "balb lba\n" +
                 "changelog [2.2, 2.3]  \n");
 
-        assertArrayEquals(new String[]{"2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
         assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
@@ -147,7 +147,7 @@ public class PRIssueTest {
                 "balb lba\n" +
                 "cl [2.2, 2.3  ]\n");
 
-        assertArrayEquals(new String[]{"2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
         assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
@@ -159,7 +159,7 @@ public class PRIssueTest {
                 "balb lba\n" +
                 "CL[ 2.2, 2.3 ]  \n");
 
-        assertArrayEquals(new String[]{"2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
         assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
@@ -168,7 +168,7 @@ public class PRIssueTest {
                 "balb lba\n" +
                 "cHanGeLoG :[ 2.2, 2.3  ]\n");
 
-        assertArrayEquals(new String[]{"2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
         assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
@@ -177,7 +177,7 @@ public class PRIssueTest {
                 "balb lba\n" +
                 "CHANGELOG[ 2.2, 2.3]  \n");
 
-        assertArrayEquals(new String[]{"2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.2", "2.3"},
                 pr.getVersionFilter().toArray());
         assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals(pr.title + " [#1](http://test.com/link)", pr.getChangeText());
@@ -261,9 +261,9 @@ public class PRIssueTest {
                 "bal\n" +
                 "changelog: [2.1, kernel ,2.2, cypher, 2.3] My change text follows here\n");
 
-        assertArrayEquals(new String[]{"2.1", "2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.1", "2.2", "2.3"},
                 pr.getVersionFilter().toArray());
-        assertArrayEquals(new String[]{"kernel", "cypher"},
+        assertArrayEquals("Unexpected label array", new String[]{"kernel", "cypher"},
                 pr.getLabelFilter().toArray());
         assertEquals("My change text follows here [#1](http://test.com/link)", pr.getChangeText());
     }
@@ -279,7 +279,7 @@ public class PRIssueTest {
                 "bal\n" +
                 "changelog [2.1 ,2.2, 2.3]  Really tricky text: with [a] bracket\n");
 
-        assertArrayEquals(new String[]{"2.1", "2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.1", "2.2", "2.3"},
                 pr.getVersionFilter().toArray());
         assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals("Really tricky text: with [a] bracket [#1](http://test.com/link)", pr.getChangeText());
@@ -296,7 +296,7 @@ public class PRIssueTest {
                 "bal\n" +
                 "cl: [2.1 ,2.2, 2.3]My change text follows here\n");
 
-        assertArrayEquals(new String[]{"2.1", "2.2", "2.3"},
+        assertArrayEquals("Unexpected label array", new String[]{"2.1", "2.2", "2.3"},
                 pr.getVersionFilter().toArray());
         assertTrue(pr.getLabelFilter().isEmpty());
         assertEquals("My change text follows here [#1](http://test.com/link)", pr.getChangeText());
