@@ -1,13 +1,12 @@
 package org.neo4j.changelog.github;
 
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 
 public class PRIssue implements PullRequest {
 
@@ -107,7 +106,9 @@ public class PRIssue implements PullRequest {
                     if (isVersion(metaPart)) {
                         versionFilter.add(metaPart.trim());
                     } else if (!metaPart.trim().isEmpty()) {
-                        labelFilter.add(metaPart.trim());
+                        String label = metaPart.trim().toLowerCase();
+                        label = label.substring(0, 1).toUpperCase() + label.substring(1);
+                        labelFilter.add( label );
                     }
                 }
             }

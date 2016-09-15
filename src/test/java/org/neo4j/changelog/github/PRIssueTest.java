@@ -314,6 +314,18 @@ public class PRIssueTest {
         assertEquals("pr title [#1](http://test.com/link)", pr.getChangeText());
     }
 
+    @Test
+    public void prettyLabels() throws Exception
+    {
+        PRIssue pr = getPrIssue(1, "", "Bla bla bla\n" +
+                               "blala bla\n" +
+                               "bal\n" +
+                               "changelog: [Kernel, cypheR, imporT Tool]\n");
+
+        assertArrayEquals("Unexpected label array", new String[]{"Kernel", "Cypher", "Import tool"},
+                pr.getLabelFilter().toArray());
+    }
+
     private PRIssue getPrIssue(int number, String title, String body) {
         return getPrIssue(number, title, body, "http://test.com/link");
     }
