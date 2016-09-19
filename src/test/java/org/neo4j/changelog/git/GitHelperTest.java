@@ -1,8 +1,6 @@
 package org.neo4j.changelog.git;
 
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
-import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.junit.Before;
@@ -18,11 +16,18 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 
 public class GitHelperTest {
 
+    public static final String TEST_A = "5af80e3";
+    public static final String TEST_B = "602ed15";
+    public static final String TEST_C = "a18dbb5";
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
     private GitHelper gitHelper;
@@ -55,8 +60,8 @@ public class GitHelperTest {
     @Test
     public void testGetVersionTagsWithFantasyVersion() throws Exception {
         List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.99").stream()
-                                     .map(Util::getTagName)
-                                     .collect(Collectors.toList());
+                .map(Util::getTagName)
+                .collect(Collectors.toList());
         assertArrayEquals(new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"},
                 tags.toArray());
     }
@@ -70,8 +75,8 @@ public class GitHelperTest {
     @Test
     public void testGetVersionTagsWithRefs() throws Exception {
         List<String> tags = gitHelper.getVersionTags("8449d26", "2bf464ebf").stream()
-                                     .map(Util::getTagName)
-                                     .collect(Collectors.toList());
+                .map(Util::getTagName)
+                .collect(Collectors.toList());
         assertArrayEquals(new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"},
                 tags.toArray());
     }
@@ -79,8 +84,8 @@ public class GitHelperTest {
     @Test
     public void testGetVersionTags() throws Exception {
         List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.3").stream()
-                                     .map(Util::getTagName)
-                                     .collect(Collectors.toList());
+                .map(Util::getTagName)
+                .collect(Collectors.toList());
         assertArrayEquals(
                 new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"},
                 tags.toArray());
@@ -89,8 +94,8 @@ public class GitHelperTest {
     @Test
     public void testGetVersionTagsSubset() throws Exception {
         List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.2").stream()
-                                     .map(Util::getTagName)
-                                     .collect(Collectors.toList());
+                .map(Util::getTagName)
+                .collect(Collectors.toList());
         assertArrayEquals(
                 new String[]{"0.0.0", "0.0.1", "0.0.2"},
                 tags.toArray());
@@ -98,86 +103,81 @@ public class GitHelperTest {
 
     @Test
     public void testGetLatestMergeCommit() throws Exception {
-        assertEquals("9e8068925d368ce543a879092abad9178e8bf761",
-                gitHelper.getLatestMergeCommit("78b320f",
-                        "test-C")
-                         .getName());
-
-        assertEquals("9e8068925d368ce543a879092abad9178e8bf761",
-                gitHelper.getLatestMergeCommit("99cff2f",
-                        "test-C")
-                         .getName());
-
-        assertEquals("99cff2f46bda9ad2fa6f0161590fe31777b1cd45",
-                gitHelper.getLatestMergeCommit("78b320f",
-                        "test-B")
-                         .getName());
+        assertEquals("3f744d08ed4cb84200eb5ea733490a95f9bf0777",
+                gitHelper.getLatestMergeCommit("602ed15",
+                        TEST_C)
+                        .getName());
 
         assertEquals("3f744d08ed4cb84200eb5ea733490a95f9bf0777",
                 gitHelper.getLatestMergeCommit("602ed15",
-                        "test-C")
-                         .getName());
+                        TEST_C)
+                        .getName());
+
+        assertEquals("3f744d08ed4cb84200eb5ea733490a95f9bf0777",
+                gitHelper.getLatestMergeCommit("602ed15",
+                        TEST_C)
+                        .getName());
 
         assertEquals("3f744d08ed4cb84200eb5ea733490a95f9bf0777",
                 gitHelper.getLatestMergeCommit("5af80e3",
-                        "test-C")
-                         .getName());
+                        TEST_C)
+                        .getName());
 
         assertEquals("602ed15dbfc223f715f421bbf910bac6b7eacf13",
                 gitHelper.getLatestMergeCommit("5af80e3",
-                        "test-B")
-                         .getName());
+                        TEST_B)
+                        .getName());
 
         assertEquals("e39bef273e6e0947510b6d50b3b4c5ad3066c2b1",
                 gitHelper.getLatestMergeCommit("7f5d283",
-                        "test-C")
-                         .getName());
+                        TEST_C)
+                        .getName());
 
         assertEquals("618c1ced7e2e2165e1188c07037c5c2d95f68d93",
                 gitHelper.getLatestMergeCommit("276e502",
-                        "test-B")
-                         .getName());
+                        TEST_B)
+                        .getName());
     }
 
     @Test
     public void testshouldBeAncestors() throws Exception {
-        assertTrue(gitHelper.isAncestorOf("78b320f",
-                "test-C"));
+        assertTrue(gitHelper.isAncestorOf("a18dbb5",
+                TEST_C));
 
         assertTrue(
-                gitHelper.isAncestorOf("99cff2f",
-                        "test-C")
-                  );
-
-        assertTrue(
-                gitHelper.isAncestorOf("78b320f",
-                        "test-B")
-                  );
+                gitHelper.isAncestorOf("3f744d0",
+                        TEST_C)
+        );
 
         assertTrue(
                 gitHelper.isAncestorOf("602ed15",
-                        "test-C")
-                  );
+                        TEST_B)
+        );
+
+        assertTrue(
+                gitHelper.isAncestorOf("602ed15",
+                        TEST_C)
+        );
 
         assertTrue(
                 gitHelper.isAncestorOf("5af80e3",
-                        "test-C")
-                  );
+                        TEST_C)
+        );
 
         assertTrue(
                 gitHelper.isAncestorOf("5af80e3",
-                        "test-B")
-                  );
+                        TEST_B)
+        );
 
         assertTrue(
                 gitHelper.isAncestorOf("7f5d283",
-                        "test-C")
-                  );
+                        TEST_C)
+        );
 
         assertTrue(
                 gitHelper.isAncestorOf("276e502",
-                        "test-B")
-                  );
+                        TEST_B)
+        );
     }
 
     @Test
@@ -257,30 +257,30 @@ public class GitHelperTest {
     @Test
     public void shouldFindRoot() throws Exception {
         assertEquals("40d7de280bf5e534d0aba00a101e27ec17f1ed38",
-                gitHelper.getRoot("test-A", "test-B").getName());
+                gitHelper.getRoot(TEST_A, TEST_B).getName());
 
         assertEquals("40d7de280bf5e534d0aba00a101e27ec17f1ed38",
-                gitHelper.getRoot("test-A", "test-C").getName());
+                gitHelper.getRoot(TEST_A, TEST_C).getName());
 
         assertEquals("630609cce2b03d73ee6b271c4344beac36cbf01e",
-                gitHelper.getRoot("test-B", "test-C").getName());
+                gitHelper.getRoot(TEST_B, TEST_C).getName());
     }
 
     @Test(expected = RuntimeException.class)
     public void shouldNotFindRoot1() throws Exception {
         assertEquals("40d7de280bf5e534d0aba00a101e27ec17f1ed38",
-                gitHelper.getRoot("test-B", "test-A").getName());
+                gitHelper.getRoot(TEST_B, TEST_A).getName());
     }
 
     @Test(expected = RuntimeException.class)
     public void shouldNotFindRoot2() throws Exception {
         assertEquals("630609cce2b03d73ee6b271c4344beac36cbf01e",
-                gitHelper.getRoot("test-C", "test-A").getName());
+                gitHelper.getRoot(TEST_C, TEST_A).getName());
     }
 
     @Test(expected = RuntimeException.class)
     public void shouldNotFindRoot3() throws Exception {
         assertEquals("630609cce2b03d73ee6b271c4344beac36cbf01e",
-                gitHelper.getRoot("test-C", "test-B").getName());
+                gitHelper.getRoot(TEST_C, TEST_B).getName());
     }
 }
