@@ -13,13 +13,19 @@ import static org.junit.Assert.*;
 public class GitHubHelperTest {
 
     @Test
-    public void untaggedPRIsNotWorthy() throws Exception {
-        assertFalse(GitHubHelper.isChangeLogWorthy(PullRequest()));
+    public void untaggedPRIsWorthyWithoutLabel() throws Exception {
+        assertFalse(GitHubHelper.isChangeLogWorthy(PullRequest(), ""));
+    }
+
+    @Test
+    public void untaggedPRIsNotWorthyWithLabel() throws Exception {
+        assertFalse(GitHubHelper.isChangeLogWorthy(PullRequest(), "changelog"));
     }
 
     @Test
     public void taggedPRIsWorthy() throws Exception {
-        assertTrue(GitHubHelper.isChangeLogWorthy(PullRequest("sha", Arrays.asList("changelog", "3.0", "bug"))));
+        assertTrue(GitHubHelper.isChangeLogWorthy(PullRequest("sha", Arrays.asList("changelog", "3.0", "bug")),
+                "changelog"));
     }
 
     @Test

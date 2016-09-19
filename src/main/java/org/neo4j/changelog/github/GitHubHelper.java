@@ -108,12 +108,12 @@ public class GitHubHelper {
         return OptionalInt.empty();
     }
 
-    public static boolean isChangeLogWorthy(@Nonnull PullRequest pr) {
-        return isChangeLogWorthy(pr, Arrays.asList("changelog"));
+    public static boolean isChangeLogWorthy(@Nonnull PullRequest pr, @Nonnull String requiredLabel) {
+        return isChangeLogWorthy(pr, Arrays.asList(requiredLabel));
     }
 
-    public static <T> boolean isChangeLogWorthy(@Nonnull PullRequest pr, @Nonnull List<String> tagStrings) {
-        return pr.getGitHubTags().stream().anyMatch(tagStrings::contains);
+    public static <T> boolean isChangeLogWorthy(@Nonnull PullRequest pr, @Nonnull List<String> requiredLabels) {
+        return pr.getGitHubTags().stream().anyMatch(requiredLabels::contains);
     }
 
     public static boolean isIncluded(@Nonnull PullRequest pr, @Nonnull String nextVersion) {

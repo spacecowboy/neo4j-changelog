@@ -29,6 +29,7 @@ public class Main {
             @Nonnull String version,
             @Nonnull GitHelper gitHelper,
             @Nonnull String changeLogPath,
+            @Nonnull String requiredLabel,
             @Nonnull List<String> categories,
             @Nonnull List<PullRequest> pullRequests) throws GitAPIException, IOException {
         List<Ref> versionTags = gitHelper.getVersionTags(fromRef, version);
@@ -44,7 +45,7 @@ public class Main {
         versionTags.forEach(t -> System.out.println(Util.getTagName(t)));
 
         pullRequests.stream()
-                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr) && GitHubHelper.isIncluded(pr, version) &&
+                .filter(pr -> GitHubHelper.isChangeLogWorthy(pr, requiredLabel) && GitHubHelper.isIncluded(pr, version) &&
                         gitHelper.isAncestorOf(pr.getCommit(), toRef) &&
                         !gitHelper.isAncestorOf(pr.getCommit(), fromRef))
                 .map(pr -> GitHubHelper.convertToChange(pr,
@@ -82,6 +83,10 @@ public class Main {
         parser.addArgument("-v", "--version")
               .help("Latest/next semantic version. Any changes occurring after the latest tag will be placed under this version in the log.")
               .required(true);
+        parser.addArgument("-rl", "--required-label")
+                .help("Only include PRs with this label")
+                .required(false)
+                .setDefault("");
         parser.addArgument("category")
               .nargs("*")
                 .help("Categories to sort changes under. These should match (case-insensitively) the tags of the GitHub issues. Will always include the catch-all category 'Misc'");
@@ -150,7 +155,7 @@ public class Main {
         try {
             System.out.printf("Generating changelog between %s and %s for %s\n", fromRef, toRef, version);
             generateChangelog(fromRef, toRef, version, gitHelper, ns.getString("output"),
-                    ns.getList("category"), pullRequests);
+                    ns.getString("required-label"), ns.getList("category"), pullRequests);
             System.out.printf("\nDone. Changelog written to %s\n", ns.getString("output"));
         } catch (Exception e) {
             System.err.printf("\nError: An error occurred while building changelog: %s\n", e.getMessage());
