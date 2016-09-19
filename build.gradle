@@ -5,6 +5,12 @@ group = 'org.neo4j.changelog'
 
 mainClassName = 'org.neo4j.changelog.Main'
 
+distributions {
+  main {
+    baseName = 'neo4j-changelog'
+  }
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
