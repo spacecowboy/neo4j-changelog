@@ -109,6 +109,9 @@ public class GitHubHelper {
     }
 
     public static boolean isChangeLogWorthy(@Nonnull PullRequest pr, @Nonnull String requiredLabel) {
+        if (requiredLabel.isEmpty()) {
+            return true;
+        }
         return isChangeLogWorthy(pr, Arrays.asList(requiredLabel));
     }
 
@@ -116,14 +119,14 @@ public class GitHubHelper {
         return pr.getGitHubTags().stream().anyMatch(requiredLabels::contains);
     }
 
-    public static boolean isIncluded(@Nonnull PullRequest pr, @Nonnull String nextVersion) {
+    public static boolean isIncluded(@Nonnull PullRequest pr, @Nonnull String changelogVersion) {
         // Special case if no filter, then always true
         if (pr.getVersionFilter().isEmpty()) {
             return true;
         }
 
         for (String version: pr.getVersionFilter()) {
-            if (nextVersion.startsWith(version)) {
+            if (changelogVersion.startsWith(version)) {
                 return true;
             }
         }

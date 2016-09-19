@@ -14,7 +14,7 @@ public class GitHubHelperTest {
 
     @Test
     public void untaggedPRIsWorthyWithoutLabel() throws Exception {
-        assertFalse(GitHubHelper.isChangeLogWorthy(PullRequest(), ""));
+        assertTrue(GitHubHelper.isChangeLogWorthy(PullRequest(), ""));
     }
 
     @Test
@@ -26,6 +26,12 @@ public class GitHubHelperTest {
     public void taggedPRIsWorthy() throws Exception {
         assertTrue(GitHubHelper.isChangeLogWorthy(PullRequest("sha", Arrays.asList("changelog", "3.0", "bug")),
                 "changelog"));
+    }
+
+    @Test
+    public void taggedPRIsWorthy2() throws Exception {
+        assertTrue(GitHubHelper.isChangeLogWorthy(PullRequest("sha", Arrays.asList("changelog", "3.0", "bug")),
+                ""));
     }
 
     @Test

@@ -89,6 +89,11 @@ public class UtilTest {
         assertNotNull(Util.asSemanticVersion("1.2.3-M01.5"));
     }
 
+    @Test
+    public void bah() {
+        assertTrue(Util.isSemanticVersion("3.1"));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void asSemanticVersionFail1() {
         Util.asSemanticVersion("1.2.3-M01.5.6");

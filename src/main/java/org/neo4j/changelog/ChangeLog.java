@@ -28,14 +28,14 @@ public class ChangeLog {
         this(tags, null, categories);
     }
 
-    public ChangeLog(@Nonnull List<Ref> tags, @Nullable String version, @Nonnull List<String> categories) {
+    public ChangeLog(@Nonnull List<Ref> tags, @Nullable String nextHeader, @Nonnull List<String> categories) {
         this.categories.addAll(categories);
 
         this.tags.addAll(tags.stream().map(Util::getTagName).collect(Collectors.toList()));
-        if (version != null && !this.tags.contains(version)) {
-            this.tags.add(version);
-        }
         this.tags.sort((t1, t2) -> -Util.SemanticCompare(t1, t2));
+        if (nextHeader != null && !this.tags.contains(nextHeader)) {
+            this.tags.add(0, nextHeader);
+        }
     }
 
     public void addToChangeLog(@Nonnull Change change) {
