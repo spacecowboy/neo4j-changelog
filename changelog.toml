@@ -1,0 +1,41 @@
+# Where the changelog is written to
+output = "CHANGELOG.md"
+# Changes added after the last tag will be listed under this header
+nextheader = "Unreleased"
+# So that PRs can be optionally filtered out in case of null-merges
+versionprefix = "3.1"
+
+# Categories to use
+categories = []
+
+[git]
+# Local clone of remote repo
+clone = "./"
+# Git SHA/tag which will mark the start of the changelog
+from = "0b7b3dc"
+# Git SHA/tag/branch which will mark the end of the changelog
+to = "upstream/3.1"
+
+[github]
+# Used to avoid github's rate limits
+token = "abc"
+# Combined to form the url where pull requests are fetched from
+user = "neo4j"
+repo = "neo4j"
+# Only PRs with this label will be included in the changelog
+requiredlabel = "changelog"
+
+[subprojects.cyphershell]
+name = "Cypher Shell"
+
+[subprojects.cyphershell.git]
+tagprefix = "neo4j-"
+from = "af0a86d68dd55854a720788fcf05be9c0fd9bb73"
+included_from = "81bec2be2c22d6644f265b9931b5092f8d716c19"
+
+[subprojects.cyphershell.github]
+# Combined to form the url where pull requests are fetched from
+user = "neo4j"
+repo = "cypher-shell"
+# Only PRs with this label will be included in the changelog
+requiredlabel = ""
