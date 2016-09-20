@@ -19,4 +19,16 @@ public class SubProjectConfig {
 
         return config;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public GitConfig getGitConfig() {
+        return gitConfig;
+    }
+
+    public GithubConfig getGithubConfig() {
+        return githubConfig;
+    }
 }

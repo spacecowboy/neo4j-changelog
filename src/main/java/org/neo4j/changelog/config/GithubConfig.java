@@ -8,16 +8,17 @@ public class GithubConfig {
     private String user = "";
     private String repo = "";
     private String token = "";
-    private String requiredLabel = "";
+    private String requiredLabels = "";
+    private String versionPrefix = "";
 
-    // TODO underscore or not?
     public static GithubConfig from(@Nonnull Map<String, Object> map) {
         GithubConfig githubConfig = new GithubConfig();
 
         githubConfig.user = (map.getOrDefault("user", "").toString());
         githubConfig.repo = (map.getOrDefault("repo", "").toString());
         githubConfig.token = (map.getOrDefault("token", "").toString());
-        githubConfig.requiredLabel = (map.getOrDefault("required_label", "").toString());
+        githubConfig.requiredLabels = (map.getOrDefault("requiredlabels", "").toString());
+        githubConfig.versionPrefix = map.getOrDefault("versionprefix", "").toString();
 
         return githubConfig;
     }
@@ -38,7 +39,16 @@ public class GithubConfig {
     }
 
     @Nonnull
-    public String getRequiredLabel() {
-        return requiredLabel;
+    public String getRequiredLabels() {
+        return requiredLabels;
+    }
+
+    @Nonnull
+    public String getVersionPrefix() {
+        return versionPrefix;
+    }
+
+    public void setToken(@Nonnull String token) {
+        this.token = token;
     }
 }

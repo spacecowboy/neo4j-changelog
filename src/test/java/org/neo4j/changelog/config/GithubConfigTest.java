@@ -20,7 +20,7 @@ public class GithubConfigTest {
 
         assertEquals("jonas", c.getUser());
         assertEquals("git", c.getRepo());
-        assertEquals("", c.getRequiredLabel());
+        assertEquals("", c.getRequiredLabels());
         assertEquals("", c.getToken());
     }
 }

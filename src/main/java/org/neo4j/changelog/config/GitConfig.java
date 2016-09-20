@@ -2,23 +2,23 @@ package org.neo4j.changelog.config;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class GitConfig {
 
     private String cloneDir = "";
     private String from = "";
     private String to = "";
-    private String tagPrefix = "";
+    private Pattern tagPattern = Pattern.compile("");
     private String includedFrom = "";
 
-    // TODO underscore or not?
     public static GitConfig from(@Nonnull Map<String, Object> map) {
         GitConfig gitConfig = new GitConfig();
 
-        gitConfig.cloneDir = (map.getOrDefault("clone_dir", "").toString());
+        gitConfig.cloneDir = (map.getOrDefault("clone", "./").toString());
         gitConfig.from = (map.getOrDefault("from", "").toString());
-        gitConfig.to = (map.getOrDefault("to", "").toString());
-        gitConfig.tagPrefix = (map.getOrDefault("tagprefix", "").toString());
+        gitConfig.to = (map.get("to").toString());
+        gitConfig.tagPattern = Pattern.compile(map.getOrDefault("tagpattern", "(.+)").toString());
         gitConfig.includedFrom = (map.getOrDefault("included_from", "").toString());
 
         return gitConfig;
@@ -26,7 +26,7 @@ public class GitConfig {
 
     @Nonnull
     public String getCloneDir() {
-        return cloneDir;
+        return cloneDir.replaceFirst("^~", System.getProperty("user.home"));
     }
 
     @Nonnull
@@ -40,8 +40,8 @@ public class GitConfig {
     }
 
     @Nonnull
-    public String getTagPrefix() {
-        return tagPrefix;
+    public Pattern getTagPattern() {
+        return tagPattern;
     }
 
     @Nonnull

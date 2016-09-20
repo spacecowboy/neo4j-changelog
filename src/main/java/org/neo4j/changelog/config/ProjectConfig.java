@@ -11,7 +11,6 @@ public class ProjectConfig {
 
     private String outputPath = "";
     private String nextHeader = "";
-    private String versionPrefix = "";
     private GitConfig gitConfig;
     private GithubConfig githubConfig;
 
@@ -21,7 +20,6 @@ public class ProjectConfig {
 
         config.outputPath = map.getOrDefault("output", "").toString();
         config.nextHeader = map.getOrDefault("nextheader", "").toString();
-        config.versionPrefix = map.getOrDefault("versionprefix", "").toString();
 
         config.gitConfig = GitConfig.from((Map<String, Object>) map.getOrDefault("git", new GitConfig()));
         config.githubConfig = GithubConfig.from((Map<String, Object>) map.getOrDefault("github", new GithubConfig()));
@@ -37,7 +35,9 @@ public class ProjectConfig {
             Map<String, Object> subMap = (Map<String, Object>) map.get("subprojects");
 
             for (String key: subMap.keySet()) {
-                config.subProjects.add(SubProjectConfig.from((Map<String, Object>) subMap.get(key)));
+                SubProjectConfig subConfig = SubProjectConfig.from((Map<String, Object>) subMap.get(key));
+                subConfig.githubConfig.setToken(config.getGithubConfig().getToken());
+                config.subProjects.add(subConfig);
             }
         }
 
@@ -50,10 +50,6 @@ public class ProjectConfig {
 
     public String getNextHeader() {
         return nextHeader;
-    }
-
-    public String getVersionPrefix() {
-        return versionPrefix;
     }
 
     public GitConfig getGitConfig() {

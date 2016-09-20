@@ -15,8 +15,11 @@ import java.util.List;
 public interface GitHubService {
     String API_URL = "https://api.github.com";
 
-    @GET("/repos/{user}/{repo}/issues?filter=all&state=closed&per_page=100&labels=changelog")
-    Call<List<Issue>> listChangeLogIssues(@Path("user") String user, @Path("repo") String repo, @Query("page") int page);
+    @GET("/repos/{user}/{repo}/issues?filter=all&state=closed&per_page=100")
+    Call<List<Issue>> listChangeLogIssues(@Path("user") String user,
+                                          @Path("repo") String repo,
+                                          @Query("labels") String labels,
+                                          @Query("page") int page);
 
     @GET("/repos/{user}/{repo}/pulls/{number}")
     Call<PR> getPR(@Path("user") String user, @Path("repo") String repo, @Path("number") int number);

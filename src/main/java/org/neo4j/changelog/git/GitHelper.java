@@ -2,23 +2,24 @@ package org.neo4j.changelog.git;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.errors.*;
+import org.eclipse.jgit.errors.RepositoryNotFoundException;
+import org.eclipse.jgit.errors.StopWalkException;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.neo4j.changelog.Util;
+import org.neo4j.changelog.config.GitConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Stack;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -30,10 +31,47 @@ public class GitHelper {
     static Pattern VERSION_TAG_PATTERN = Pattern.compile("^v?[\\d\\.]+");
     private final Git git;
     private final Repository repo;
+    private final GitConfig config;
+    private final String fromRef;
+    private final String toRef;
 
-    public GitHelper(@Nonnull File localDir) throws IOException {
-        this.git = getGit(localDir);
+    public GitHelper(@Nonnull GitConfig config) throws IOException {
+        this.config = config;
+        this.git = getGit(Paths.get(config.getCloneDir()));
         this.repo = git.getRepository();
+
+        String fromRef1 = config.getFrom();
+        if (fromRef1.isEmpty()) {
+            try {
+                fromRef1 = getOldestCommit().getName();
+                System.out.printf("No from-ref specified, using: %s\n", fromRef1);
+            } catch (GitAPIException e) {
+                System.err.printf("\nError: Could not find oldest commit: %s\n", e.getMessage());
+                System.exit(1);
+            }
+        } else {
+            try {
+                fromRef1 = getCommitFromString(fromRef1).getName();
+            } catch (IOException | NullPointerException e) {
+                System.err.printf("\nError: Could not parse from-commit for %s: %s\n", fromRef1, e.getMessage());
+                System.exit(1);
+            }
+        }
+        fromRef = fromRef1;
+
+        String toRef1 = config.getTo();
+        try {
+            toRef1 = getCommitFromString(toRef1).getName();
+        } catch (IOException | NullPointerException e) {
+            System.err.printf("\nError: Could not parse to-commit for %s: %s\n", toRef1, e.getMessage());
+            System.exit(1);
+        }
+        toRef = toRef1;
+
+        if (!isAncestorOf(fromRef, toRef)) {
+            throw new RuntimeException(
+                    String.format("%s is not an ancestor of %s, can't generate changelog", fromRef, toRef));
+        }
     }
 
     /**
@@ -52,20 +90,36 @@ public class GitHelper {
      * return 2.3.0, 2.3.1, 2.3.2,...., 3.0.7, 3.0.8, 3.0.8
      */
     @Nonnull
-    public List<Ref> getVersionTags(@Nonnull String from, @Nonnull String to) throws IOException, GitAPIException {
+    public List<Ref> getVersionTagsForChangelog() throws IOException, GitAPIException {
+        return getVersionTags(fromRef, toRef, config.getTagPattern());
+    }
+
+    /**
+     * Returns the version tags which belongs between the specified versions (inclusive): Example: 2.3.0 - 3.0.9 could
+     * return 2.3.0, 2.3.1, 2.3.2,...., 3.0.7, 3.0.8, 3.0.8
+     */
+    @Nonnull
+    public List<Ref> getVersionTags(@Nonnull String from, @Nonnull String to, @Nonnull Pattern pattern) throws IOException, GitAPIException {
         // To is either a ref, or a version
         ObjectId toCommit = getCommitFromString(to);
 
-        return getVersionTags().stream()
+        return getVersionTags(pattern).stream()
                                .filter(ref -> isAncestorOf(from, ref.getName()))
                                .filter(ref -> {
                                    if (toCommit == null) {
-                                       return Util.isSameMajorMinorVersion(Util.getTagName(ref), to);
+                                       return true;
+                                       //return Util.isSameMajorMinorVersion(Util.getTagName(ref), to);
                                    } else {
                                        return isAncestorOf(ref.getName(), to);
                                    }
                                })
                                .collect(Collectors.toList());
+    }
+
+    private List<Ref> getVersionTags(@Nonnull Pattern pattern) throws GitAPIException {
+        return git.tagList().call().stream()
+                .filter(t -> pattern.asPredicate().test(Util.getTagName(t)))
+                .collect(Collectors.toList());
     }
 
     @Nonnull
@@ -84,10 +138,11 @@ public class GitHelper {
         return VERSION_TAG_PATTERN.asPredicate().test(tagName);
     }
 
-    public static Git getGit(@Nonnull File localDir) throws IOException {
-        FileRepositoryBuilder builder = new FileRepositoryBuilder().findGitDir(localDir).readEnvironment();
+    public static Git getGit(@Nonnull Path localDir) throws IOException {
+        System.out.printf("Loading repo in: %s\n", localDir.toRealPath());
+        FileRepositoryBuilder builder = new FileRepositoryBuilder().findGitDir(localDir.toRealPath().toFile()).readEnvironment();
         if (builder.getGitDir() == null) {
-            throw new RepositoryNotFoundException(localDir);
+            throw new RepositoryNotFoundException(localDir.toFile());
         }
         return Git.wrap(builder.build());
     }
@@ -221,7 +276,15 @@ public class GitHelper {
     public String getFirstVersionOf(@Nonnull String commit,
                                     @Nonnull List<Ref> versionTags,
                                     @Nonnull String fallback) {
-        versionTags.sort(Util.SemanticComparator());
+        return getFirstVersionOf(commit, versionTags, fallback, Pattern.compile("(.+)"));
+    }
+
+    @Nonnull
+    public String getFirstVersionOf(@Nonnull String commit,
+                                    @Nonnull List<Ref> versionTags,
+                                    @Nonnull String fallback,
+                                    @Nonnull Pattern pattern) {
+        versionTags.sort(Util.SemanticComparator(pattern));
 
         for (Ref tag : versionTags) {
             if (isAncestorOf(commit, tag.getName())) {
@@ -237,5 +300,13 @@ public class GitHelper {
 
     public Repository getRepo() {
         return repo;
+    }
+
+    public boolean isAncestorOfToRef(@Nonnull String commit) {
+        return isAncestorOf(commit, toRef);
+    }
+
+    public boolean isAncestorOfFromRef(@Nonnull String commit) {
+        return isAncestorOf(commit, fromRef);
     }
 }
