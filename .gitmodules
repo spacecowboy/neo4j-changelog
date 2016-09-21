@@ -1,0 +1,3 @@
+[submodule "TOML-javalib"]
+	path = TOML-javalib
+	url = https://github.com/TheElectronWill/TOML-javalib

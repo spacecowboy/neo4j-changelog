@@ -4,12 +4,13 @@ import org.eclipse.jgit.errors.RepositoryNotFoundException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.neo4j.changelog.Util;
+import org.neo4j.changelog.config.GitConfig;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 
 public class GitHelperTest {
@@ -30,18 +33,24 @@ public class GitHelperTest {
     public static final String TEST_C = "a18dbb5";
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
+    private GitConfig config;
     private GitHelper gitHelper;
 
     @Before
     public void setup() throws IOException {
-        gitHelper = new GitHelper(new File("./"));
+        config = mock(GitConfig.class);
+        doReturn("").when(config).getFrom();
+        doReturn(TEST_C).when(config).getTo();
+        doReturn(Pattern.compile(GitConfig.DEFAULT_TAG_PATTERN)).when(config).getTagPattern();
+        doReturn("./").when(config).getCloneDir();
+        gitHelper = new GitHelper(config);
     }
 
     @Test
     public void testGetTagShouldFailOutsideRepo() throws Exception {
-        File file = tempFolder.newFolder();
+        doReturn(tempFolder.newFolder().getAbsolutePath()).when(config).getCloneDir();
         try {
-            new GitHelper(file).getVersionTags();
+            new GitHelper(config).getVersionTags();
             fail("Expected failure");
         } catch (RepositoryNotFoundException e) {
             assertTrue(e.getMessage().contains("repository not found"));
@@ -50,6 +59,7 @@ public class GitHelperTest {
 
     @Test
     public void testGetTagShouldSucceedInRepo() throws Exception {
+        GitHelper gitHelper = new GitHelper(config);
         List<Ref> tags = gitHelper.getVersionTags();
         assertTrue(tags.size() > 1);
         // either 1.2.3 or v1.2.3 is ok
@@ -57,9 +67,12 @@ public class GitHelperTest {
         tags.stream().allMatch(ref -> pattern.asPredicate().test(ref.getName()));
     }
 
+    @Ignore("Need to decide if I want version limiting here or not")
     @Test
     public void testGetVersionTagsWithFantasyVersion() throws Exception {
-        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.99").stream()
+        doReturn(Pattern.compile("(0\\..*)")).when(config).getTagPattern();
+        GitHelper gitHelper = new GitHelper(config);
+        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.99", config.getTagPattern()).stream()
                 .map(Util::getTagName)
                 .collect(Collectors.toList());
         assertArrayEquals(new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"},
@@ -74,7 +87,7 @@ public class GitHelperTest {
 
     @Test
     public void testGetVersionTagsWithRefs() throws Exception {
-        List<String> tags = gitHelper.getVersionTags("8449d26", "2bf464ebf").stream()
+        List<String> tags = gitHelper.getVersionTags("8449d26", "2bf464ebf", config.getTagPattern()).stream()
                 .map(Util::getTagName)
                 .collect(Collectors.toList());
         assertArrayEquals(new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"},
@@ -83,7 +96,7 @@ public class GitHelperTest {
 
     @Test
     public void testGetVersionTags() throws Exception {
-        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.3").stream()
+        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.3", config.getTagPattern()).stream()
                 .map(Util::getTagName)
                 .collect(Collectors.toList());
         assertArrayEquals(
@@ -93,7 +106,7 @@ public class GitHelperTest {
 
     @Test
     public void testGetVersionTagsSubset() throws Exception {
-        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.2").stream()
+        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.2", config.getTagPattern()).stream()
                 .map(Util::getTagName)
                 .collect(Collectors.toList());
         assertArrayEquals(

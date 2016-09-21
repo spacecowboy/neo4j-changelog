@@ -4,7 +4,8 @@ import org.eclipse.jgit.lib.Ref;
 
 import javax.annotation.Nonnull;
 import java.util.Comparator;
-import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Some utilities
@@ -86,8 +87,20 @@ public class Util {
     }
 
     @Nonnull
-    public static Comparator<Ref> SemanticComparator() {
-        return Util::SemanticCompare;
+    public static Comparator<Ref> SemanticComparator(Pattern pattern) {
+        //return Util::SemanticCompare;
+        return (ref1, ref2) -> {
+            Matcher m1 = pattern.matcher(Util.getTagName(ref1));
+            if (!m1.matches()) {
+                throw new IllegalArgumentException("Could not compare order for: " + Util.getTagName(ref1));
+            }
+            Matcher m2 = pattern.matcher(Util.getTagName(ref2));
+            if (!m2.matches()) {
+                throw new IllegalArgumentException("Could not compare order for: " + Util.getTagName(ref2));
+            }
+
+            return Util.SemanticCompare(m1.group(1), m2.group(1));
+        };
     }
 
     @Nonnull

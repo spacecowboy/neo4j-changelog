@@ -72,3 +72,4 @@ offlineimap2.py
 .okhttpcache
 build
 classes
+changelog.toml
