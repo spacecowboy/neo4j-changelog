@@ -25,7 +25,7 @@ public class ConfigReader {
         }
         File configFile = new File(configPath);
         if (!configFile.isFile()) {
-            return Toml.read("", true);
+            throw new IllegalArgumentException("Could not read '" + configFile.getAbsolutePath() + "'");
         }
         return Toml.read(configFile);
     }

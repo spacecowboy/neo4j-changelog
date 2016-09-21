@@ -9,7 +9,6 @@ import org.eclipse.jgit.lib.Ref;
 import org.neo4j.changelog.config.ConfigReader;
 import org.neo4j.changelog.config.GithubConfig;
 import org.neo4j.changelog.config.ProjectConfig;
-import org.neo4j.changelog.config.SubProjectConfig;
 import org.neo4j.changelog.git.GitHelper;
 import org.neo4j.changelog.github.GitHubHelper;
 import org.neo4j.changelog.github.PullRequest;
@@ -47,7 +46,7 @@ public class Main {
         // Defined categories are included
         subHeaders.addAll(config.getCategories());
         // And any possible sub projects
-        subHeaders.addAll(config.getSubProjects().stream().map(SubProjectConfig::getName).collect(Collectors.toList()));
+        subHeaders.addAll(config.getSubProjects().stream().map(ProjectConfig::getName).collect(Collectors.toList()));
 
         System.out.println("Categories to generate log with: " +
                           subHeaders.stream().reduce("", (s, x) -> String.join(", ", s, x)));
@@ -72,7 +71,7 @@ public class Main {
     }
 
     private void addSubprojectChanges(List<Ref> orgVersionTags, ChangeLog changeLog) throws IOException, GitAPIException {
-        for (SubProjectConfig subProjectConfig: config.getSubProjects()) {
+        for (ProjectConfig subProjectConfig: config.getSubProjects()) {
             System.out.println("Subproject: " + subProjectConfig.getName());
             GitHelper gitHelper = new GitHelper(subProjectConfig.getGitConfig());
 
@@ -94,7 +93,7 @@ public class Main {
         }
     }
 
-    private Change subChange(PullRequest pr, SubProjectConfig subProjectConfig, GitHelper gitHelper,
+    private Change subChange(PullRequest pr, ProjectConfig subProjectConfig, GitHelper gitHelper,
                              List<Ref> subTags, List<Ref> orgVersionTags) {
         final Pattern pattern = subProjectConfig.getGitConfig().getTagPattern();
         final String version = gitHelper.getFirstVersionOf(pr.getCommit(), subTags, IGNORE, pattern);
