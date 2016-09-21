@@ -1,15 +1,18 @@
+# Not currently used for top level project
+# name = ""
 # Where the changelog is written to
 output = "CHANGELOG.md"
 # Changes added after the last tag will be listed under this header
 nextheader = "Unreleased"
 
-# Categories to use
+# Categories to use, 'Misc' is always included for unlabeled PRs
+# Note that sub projects get their own category based on their 'name'
 categories = ["Kernel", "Cypher", "Packaging", "Security",
               "HA", "Core Edge", "Tools"]
 
 [git]
 # Local clone of remote repo
-clone = "~/work/neo4j"
+dir = "~/work/neo4j"
 # Git SHA/tag which will mark the start of the changelog
 from = "0b7b3dc"
 # Git SHA/tag/branch which will mark the end of the changelog
@@ -21,11 +24,13 @@ tagpattern = "(3\\.1\\..+)"
 # So that PRs can be optionally filtered out in case of null-merges
 versionprefix = "3.1"
 # Used to avoid github's rate limits
-token = "abc"
+#token = ""
 # Combined to form the url where pull requests are fetched from
 user = "neo4j"
 repo = "neo4j"
 # Only PRs with this label will be included in the changelog
+# You can specify multiple labels as well, example: "changelog,kernel"
+# in which case ALL labels must be included
 requiredlabels = "changelog"
 
 [subprojects.cyphershell]
@@ -33,10 +38,9 @@ name = "Cypher Shell"
 
 [subprojects.cyphershell.git]
 tagpattern = "neo4j-(3\\.1\\..+)"
-clone = "~/work/cypher-shell"
+dir = "~/work/cypher-shell"
 from = "af0a86d68dd55854a720788fcf05be9c0fd9bb73"
 to = "upstream/master"
-included_from = "81bec2be2c22d6644f265b9931b5092f8d716c19"
 
 [subprojects.cyphershell.github]
 # Combined to form the url where pull requests are fetched from
