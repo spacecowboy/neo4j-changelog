@@ -8,7 +8,7 @@ The first step is to add the `changelog`-label on your PR on
 Github. Only PRs with this label are downloaded and considered for
 inclusion in the log.
 
-![Add the changelog label to your PR]https://raw.githubusercontent.com/spacecowboy/neo4j-changelog/master/docs/AddChangelogLabel.png()
+![Add the changelog label to your PR](https://raw.githubusercontent.com/spacecowboy/neo4j-changelog/master/docs/AddChangelogLabel.png)
 
 This creates an entry for the PR in the changelog as below:
 
