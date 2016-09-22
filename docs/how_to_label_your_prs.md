@@ -50,6 +50,11 @@ title. So just make your PR titles nice and descriptive:
 
 ![Change the title of the PR](https://raw.githubusercontent.com/spacecowboy/neo4j-changelog/master/docs/SetTitle.png)
 
+* Caveat: The Github wiki does not automatically make things like
+  `[#99]` into a link. If you want to link to an issue/pr, make it a
+  proper markdown link:
+  `[#99](https://github.com/neo4j/neo4j/issue/99)`
+
 ## Null Forward Merges
 
 The tool handles forward merges perfectly, but it does need a little
