@@ -1,6 +1,10 @@
 
-You have a change that you think is relevant for the changelog. How do
-you get that into the changelog?
+The primary purpose of the change log is to serve as the basis for the
+release-notes. The secondary purpose is to allow interested users to
+see what changed in a given version.
+
+If you have a change which you think might be relevant for the change
+log, this document explains how to get it included.
 
 ## Getting a PR into the changelog at all
 
@@ -67,7 +71,7 @@ text to the PR description:
 
 ![Add meta data to PR](https://raw.githubusercontent.com/spacecowboy/neo4j-changelog/master/docs/AddMetaDeta.png)
 
-To handle null forward merges, you the only additional information
+To handle null forward merges, the only additional information
 required is *which versions include this change*. So all that is
 needed, is version(s) inside brackets:
 
@@ -118,16 +122,23 @@ a description line like this:
 changelog [tools] neo4j-admin: added import
 ```
 
-But this should be avoided. The recommended way is to rely on Github
-labels and proper PR titles. Handling null forward-merges should
-specify the minimum possible, e.g. only the additional version
-meta-data required.
+But the recommended way is to rely on Github labels and proper PR
+titles. Handling null forward-merges should specify the minimum
+possible, e.g. only the additional version meta-data required.
 
-Avoid specifying category in the brackets if at all possible.
+One case when you must specify the category is when we for internal
+reasons label a PR with for example *Kernel* and *Security*, but the
+actual PR should be mentioned under *Procedures*. In that case, it is
+appropriate to set the category manually:
 
-The only real reason for overriding the PR title is to add a message
-which adds a link to an issue or another pr, which will look bad in
-the PR title:
+```
+changelog [procedures]
+```
+
+If your PR title can't be short and descriptive enough for the
+changelog, you can override it. For example, if you need to link to
+another issue/PR (remember, you must write the full link, Github will
+NOT render `#99` as a link inside the Wiki):
 
 ```
 changelog neo4j-admin: added import. See also [#99999](http://link/to/issue)
