@@ -7,38 +7,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 
 public class GitHubHelperTest {
-
-    @Test
-    public void untaggedPRIsWorthyWithoutLabel() throws Exception {
-        assertTrue(GitHubHelper.isChangeLogWorthy(PullRequest(), ""));
-    }
-
-    @Test
-    public void untaggedPRIsNotWorthyWithLabel() throws Exception {
-        assertFalse(GitHubHelper.isChangeLogWorthy(PullRequest(), "changelog"));
-    }
-
-    @Test
-    public void taggedPRIsWorthy() throws Exception {
-        assertTrue(GitHubHelper.isChangeLogWorthy(PullRequest("sha", Arrays.asList("changelog", "3.0", "bug")),
-                "changelog"));
-    }
-
-    @Test
-    public void taggedPRIsWorthy2() throws Exception {
-        assertTrue(GitHubHelper.isChangeLogWorthy(PullRequest("sha", Arrays.asList("changelog", "3.0", "bug")),
-                ""));
-    }
-
-    @Test
-    public void taggedPRIsWorthyWithCustomTags() throws Exception {
-        assertTrue(GitHubHelper.isChangeLogWorthy(PullRequest("sha", Arrays.asList("bah", "hoo")),
-                Arrays.asList("meh", "hoo")));
-    }
 
     @Test
     public void prWithNoFilterIsAlwaysIncluded() throws Exception {
