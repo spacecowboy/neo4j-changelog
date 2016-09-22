@@ -7,7 +7,6 @@ import retrofit2.Response;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.OptionalInt;
@@ -41,20 +40,61 @@ public class GitHubHelper {
         }
     }
 
+    public static boolean isIncluded(@Nonnull PullRequest pr, @Nonnull String changelogVersion) {
+        // Special case if no filter, then always true
+        if (pr.getVersionFilter().isEmpty() || changelogVersion.isEmpty()) {
+            return true;
+        }
+
+        for (String version : pr.getVersionFilter()) {
+            if (changelogVersion.startsWith(version)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Nonnull
+    public static Change convertToChange(@Nonnull PullRequest pr, @Nonnull String version) {
+        return new Change() {
+            @Override
+            public int getSortingNumber() {
+                return pr.getNumber();
+            }
+
+            @Nonnull
+            @Override
+            public List<String> getLabels() {
+                return pr.getLabelFilter();
+            }
+
+            @Nonnull
+            @Override
+            public String getVersion() {
+                return version;
+            }
+
+            @Override
+            public String toString() {
+                return pr.getChangeText();
+            }
+        };
+    }
+
     @Nonnull
     public List<PullRequest> getChangeLogPullRequests() {
         List<GitHubService.Issue> issues = listChangeLogIssues();
         System.out.println("Fetched " + issues.size() + " issues");
 
         return issues.parallelStream()
-                     // Only consider pull requests, not issues
-                     .filter(i -> i.pull_request != null)
-                     .map(issue -> {
-                         GitHubService.PR pr = getPr(issue.number);
-                         return new PRIssue(issue, pr);
-                     })
-                     .filter(pr -> isIncluded(pr, versionPrefix))
-                     .collect(Collectors.toList());
+                // Only consider pull requests, not issues
+                .filter(i -> i.pull_request != null)
+                .map(issue -> {
+                    GitHubService.PR pr = getPr(issue.number);
+                    return new PRIssue(issue, pr);
+                })
+                .filter(pr -> isIncluded(pr, versionPrefix))
+                .collect(Collectors.toList());
     }
 
     @Nonnull
@@ -120,58 +160,6 @@ public class GitHubHelper {
             }
         }
         return OptionalInt.empty();
-    }
-
-    public static boolean isChangeLogWorthy(@Nonnull PullRequest pr, @Nonnull String requiredLabel) {
-        if (requiredLabel.isEmpty()) {
-            return true;
-        }
-        return isChangeLogWorthy(pr, Arrays.asList(requiredLabel));
-    }
-
-    public static <T> boolean isChangeLogWorthy(@Nonnull PullRequest pr, @Nonnull List<String> requiredLabels) {
-        return pr.getGitHubTags().stream().anyMatch(requiredLabels::contains);
-    }
-
-    public static boolean isIncluded(@Nonnull PullRequest pr, @Nonnull String changelogVersion) {
-        // Special case if no filter, then always true
-        if (pr.getVersionFilter().isEmpty() || changelogVersion.isEmpty()) {
-            return true;
-        }
-
-        for (String version: pr.getVersionFilter()) {
-            if (changelogVersion.startsWith(version)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Nonnull
-    public static Change convertToChange(@Nonnull PullRequest pr, @Nonnull String version) {
-        return new Change() {
-            @Override
-            public int getSortingNumber() {
-                return pr.getNumber();
-            }
-
-            @Nonnull
-            @Override
-            public List<String> getLabels() {
-                return pr.getLabelFilter();
-            }
-
-            @Nonnull
-            @Override
-            public String getVersion() {
-                return version;
-            }
-
-            @Override
-            public String toString() {
-                return pr.getChangeText();
-            }
-        };
     }
 
     public GitHubService getService() {
