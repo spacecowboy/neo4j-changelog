@@ -15,8 +15,44 @@ import static org.junit.Assert.*;
 public class ChangeLogTest {
 
     @Test
-    public void whenTagEqualsVersion() throws Exception {
-        ChangeLog cl = new ChangeLog(Arrays.asList(v1),
+    public void whenNextHeaderEmpty() throws Exception {
+        ChangeLog cl = new ChangeLog(Arrays.asList(v100),
+                "Unreleased",
+                Arrays.asList("Kernel", "Cypher"));
+
+        cl.addToChangeLog(simpleChange(3, "Kernel", "Fix the kernel [#3]"));
+        cl.addToChangeLog(simpleChange(2, "Changelog", "Added a changelog [#2]"));
+        cl.addToChangeLog(simpleChange(4, "Cypher", "Add a query language [#4]"));
+        cl.addToChangeLog(simpleChange(1, "Kernel", "Add a kernel [#1]"));
+
+        StringWriter sw = new StringWriter();
+
+        cl.writeTo(sw);
+
+        assertEquals(SIMPLE_CHANGELOG, sw.toString());
+    }
+
+    @Test
+    public void whenTagsAreEmpty() throws Exception {
+        ChangeLog cl = new ChangeLog(Arrays.asList(v099, v100, v101),
+                "1.0.0",
+                Arrays.asList("Kernel", "Cypher"));
+
+        cl.addToChangeLog(simpleChange(3, "Kernel", "Fix the kernel [#3]"));
+        cl.addToChangeLog(simpleChange(2, "Changelog", "Added a changelog [#2]"));
+        cl.addToChangeLog(simpleChange(4, "Cypher", "Add a query language [#4]"));
+        cl.addToChangeLog(simpleChange(1, "Kernel", "Add a kernel [#1]"));
+
+        StringWriter sw = new StringWriter();
+
+        cl.writeTo(sw);
+
+        assertEquals(SIMPLE_CHANGELOG, sw.toString());
+    }
+
+    @Test
+    public void whenTagEqualsNextHeader() throws Exception {
+        ChangeLog cl = new ChangeLog(Arrays.asList(v100),
                 "1.0.0",
                 Arrays.asList("Kernel", "Cypher"));
 
@@ -34,7 +70,7 @@ public class ChangeLogTest {
 
     @Test
     public void simpleChangeLogGeneration() throws Exception {
-        ChangeLog cl = new ChangeLog(Arrays.asList(v1),
+        ChangeLog cl = new ChangeLog(Arrays.asList(v100),
                 Arrays.asList("Kernel", "Cypher"));
 
         cl.addToChangeLog(simpleChange(3, "Kernel", "Fix the kernel [#3]"));
@@ -85,10 +121,94 @@ public class ChangeLogTest {
             "\n#### Misc\n\n" +
             "- Added a changelog [#2]\n";
 
-    Ref v1 = new Ref() {
+    Ref v100 = new Ref() {
         @Override
         public String getName() {
             return "1.0.0";
+        }
+
+        @Override
+        public boolean isSymbolic() {
+            return false;
+        }
+
+        @Override
+        public Ref getLeaf() {
+            return null;
+        }
+
+        @Override
+        public Ref getTarget() {
+            return null;
+        }
+
+        @Override
+        public ObjectId getObjectId() {
+            return null;
+        }
+
+        @Override
+        public ObjectId getPeeledObjectId() {
+            return null;
+        }
+
+        @Override
+        public boolean isPeeled() {
+            return false;
+        }
+
+        @Override
+        public Storage getStorage() {
+            return null;
+        }
+    };
+
+    Ref v099 = new Ref() {
+        @Override
+        public String getName() {
+            return "0.9.9";
+        }
+
+        @Override
+        public boolean isSymbolic() {
+            return false;
+        }
+
+        @Override
+        public Ref getLeaf() {
+            return null;
+        }
+
+        @Override
+        public Ref getTarget() {
+            return null;
+        }
+
+        @Override
+        public ObjectId getObjectId() {
+            return null;
+        }
+
+        @Override
+        public ObjectId getPeeledObjectId() {
+            return null;
+        }
+
+        @Override
+        public boolean isPeeled() {
+            return false;
+        }
+
+        @Override
+        public Storage getStorage() {
+            return null;
+        }
+    };
+
+    Ref v101 = new Ref() {
+        @Override
+        public String getName() {
+            return "1.0.1";
         }
 
         @Override

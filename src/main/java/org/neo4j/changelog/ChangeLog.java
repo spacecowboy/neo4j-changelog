@@ -66,18 +66,21 @@ public class ChangeLog {
 
     void writeTo(@Nonnull Writer w) throws IOException {
         for (String version: tags) {
-            w.write(String.format(VERSION_FMT, version));
-
             Map<String, List<Change>> catMap = defaultGet(versions, version, HashMap::new);
+
+            if (containsNoChanges(catMap)) {
+                // Don't write empty stuff
+                continue;
+            }
+
+            w.write(String.format(VERSION_FMT, version));
 
             if (!categories.contains(catchAllSubHeader)) {
                 categories.add(catchAllSubHeader);
             }
+
             for (String category: categories) {
                 List<Change> changes = defaultGet(catMap, category, ArrayList::new);
-                if (changes.isEmpty()) {
-                    continue;
-                }
 
                 w.write(String.format(CATEGORY_FMT, category));
 
@@ -96,6 +99,15 @@ public class ChangeLog {
                 }
             }
         }
+    }
+
+    private static boolean containsNoChanges(@Nonnull final Map<String, List<Change>> catMap) {
+        for (String category: catMap.keySet()) {
+            if (!catMap.getOrDefault(category, Collections.emptyList()).isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private <T> T defaultGet(@Nonnull Map<String, T> map, @Nonnull String key, @Nonnull Supplier<T> supplier) {
