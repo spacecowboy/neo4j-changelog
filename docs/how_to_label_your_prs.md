@@ -27,13 +27,28 @@ This creates an entry for the PR in the changelog as below:
 As it stands, the PR is listed under *Misc* and obviously we can do
 better than that. *Misc* is where anything not otherwise labeled ends
 up. There are a fixed number of categories available (defined by the
-config given to the tool). These categories are such as *Kernel*,
-*Cypher*, *Security*, *Core Edge*, etc. If your PR is already labeled
-with one of those, congratulations, you are already done!
+config given to the tool). These top level categories are:
+
+- Kernel
+- Cypher
+- Security
+- Core-Edge
+- HA
+- Browser
+- Tools
+- Packaging
+- Procedures
+- Metrics
+- Server
+- Config
+
+(these are defined by what you enter in the tool config)
+
+If your PR is already labeled with *one* of those, congratulations,
+you are already done!
 
 This PR however is labeled with Operability, which is not one of the
-categories in the change log. The suitable category in this case would
-be *Tools*.
+categories. The suitable category in this case would be *Tools*.
 
 So just add the *Tools* label to the PR:
 
