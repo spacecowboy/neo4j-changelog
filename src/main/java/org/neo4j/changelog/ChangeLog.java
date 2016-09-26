@@ -69,7 +69,7 @@ public class ChangeLog {
             Map<String, List<Change>> catMap = defaultGet(versions, version, HashMap::new);
 
             if (containsNoChanges(catMap)) {
-                // Don't write empty stuff
+                // Don't output versions with no changes
                 continue;
             }
 
@@ -81,6 +81,11 @@ public class ChangeLog {
 
             for (String category: categories) {
                 List<Change> changes = defaultGet(catMap, category, ArrayList::new);
+
+                if (changes.isEmpty()) {
+                    // Don't output categories with no changes
+                    continue;
+                }
 
                 w.write(String.format(CATEGORY_FMT, category));
 
