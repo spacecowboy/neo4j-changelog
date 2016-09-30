@@ -87,6 +87,23 @@ public class ChangeLogTest {
     }
 
     @Test
+    public void duplicateCategoriesAreNotPossible() throws Exception {
+        ChangeLog cl = new ChangeLog(Arrays.asList(v100),
+                Arrays.asList("Kernel", "Cypher", "Kernel"));
+
+        cl.addToChangeLog(simpleChange(3, "Kernel", "Fix the kernel [#3]"));
+        cl.addToChangeLog(simpleChange(2, "Changelog", "Added a changelog [#2]"));
+        cl.addToChangeLog(simpleChange(4, "Cypher", "Add a query language [#4]"));
+        cl.addToChangeLog(simpleChange(1, "Kernel", "Add a kernel [#1]"));
+
+        StringWriter sw = new StringWriter();
+
+        cl.writeTo(sw);
+
+        assertEquals(SIMPLE_CHANGELOG, sw.toString());
+    }
+
+    @Test
     public void simpleChangeLogGeneration() throws Exception {
         ChangeLog cl = new ChangeLog(Arrays.asList(v100),
                 Arrays.asList("Kernel", "Cypher"));
