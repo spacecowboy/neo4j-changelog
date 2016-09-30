@@ -21,7 +21,7 @@ public class ChangeLog {
     private static final String CHANGE_FMT = "- %s\n";
     private final Map<String, Map<String, List<Change>>> versions = new HashMap<>();
     private final ArrayList<String> tags = new ArrayList<>();
-    private final ArrayList<String> categories = new ArrayList<>();
+    private final LinkedHashSet<String> categories = new LinkedHashSet<>();
     private String catchAllSubHeader = "Misc";
 
     public ChangeLog(@Nonnull List<Ref> tags, @Nonnull List<String> categories) {
