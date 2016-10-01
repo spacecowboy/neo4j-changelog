@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.OptionalInt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,13 +28,15 @@ public class GitHubHelper {
     private final String repo;
     @Nonnull
     private final GithubLabelsConfig labels;
+    private final boolean includeAuthor;
 
-    public GitHubHelper(@Nonnull String token, @Nonnull String user, @Nonnull String repo,
+    public GitHubHelper(@Nonnull String token, @Nonnull String user, @Nonnull String repo, boolean includeAuthor,
                         @Nonnull GithubLabelsConfig labels) {
         service = GitHubService.GetService(token);
         this.user = user;
         this.repo = repo;
         this.labels = labels;
+        this.includeAuthor = includeAuthor;
 
         if (!labels.getVersionPrefix().isEmpty() && !Util.isSemanticVersion(labels.getVersionPrefix())) {
             throw new IllegalArgumentException("version_prefix is not a semantic version: '"
@@ -107,7 +108,7 @@ public class GitHubHelper {
                      })
                      .map(issue -> {
                          GitHubService.PR pr = getPr(issue.number);
-                         return new PRIssue(issue, pr, labels.getCategoryMap());
+                         return new PRIssue(issue, pr, labels.getCategoryMap(), includeAuthor);
                      })
                      .filter(pr -> isIncludedInVersion(pr, labels.getVersionPrefix()))
                      .collect(Collectors.toList());

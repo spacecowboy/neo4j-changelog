@@ -147,7 +147,7 @@ public class Main {
         GithubLabelsConfig labels = config.getLabels();
         System.out.printf("Fetching pull requests from github.com/%s/%s\n", user,
                 repo);
-        GitHubHelper gitHubHelper = new GitHubHelper(token, user, repo, labels);
+        GitHubHelper gitHubHelper = new GitHubHelper(token, user, repo, config.getIncludeAuthor(), labels);
 
         List<PullRequest> pullRequests = gitHubHelper.getChangeLogPullRequests();
 

@@ -87,6 +87,7 @@ public interface GitHubService {
         public int number;
         public String title;
         public String body;
+        public User user;
         public List<Label> labels;
         public UrlHolder pull_request;
     }
@@ -99,6 +100,12 @@ public interface GitHubService {
         public String merged_at;
         public Ref head;
         public Ref base;
+        public User user;
+    }
+
+    class User {
+        public String login;
+        public String html_url;
     }
 
     class UrlHolder {

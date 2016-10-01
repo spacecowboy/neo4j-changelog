@@ -38,6 +38,7 @@ public class GithubConfigTest {
         assertEquals("jonas", c.getUser());
         assertEquals("git", c.getRepo());
         assertEquals("", c.getToken());
+        assertEquals(false, c.getIncludeAuthor());
     }
 
     @Test

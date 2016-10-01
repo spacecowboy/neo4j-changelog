@@ -11,10 +11,12 @@ public class GithubConfig {
     public static final String REPO = "repo";
     public static final String TOKEN = "token";
     public static final String LABELS = "labels";
-    private static final List<Object> VALID_KEYS = Arrays.asList(USER, REPO, TOKEN, LABELS);
+    private static final String INCLUDE_AUTHOR = "include_author";
+    private static final List<Object> VALID_KEYS = Arrays.asList(USER, REPO, TOKEN, INCLUDE_AUTHOR, LABELS);
     private String user = "";
     private String repo = "";
     private String token = "";
+    private boolean includeAuthor = false;
     private GithubLabelsConfig labels = new GithubLabelsConfig();
 
     public static GithubConfig from(@Nonnull Map<String, Object> map) {
@@ -32,6 +34,13 @@ public class GithubConfig {
         }
 
         githubConfig.token = (map.getOrDefault(TOKEN, "").toString());
+
+        try {
+            githubConfig.includeAuthor = (boolean) map.getOrDefault(INCLUDE_AUTHOR, githubConfig.includeAuthor);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException(
+                    String.format("'%s' in [github] should be a boolean", INCLUDE_AUTHOR), e);
+        }
 
         if (map.containsKey(LABELS)) {
             try {
@@ -76,5 +85,9 @@ public class GithubConfig {
     @Nonnull
     public GithubLabelsConfig getLabels() {
         return labels;
+    }
+
+    public boolean getIncludeAuthor() {
+        return includeAuthor;
     }
 }

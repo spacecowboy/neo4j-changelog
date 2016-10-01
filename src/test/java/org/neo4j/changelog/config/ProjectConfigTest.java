@@ -203,6 +203,7 @@ public class ProjectConfigTest {
                 .append("user = 'jonas'\n")
                 .append("repo = 'neo4j'\n")
                 .append("token = 'supertoken'\n")
+                .append("include_author = true\n")
                 // GITHUB LABELS
                 .append("[github.labels]\n")
                 .append("required = 'req'\n")
@@ -231,6 +232,8 @@ public class ProjectConfigTest {
 
         assertEquals("jonas", c.getGithubConfig().getUser());
         assertEquals("neo4j", c.getGithubConfig().getRepo());
+        assertEquals("supertoken", c.getGithubConfig().getToken());
+        assertEquals(true, c.getGithubConfig().getIncludeAuthor());
 
         assertEquals("req", c.getGithubConfig().getLabels().getRequired());
         assertEquals(true, c.getGithubConfig().getLabels().getExcludeUnlabeled());
