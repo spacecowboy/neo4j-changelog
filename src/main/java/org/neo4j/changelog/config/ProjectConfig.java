@@ -38,7 +38,7 @@ public class ProjectConfig {
         try {
             gitSection = (Map<String, Object>) map.get("git");
         } catch (ClassCastException e) {
-            gitSection = null;
+            throw new IllegalArgumentException("Expected 'git' to be a section but found something else", e);
         }
         try {
             config.gitConfig = GitConfig.from(gitSection);
@@ -50,7 +50,7 @@ public class ProjectConfig {
         try {
             githubSection = (Map<String, Object>) map.get("github");
         } catch (ClassCastException e) {
-            githubSection = null;
+            throw new IllegalArgumentException("Expected 'github' to be a section but found something else", e);
         }
         try {
             config.githubConfig = GithubConfig.from(githubSection);
@@ -65,7 +65,7 @@ public class ProjectConfig {
                     config.categories.add(cat.toString());
                 }
             } catch (ClassCastException e) {
-                throw new IllegalArgumentException("'categories' must be a list of strings");
+                throw new IllegalArgumentException("'categories' must be a list of strings", e);
             }
         }
 
@@ -75,7 +75,7 @@ public class ProjectConfig {
             try {
                 subMap = (Map<String, Object>) map.get("subprojects");
             } catch (ClassCastException e) {
-                throw new IllegalArgumentException("'subprojects' must be a section");
+                throw new IllegalArgumentException("Expected 'subprojects' to be a section but found something else");
             }
 
             for (String key: subMap.keySet()) {

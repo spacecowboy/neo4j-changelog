@@ -78,7 +78,7 @@ public class ProjectConfigTest {
 
     @Test
     public void gitNotASection() throws Exception {
-        exception.expectMessage("Missing [git] section");
+        exception.expectMessage("Expected 'git' to be a section but found something else");
 
         StringBuilder tml = new StringBuilder()
                 .append("git = 'bob'\n")
@@ -102,7 +102,7 @@ public class ProjectConfigTest {
 
     @Test
     public void gitHubNotASection() throws Exception {
-        exception.expectMessage("Missing [github] section");
+        exception.expectMessage("Expected 'github' to be a section but found something else");
 
         StringBuilder tml = new StringBuilder()
                 .append("github = 'bob'\n")
@@ -129,7 +129,7 @@ public class ProjectConfigTest {
 
     @Test
     public void testSubProjectsNotSection() throws Exception {
-        exception.expectMessage("'subprojects' must be a section");
+        exception.expectMessage("Expected 'subprojects' to be a section but found something else");
 
         StringBuilder tml = new StringBuilder()
                 .append("subprojects = 1\n")
