@@ -32,7 +32,6 @@ public class ChangeLog {
         this.categories.addAll(categories);
 
         this.tags.addAll(tags.stream().map(Util::getTagName).collect(Collectors.toList()));
-        this.tags.sort((t1, t2) -> -Util.SemanticCompare(t1, t2));
         if (nextHeader != null && !this.tags.contains(nextHeader)) {
             this.tags.add(0, nextHeader);
         }

@@ -75,17 +75,6 @@ public class GitHelper {
     }
 
     /**
-     * Returns the version tags which belongs with the specified version. If 3.0.5 is specified,
-     * then all 3.0.X tags are returned.
-     */
-    @Nonnull
-    public List<Ref> getVersionTags(@Nonnull String version) throws IOException, GitAPIException {
-        return getVersionTags().stream()
-                               .filter(ref -> Util.isSameMajorMinorVersion(Util.getTagName(ref), version))
-                               .collect(Collectors.toList());
-    }
-
-    /**
      * Returns the version tags which belongs between the specified versions (inclusive): Example: 2.3.0 - 3.0.9 could
      * return 2.3.0, 2.3.1, 2.3.2,...., 3.0.7, 3.0.8, 3.0.8
      */
@@ -284,7 +273,7 @@ public class GitHelper {
                                     @Nonnull List<Ref> versionTags,
                                     @Nonnull String fallback,
                                     @Nonnull Pattern pattern) {
-        versionTags.sort(Util.SemanticComparator(pattern));
+        versionTags.sort(Util.getGitRefSorter(this));
 
         for (Ref tag : versionTags) {
             if (isAncestorOf(commit, tag.getName())) {
