@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 public class ChangeLog {
 
-    private static final String VERSION_FMT = "\n### %s\n\n";
-    private static final String CATEGORY_FMT = "\n#### %s\n\n";
+    private static final String VERSION_FMT = "\n## %s\n\n";
+    private static final String CATEGORY_FMT = "\n### %s\n\n";
     private static final String CHANGE_FMT = "- %s\n";
     private final Map<String, Map<String, List<Change>>> versions = new HashMap<>();
     private final ArrayList<String> tags = new ArrayList<>();
