@@ -105,13 +105,13 @@ repo = "neo4j"
 #enhancement = "Enhancements"
 
 ## Sub projects should be defined under [subprojects.<NAME>]
-[subprojects.cyphershell]
+#[subprojects.cyphershell]
 ## Used as the category in the change log
-name = "Cypher Shell"
+#name = "Cypher Shell"
 
 ## Just like main git settings, a sub project requires git settings to
 ## go under a git-section
-[subprojects.cyphershell.git]
+#[subprojects.cyphershell.git]
 ## For sub projects, the first match group is expected to match a tag
 ## in the main project. A sensible organization is to prefix tags in
 ## your sub project as to not conflict with normal versioning:
@@ -120,24 +120,23 @@ name = "Cypher Shell"
 #tag_pattern = "(.+)"
 
 ## Local clone of remote repo (recommend to do `git fetch <UPSTREAM>` first)
-## Required
-dir = "~/path/to/cypher-shell"
+## Required for sub projects
+#dir = "~/path/to/cypher-shell"
 
 ## Git SHA/tag which will mark the start of the change log Not required
 ## but highly recommended.
 #from = ""
 
 ## Git SHA/tag/branch/name which will mark the end of the change log.
-## Required
-to = "upstream/master"
+#to = "HEAD"
 
 ## Just like main github settings, a subproject requires github
 ## settings to go under a github-section
-[subprojects.cyphershell.github]
+#[subprojects.cyphershell.github]
 ## Combined to form the url where pull requests are fetched from
 ## Required
-user = "neo4j"
-repo = "cypher-shell"
+#user = "neo4j"
+#repo = "cypher-shell"
 
 #[subprojects.cyphershell.github.labels]
 #version_prefix = ""
