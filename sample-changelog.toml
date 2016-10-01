@@ -11,10 +11,7 @@
 ##
 ## ----------------------------------------------------------------
 
-## Not used for main project (see sub projects below)
-# name = ""
-
-## Path to file where the changelog is written
+## Path to file where the change log is written
 #output = "CHANGELOG.md"
 
 ## Changes added after the last tag will be listed under this header
@@ -25,30 +22,31 @@
 ##
 ## Example: ["Kernel", "Cypher"]
 ## Example: ["Breaking Changes", "Enhancements", "Bug Fixes"]
-#categories = []
+#categories = ["Bug fixes", "Enhancements"]
 
 ## Settings related to git go in this section
-[git]
+#[git]
 ## Local clone of remote repo (recommend to do `git fetch <UPSTREAM>` first)
-## Required
-dir = "~/path/to/neo4j"
+#dir = "./"
 
-## Git SHA/tag which will mark the start of the change log Not required
-## but highly recommended. You can get a sensible value by doing:
+## Git SHA/tag which will mark the start of the change log. Not
+## required but highly recommended. You can get a sensible value by
+## doing:
 ##
 ##`git log branch1..branch2 --oneline | tail -n 1`
 ##
 ## That will give you the first commit of branch2, which means you can
 ## then simply specify "to=upstream/branch2" or something, and
 ## generate a change log for the entire branch2 history.
+##
+## Default value is is the project root commit.
 #from = ""
 
 ## Git SHA/tag/branch/name which will mark the end of the change log.
 ## If you don't have a specific SHA or version number in mind, you can
 ## specify something like origin/branch to consider everything up to
-## latest known change. (Remember to do `git fetch origin`) first.
-## Required
-to = "upstream/branch"
+## latest known change. (Remember to do `git fetch origin` first.)
+#to = "HEAD"
 
 ## Only consider tags with the following regex-pattern (java-style, so
 ## remember your backslashes). A [semantic
@@ -58,17 +56,10 @@ to = "upstream/branch"
 ##
 ## Example v-prefixed versions: v(.+)
 ## Example only want the 3.1 versions: (3\\.1\\..+)
-#tagpattern = "(.+)"
+#tag_pattern = "(.+)"
 
 ## Settings related to github go in this section
 [github]
-## A prefix given here is used to exclude PRs which list version(s),
-## and none of those versions have this prefix. For example, if a PR
-## is tagged with "2.3" and "3.0", and this config gives "3.1" as its
-## versionprefix, then that PR is not listed in the change log.  By
-## default (empty string) PR version tags are ignored.
-#versionprefix = ""
-
 ## It is highly recommended to specify a github token for talking to
 ## the Github API with. Otherwise you will be subject to heavy
 ## throttling, daily limits, etc. You can get generate one at
@@ -80,10 +71,38 @@ to = "upstream/branch"
 user = "neo4j"
 repo = "neo4j"
 
-## Only PRs with this GH-label will be included in the changelog. You
-## can specify multiple labels as well, example: "changelog,kernel" in
-## which case ALL labels must be included.
-#requiredlabels = ""
+## Settings related to github labels go in this section
+#[github.labels]
+## A prefix given here is used to exclude PRs which list version(s),
+## and none of those versions have this prefix. For example, if a PR
+## is tagged with "2.3" and "3.0", and this config gives "3.1" as its
+## versionprefix, then that PR is not listed in the change log.  By
+## default (empty string) PR version tags are ignored.
+#version_prefix = ""
+
+## Only PRs with this GH-label will be downloaded and considered for
+## inclusion in the change log. You can specify multiple labels as
+## well, example: "changelog,kernel" in which case ALL labels must be
+## included.
+#required = ""
+
+## Only PRs which have at least one GH-label in this list will be
+## included in the change log.
+#include = []
+
+## Only PRs which have no GH-labels in this list will be included in
+## the change log.
+#exclude = ["question", "duplicate", "invalid", "wontfix"]
+
+## Set this to true to completely ignore PRs with no label information
+## attached.
+#exclude_unlabeled = false
+
+## This section can be used to define custom mappings from GH-labels
+## to better categories in the change log.
+#[github.labels.category_map]
+#bug = "Bug fixes"
+#enhancement = "Enhancements"
 
 ## Sub projects should be defined under [subprojects.<NAME>]
 [subprojects.cyphershell]
@@ -98,7 +117,7 @@ name = "Cypher Shell"
 ## your sub project as to not conflict with normal versioning:
 ##
 ## Example: neo4j-(3\\.1\\..+)
-#tagpattern = "(.+)"
+#tag_pattern = "(.+)"
 
 ## Local clone of remote repo (recommend to do `git fetch <UPSTREAM>` first)
 ## Required
@@ -120,5 +139,9 @@ to = "upstream/master"
 user = "neo4j"
 repo = "cypher-shell"
 
-## Only PRs with this GH-label will be included in the changelog.
-#requiredlabels = ""
+#[subprojects.cyphershell.github.labels]
+#version_prefix = ""
+#required = ""
+#exclude_unlabeled = false
+#include = []
+#exclude = []
