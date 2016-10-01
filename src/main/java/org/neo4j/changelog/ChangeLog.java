@@ -33,8 +33,10 @@ public class ChangeLog {
 
         this.tags.addAll(tags.stream().map(Util::getTagName).collect(Collectors.toList()));
         if (nextHeader != null && !this.tags.contains(nextHeader)) {
-            this.tags.add(0, nextHeader);
+            this.tags.add(nextHeader);
         }
+        // Reverse the list of tags
+        Collections.reverse(this.tags);
     }
 
     public void addToChangeLog(@Nonnull Change change) {
