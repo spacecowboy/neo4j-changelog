@@ -14,9 +14,9 @@ public class GitConfig {
     public static final String FROM = "from";
     public static final String DIR = "dir";
     private static final List<String> VALID_KEYS = Arrays.asList(DIR, FROM, TO, TAG_PATTERN);
-    private String cloneDir = "";
+    private String cloneDir = "./";
     private String from = "";
-    private String to = "";
+    private String to = "HEAD";
     private Pattern tagPattern = Pattern.compile("");
 
     public static GitConfig from(@Nonnull Map<String, Object> map) {
@@ -24,14 +24,9 @@ public class GitConfig {
 
         GitConfig gitConfig = new GitConfig();
 
-        gitConfig.cloneDir = map.getOrDefault(DIR, "./").toString();
-        gitConfig.from = map.getOrDefault(FROM, "").toString();
-        gitConfig.to = map.getOrDefault(TO, "").toString();
-
-        if (gitConfig.to.isEmpty()) {
-            throw new IllegalArgumentException("Missing 'to' in [git] config");
-        }
-
+        gitConfig.cloneDir = map.getOrDefault(DIR, gitConfig.cloneDir).toString();
+        gitConfig.from = map.getOrDefault(FROM, gitConfig.from).toString();
+        gitConfig.to = map.getOrDefault(TO, gitConfig.to).toString();
         gitConfig.tagPattern = Pattern.compile(map.getOrDefault(TAG_PATTERN, DEFAULT_TAG_PATTERN).toString());
 
         return gitConfig;

@@ -17,11 +17,10 @@ public class GitConfigTest {
     @Test
     public void testMinimum() throws Exception {
         Map<String, Object> minSettings = new HashMap<>();
-        minSettings.put("to", "abc");
 
         GitConfig c = GitConfig.from(minSettings);
 
-        assertEquals("abc", c.getTo());
+        assertEquals("HEAD", c.getTo());
         assertEquals("", c.getFrom());
         assertEquals("./", c.getCloneDir());
         assertEquals(GitConfig.DEFAULT_TAG_PATTERN, c.getTagPattern().toString());
@@ -36,13 +35,6 @@ public class GitConfigTest {
         settings.put("bah", "bobo");
         settings.put("to", "abc");
 
-        GitConfig.from(settings);
-    }
-
-    @Test
-    public void testMissingTo() throws Exception {
-        exception.expectMessage("Missing 'to' in [git] config");
-        Map<String, Object> settings = new HashMap<>();
         GitConfig.from(settings);
     }
 }
