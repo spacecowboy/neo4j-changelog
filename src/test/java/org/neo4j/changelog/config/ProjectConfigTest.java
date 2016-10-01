@@ -68,8 +68,6 @@ public class ProjectConfigTest {
 
     @Test
     public void missingGitSection() throws Exception {
-        exception.expectMessage("Missing [git] section");
-
         StringBuilder tml = new StringBuilder()
                 .append("[github]\n")
                 .append("user = 'jonas'\n")
@@ -147,7 +145,7 @@ public class ProjectConfigTest {
 
     @Test
     public void testEmptySubProject() throws Exception {
-        exception.expectMessage("In [subprojects.woho]\nMissing [git] section");
+        exception.expectMessage("In [subprojects.woho]\nMissing [github] section");
 
         StringBuilder tml = new StringBuilder()
                 .append("[github]\n")

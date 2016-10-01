@@ -27,6 +27,16 @@ public class GitConfigTest {
     }
 
     @Test
+    public void testDefault() throws Exception {
+        GitConfig c = new GitConfig();
+
+        assertEquals("HEAD", c.getTo());
+        assertEquals("", c.getFrom());
+        assertEquals("./", c.getCloneDir());
+        assertEquals(GitConfig.DEFAULT_TAG_PATTERN, c.getTagPattern().toString());
+    }
+
+    @Test
     public void testUnknownKeyThrows() throws Exception {
         exception.expectMessage("Unknown config option 'bah' in [git] section");
 

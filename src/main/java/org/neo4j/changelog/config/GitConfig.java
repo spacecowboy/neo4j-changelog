@@ -17,7 +17,7 @@ public class GitConfig {
     private String cloneDir = "./";
     private String from = "";
     private String to = "HEAD";
-    private Pattern tagPattern = Pattern.compile("");
+    private Pattern tagPattern = Pattern.compile(DEFAULT_TAG_PATTERN);
 
     public static GitConfig from(@Nonnull Map<String, Object> map) {
         validateKeys(map);

@@ -24,7 +24,7 @@ public class ProjectConfig {
     private String name = "";
     private String outputPath = "";
     private String nextHeader = "";
-    private GitConfig gitConfig;
+    private GitConfig gitConfig = new GitConfig();
     private GithubConfig githubConfig;
 
     public ProjectConfig() {
@@ -48,18 +48,6 @@ public class ProjectConfig {
         config.outputPath = map.getOrDefault(OUTPUT, "CHANGELOG.md").toString();
         config.nextHeader = map.getOrDefault(NEXTHEADER, "Unreleased").toString();
 
-        Map<String, Object> gitSection;
-        try {
-            gitSection = (Map<String, Object>) map.get(GIT);
-        } catch (ClassCastException e) {
-            throw new IllegalArgumentException(String.format(EXPECTED_SECTION_MSG, GIT), e);
-        }
-        try {
-            config.gitConfig = GitConfig.from(gitSection);
-        } catch (NullPointerException e) {
-            throw new IllegalArgumentException(String.format(MISSING_SECTION_MSG, GIT));
-        }
-
         Map<String, Object> githubSection;
         try {
             githubSection = (Map<String, Object>) map.get(GITHUB);
@@ -70,6 +58,15 @@ public class ProjectConfig {
             config.githubConfig = GithubConfig.from(githubSection);
         } catch (NullPointerException e) {
             throw new IllegalArgumentException(String.format(MISSING_SECTION_MSG, GITHUB));
+        }
+        if (map.containsKey(GIT)) {
+            Map<String, Object> gitSection;
+            try {
+                gitSection = (Map<String, Object>) map.get(GIT);
+            } catch (ClassCastException e) {
+                throw new IllegalArgumentException(String.format(EXPECTED_SECTION_MSG, GIT), e);
+            }
+            config.gitConfig = GitConfig.from(gitSection);
         }
 
         if (map.containsKey(CATEGORIES)) {
