@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.OptionalInt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +38,7 @@ public class GitHubHelper {
         this.labels = labels;
 
         if (!labels.getVersionPrefix().isEmpty() && !Util.isSemanticVersion(labels.getVersionPrefix())) {
-            throw new IllegalArgumentException("versionprefix is not a semantic version: '"
+            throw new IllegalArgumentException("version_prefix is not a semantic version: '"
                     + labels.getVersionPrefix() + "'");
         }
     }

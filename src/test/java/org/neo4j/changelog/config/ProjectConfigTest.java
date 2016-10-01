@@ -63,7 +63,7 @@ public class ProjectConfigTest {
         assertEquals("Unreleased", c.getNextHeader());
         assertEquals("CHANGELOG.md", c.getOutputPath());
         assertEquals(0, c.getSubProjects().size());
-        assertEquals(Arrays.asList("Bug fixes", "Enchancements"), c.getCategories());
+        assertEquals(Arrays.asList("Bug fixes", "Enhancements"), c.getCategories());
     }
 
     @Test

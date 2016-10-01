@@ -29,7 +29,7 @@ public class ProjectConfig {
 
     public ProjectConfig() {
         // Default values
-        categories.addAll(Arrays.asList("Bug fixes", "Enchancements"));
+        categories.addAll(Arrays.asList("Bug fixes", "Enhancements"));
     }
 
     private static void validateKeys(Map<String, Object> map) {
