@@ -38,6 +38,7 @@ public class Main {
 
         System.out.println("Checking for tags...");
         List<Ref> versionTags = gitHelper.getVersionTagsForChangelog();
+        // Pre-sort the tags
         versionTags.sort(Util.getGitRefSorter(gitHelper));
 
         System.out.println("Version tags:");
@@ -49,11 +50,7 @@ public class Main {
         // And any possible sub projects
         categories.addAll(config.getSubProjects().stream().map(ProjectConfig::getName).collect(Collectors.toList()));
 
-        // Pre-sort the tags
-        versionTags.sort(Util.getGitRefSorter(gitHelper));
-
-        System.out.println("Categories to generate log with: " +
-                categories.stream().reduce("", (s, x) -> String.join(", ", s, x)));
+        System.out.println("Categories to generate log with: " + String.join(", ", categories));
         ChangeLog changeLog = new ChangeLog(versionTags, config.getNextHeader(), categories);
 
         // Add project pull requests to changelog
