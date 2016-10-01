@@ -73,7 +73,7 @@ public class GithubLabelsConfig {
                 config.categoryMap.clear();
                 Map catMap = (Map) map.get(CATEGORY_MAP);
                 for (Object key : catMap.keySet()) {
-                    config.categoryMap.put(key.toString(), catMap.get(key).toString());
+                    config.categoryMap.put(key.toString().toLowerCase(), catMap.get(key).toString());
                 }
             } catch (ClassCastException e) {
                 throw new IllegalArgumentException(String.format("'%s' must be map of strings to strings",
