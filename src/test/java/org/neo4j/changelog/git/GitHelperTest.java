@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -75,8 +74,8 @@ public class GitHelperTest {
         List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.99", config.getTagPattern()).stream()
                 .map(Util::getTagName)
                 .collect(Collectors.toList());
-        assertArrayEquals(new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"},
-                tags.toArray());
+        assertEquals(Arrays.asList("0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"),
+                tags);
     }
 
     @Test
@@ -90,8 +89,8 @@ public class GitHelperTest {
         List<String> tags = gitHelper.getVersionTags("8449d26", "2bf464ebf", config.getTagPattern()).stream()
                 .map(Util::getTagName)
                 .collect(Collectors.toList());
-        assertArrayEquals(new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"},
-                tags.toArray());
+        assertEquals(Arrays.asList("0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"),
+                tags);
     }
 
     @Test
@@ -99,9 +98,8 @@ public class GitHelperTest {
         List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.3", config.getTagPattern()).stream()
                 .map(Util::getTagName)
                 .collect(Collectors.toList());
-        assertArrayEquals(
-                new String[]{"0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"},
-                tags.toArray());
+        assertEquals(Arrays.asList("0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"),
+                tags);
     }
 
     @Test
@@ -109,9 +107,8 @@ public class GitHelperTest {
         List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.2", config.getTagPattern()).stream()
                 .map(Util::getTagName)
                 .collect(Collectors.toList());
-        assertArrayEquals(
-                new String[]{"0.0.0", "0.0.1", "0.0.2"},
-                tags.toArray());
+        assertEquals(Arrays.asList("0.0.0", "0.0.1", "0.0.2"),
+                tags);
     }
 
     @Test
