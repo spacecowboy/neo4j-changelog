@@ -3,8 +3,8 @@ package org.neo4j.changelog.github;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -42,9 +42,13 @@ public class PRIssue implements PullRequest {
         this.labels = labels;
     }
 
-    public PRIssue(GitHubService.Issue issue, GitHubService.PR pr) {
+    public PRIssue(@Nonnull GitHubService.Issue issue, @Nonnull GitHubService.PR pr,
+                   @Nonnull Map<String, String> categoryMap) {
         this(pr.number, pr.title, pr.body, pr.html_url, pr.merged_at, pr.head.sha, pr.base.sha,
-                issue.labels.stream().map(l -> l.name).collect(Collectors.toList()));
+                issue.labels.stream()
+                            .map(l -> l.name)
+                            .map(l -> categoryMap.getOrDefault(l, l))
+                            .collect(Collectors.toList()));
     }
 
     @Override

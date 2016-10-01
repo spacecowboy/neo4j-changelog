@@ -9,7 +9,11 @@ import java.util.regex.Pattern;
 public class GitConfig {
 
     public static final String DEFAULT_TAG_PATTERN = "(\\d+\\.\\d+.*)";
-    private static final List<String> VALID_KEYS = Arrays.asList("dir", "from", "to", "tagpattern");
+    public static final String TAG_PATTERN = "tag_pattern";
+    public static final String TO = "to";
+    public static final String FROM = "from";
+    public static final String DIR = "dir";
+    private static final List<String> VALID_KEYS = Arrays.asList(DIR, FROM, TO, TAG_PATTERN);
     private String cloneDir = "";
     private String from = "";
     private String to = "";
@@ -20,15 +24,15 @@ public class GitConfig {
 
         GitConfig gitConfig = new GitConfig();
 
-        gitConfig.cloneDir = map.getOrDefault("dir", "./").toString();
-        gitConfig.from = map.getOrDefault("from", "").toString();
-        gitConfig.to = map.getOrDefault("to", "").toString();
+        gitConfig.cloneDir = map.getOrDefault(DIR, "./").toString();
+        gitConfig.from = map.getOrDefault(FROM, "").toString();
+        gitConfig.to = map.getOrDefault(TO, "").toString();
 
         if (gitConfig.to.isEmpty()) {
             throw new IllegalArgumentException("Missing 'to' in [git] config");
         }
 
-        gitConfig.tagPattern = Pattern.compile(map.getOrDefault("tagpattern", DEFAULT_TAG_PATTERN).toString());
+        gitConfig.tagPattern = Pattern.compile(map.getOrDefault(TAG_PATTERN, DEFAULT_TAG_PATTERN).toString());
 
         return gitConfig;
     }

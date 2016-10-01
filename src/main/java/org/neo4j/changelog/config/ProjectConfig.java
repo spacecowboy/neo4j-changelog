@@ -7,8 +7,17 @@ import java.util.List;
 import java.util.Map;
 
 public class ProjectConfig {
+    public static final String NAME = "name";
+    public static final String OUTPUT = "output";
+    public static final String NEXTHEADER = "nextheader";
+    public static final String GIT = "git";
+    public static final String GITHUB = "github";
+    public static final String CATEGORIES = "categories";
+    public static final String SUBPROJECTS = "subprojects";
     private static final List<String> VALID_KEYS =
-            Arrays.asList("name", "output", "nextheader", "git", "github", "categories", "subprojects");
+            Arrays.asList(NAME, OUTPUT, NEXTHEADER, GIT, GITHUB, CATEGORIES, SUBPROJECTS);
+    private static final String MISSING_SECTION_MSG = "Missing [%s] section";
+    private static final String EXPECTED_SECTION_MSG = "Expected '%s' to be a section but found something else";
     private final List<ProjectConfig> subProjects = new ArrayList<>();
     private final List<String> categories = new ArrayList<>();
 
@@ -17,6 +26,11 @@ public class ProjectConfig {
     private String nextHeader = "";
     private GitConfig gitConfig;
     private GithubConfig githubConfig;
+
+    public ProjectConfig() {
+        // Default values
+        categories.addAll(Arrays.asList("Bug fixes", "Enchancements"));
+    }
 
     private static void validateKeys(Map<String, Object> map) {
         for (String key: map.keySet()) {
@@ -30,52 +44,54 @@ public class ProjectConfig {
         validateKeys(map);
         ProjectConfig config = new ProjectConfig();
 
-        config.name = map.getOrDefault("name", "").toString();
-        config.outputPath = map.getOrDefault("output", "CHANGELOG.md").toString();
-        config.nextHeader = map.getOrDefault("nextheader", "Unreleased").toString();
+        config.name = map.getOrDefault(NAME, "").toString();
+        config.outputPath = map.getOrDefault(OUTPUT, "CHANGELOG.md").toString();
+        config.nextHeader = map.getOrDefault(NEXTHEADER, "Unreleased").toString();
 
         Map<String, Object> gitSection;
         try {
-            gitSection = (Map<String, Object>) map.get("git");
+            gitSection = (Map<String, Object>) map.get(GIT);
         } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Expected 'git' to be a section but found something else", e);
+            throw new IllegalArgumentException(String.format(EXPECTED_SECTION_MSG, GIT), e);
         }
         try {
             config.gitConfig = GitConfig.from(gitSection);
         } catch (NullPointerException e) {
-            throw new IllegalArgumentException("Missing [git] section");
+            throw new IllegalArgumentException(String.format(MISSING_SECTION_MSG, GIT));
         }
 
         Map<String, Object> githubSection;
         try {
-            githubSection = (Map<String, Object>) map.get("github");
+            githubSection = (Map<String, Object>) map.get(GITHUB);
         } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Expected 'github' to be a section but found something else", e);
+            throw new IllegalArgumentException(String.format(EXPECTED_SECTION_MSG, GITHUB), e);
         }
         try {
             config.githubConfig = GithubConfig.from(githubSection);
         } catch (NullPointerException e) {
-            throw new IllegalArgumentException("Missing [github] section");
+            throw new IllegalArgumentException(String.format(MISSING_SECTION_MSG, GITHUB));
         }
 
-        if (map.containsKey("categories")) {
+        if (map.containsKey(CATEGORIES)) {
             try {
-                List list = (List) map.get("categories");
+                config.categories.clear();
+                List list = (List) map.get(CATEGORIES);
                 for (Object cat : list) {
                     config.categories.add(cat.toString());
                 }
             } catch (ClassCastException e) {
-                throw new IllegalArgumentException("'categories' must be a list of strings", e);
+                throw new IllegalArgumentException(String.format("'%s' must be a list of strings", CATEGORIES), e);
             }
         }
 
-        if (map.containsKey("subprojects")) {
+        if (map.containsKey(SUBPROJECTS)) {
             Map<String, Object> subMap;
 
             try {
-                subMap = (Map<String, Object>) map.get("subprojects");
+                subMap = (Map<String, Object>) map.get(SUBPROJECTS);
             } catch (ClassCastException e) {
-                throw new IllegalArgumentException("Expected 'subprojects' to be a section but found something else");
+                throw new IllegalArgumentException(
+                        String.format(EXPECTED_SECTION_MSG, SUBPROJECTS));
             }
 
             for (String key: subMap.keySet()) {
@@ -84,7 +100,7 @@ public class ProjectConfig {
                     subConfig.githubConfig.setToken(config.getGithubConfig().getToken());
                     config.subProjects.add(subConfig);
                 } catch (IllegalArgumentException e) {
-                    throw new IllegalArgumentException("In [subprojects." + key + "]\n" + e.getMessage());
+                    throw new IllegalArgumentException("In [" + SUBPROJECTS + "." + key + "]\n" + e.getMessage());
                 }
             }
         }

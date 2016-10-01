@@ -7,30 +7,41 @@ import java.util.Map;
 
 public class GithubConfig {
 
-    private static final List<Object> VALID_KEYS = Arrays.asList("user", "repo", "token", "requiredlabels", "versionprefix");
+    public static final String USER = "user";
+    public static final String REPO = "repo";
+    public static final String TOKEN = "token";
+    public static final String LABELS = "labels";
+    private static final List<Object> VALID_KEYS = Arrays.asList(USER, REPO, TOKEN, LABELS);
     private String user = "";
     private String repo = "";
     private String token = "";
-    private String requiredLabels = "";
-    private String versionPrefix = "";
+    private GithubLabelsConfig labels = new GithubLabelsConfig();
 
     public static GithubConfig from(@Nonnull Map<String, Object> map) {
         validateKeys(map);
         GithubConfig githubConfig = new GithubConfig();
 
-        githubConfig.user = (map.getOrDefault("user", "").toString());
+        githubConfig.user = (map.getOrDefault(USER, "").toString());
         if (githubConfig.user.isEmpty()) {
             throw new IllegalArgumentException("Missing 'user' in [github] config");
         }
 
-        githubConfig.repo = (map.getOrDefault("repo", "").toString());
+        githubConfig.repo = (map.getOrDefault(REPO, "").toString());
         if (githubConfig.repo.isEmpty()) {
             throw new IllegalArgumentException("Missing 'repo' in [github] config");
         }
 
-        githubConfig.token = (map.getOrDefault("token", "").toString());
-        githubConfig.requiredLabels = (map.getOrDefault("requiredlabels", "").toString());
-        githubConfig.versionPrefix = map.getOrDefault("versionprefix", "").toString();
+        githubConfig.token = (map.getOrDefault(TOKEN, "").toString());
+
+        if (map.containsKey(LABELS)) {
+            try {
+                Map labelMap = (Map<String, Object>) map.get(LABELS);
+                githubConfig.labels = GithubLabelsConfig.from(labelMap);
+            } catch (ClassCastException e) {
+                throw new IllegalArgumentException(
+                        String.format("Expected '%s' to be a section but found something else", LABELS), e);
+            }
+        }
 
         return githubConfig;
     }
@@ -58,17 +69,12 @@ public class GithubConfig {
         return token;
     }
 
-    @Nonnull
-    public String getRequiredLabels() {
-        return requiredLabels;
-    }
-
-    @Nonnull
-    public String getVersionPrefix() {
-        return versionPrefix;
-    }
-
     public void setToken(@Nonnull String token) {
         this.token = token;
+    }
+
+    @Nonnull
+    public GithubLabelsConfig getLabels() {
+        return labels;
     }
 }

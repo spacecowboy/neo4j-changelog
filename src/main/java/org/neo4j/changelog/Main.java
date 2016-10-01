@@ -8,6 +8,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.neo4j.changelog.config.ConfigReader;
 import org.neo4j.changelog.config.GithubConfig;
+import org.neo4j.changelog.config.GithubLabelsConfig;
 import org.neo4j.changelog.config.ProjectConfig;
 import org.neo4j.changelog.git.GitHelper;
 import org.neo4j.changelog.github.GitHubHelper;
@@ -143,9 +144,10 @@ public class Main {
         String user = config.getUser();
         String repo = config.getRepo();
         String token = config.getToken();
+        GithubLabelsConfig labels = config.getLabels();
         System.out.printf("Fetching pull requests from github.com/%s/%s\n", user,
                 repo);
-        GitHubHelper gitHubHelper = new GitHubHelper(token, user, repo, config.getRequiredLabels(), config.getVersionPrefix());
+        GitHubHelper gitHubHelper = new GitHubHelper(token, user, repo, labels);
 
         List<PullRequest> pullRequests = gitHubHelper.getChangeLogPullRequests();
 
