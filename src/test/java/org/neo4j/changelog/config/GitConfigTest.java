@@ -4,6 +4,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +24,9 @@ public class GitConfigTest {
         assertEquals("HEAD", c.getTo());
         assertEquals("", c.getFrom());
         assertEquals("./", c.getCloneDir());
+        assertEquals("commits.toml", c.getCommitsFile());
         assertEquals(GitConfig.DEFAULT_TAG_PATTERN, c.getTagPattern().toString());
+        assertEquals(Collections.EMPTY_LIST, c.getCommitsConfig().getCommits());
     }
 
     @Test
@@ -33,7 +36,9 @@ public class GitConfigTest {
         assertEquals("HEAD", c.getTo());
         assertEquals("", c.getFrom());
         assertEquals("./", c.getCloneDir());
+        assertEquals("commits.toml", c.getCommitsFile());
         assertEquals(GitConfig.DEFAULT_TAG_PATTERN, c.getTagPattern().toString());
+        assertEquals(Collections.EMPTY_LIST, c.getCommitsConfig().getCommits());
     }
 
     @Test

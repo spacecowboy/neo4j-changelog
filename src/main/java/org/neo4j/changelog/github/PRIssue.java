@@ -1,9 +1,10 @@
 package org.neo4j.changelog.github;
 
 
+import org.neo4j.changelog.Util;
+
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -108,17 +109,14 @@ public class PRIssue implements PullRequest {
             if (msgMatch.find()) {
                 String msg = msgMatch.group(1);
                 if (!msg.trim().isEmpty()) {
-                    // In case of multiple lines
-                    String[] lines = msg.trim().split("\n");
-                    changeText = addLink(lines[0].trim());
                     if (includeAuthor) {
-                        changeText = addAuthor(changeText);
+                        changeText = Util.formatChangeText(msg,
+                                String.format("[\\#%d](%s)", number, html_url),
+                                String.format("([%s](%s))", username, userlink));
+                    } else {
+                        changeText = Util.formatChangeText(msg,
+                                String.format("[\\#%d](%s)", number, html_url));
                     }
-
-                    // Rest of lines (don't trim them, in case they are indented)
-                    Arrays.stream(lines)
-                          .skip(1)
-                          .forEach(line -> changeText = String.join("\n", changeText, line));
                 }
             }
 

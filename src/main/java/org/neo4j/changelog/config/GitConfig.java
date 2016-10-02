@@ -13,11 +13,14 @@ public class GitConfig {
     public static final String TO = "to";
     public static final String FROM = "from";
     public static final String DIR = "dir";
-    private static final List<String> VALID_KEYS = Arrays.asList(DIR, FROM, TO, TAG_PATTERN);
+    public static final String COMMITS_FILE = "commits_file";
+    private static final List<String> VALID_KEYS = Arrays.asList(DIR, FROM, TO, COMMITS_FILE, TAG_PATTERN);
     private String cloneDir = "./";
     private String from = "";
     private String to = "HEAD";
     private Pattern tagPattern = Pattern.compile(DEFAULT_TAG_PATTERN);
+    private String commitsFile = "commits.toml";
+    private GitCommitsConfig commitsConfig = new GitCommitsConfig();
 
     public static GitConfig from(@Nonnull Map<String, Object> map) {
         validateKeys(map);
@@ -27,6 +30,7 @@ public class GitConfig {
         gitConfig.cloneDir = map.getOrDefault(DIR, gitConfig.cloneDir).toString();
         gitConfig.from = map.getOrDefault(FROM, gitConfig.from).toString();
         gitConfig.to = map.getOrDefault(TO, gitConfig.to).toString();
+        gitConfig.commitsFile = map.getOrDefault(COMMITS_FILE, gitConfig.commitsFile).toString();
         gitConfig.tagPattern = Pattern.compile(map.getOrDefault(TAG_PATTERN, DEFAULT_TAG_PATTERN).toString());
 
         return gitConfig;
@@ -58,5 +62,19 @@ public class GitConfig {
     @Nonnull
     public Pattern getTagPattern() {
         return tagPattern;
+    }
+
+    @Nonnull
+    public String getCommitsFile() {
+        return commitsFile;
+    }
+
+    public void setCommitsConfig(@Nonnull GitCommitsConfig commitsConfig) {
+        this.commitsConfig = commitsConfig;
+    }
+
+    @Nonnull
+    public GitCommitsConfig getCommitsConfig() {
+        return commitsConfig;
     }
 }

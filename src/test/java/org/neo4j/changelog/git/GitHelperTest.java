@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.neo4j.changelog.Util;
 import org.neo4j.changelog.config.GitConfig;
+import org.neo4j.changelog.config.ProjectConfig;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -32,22 +33,25 @@ public class GitHelperTest {
     public static final String TEST_C = "a18dbb5";
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
-    private GitConfig config;
+    private ProjectConfig config;
+    private GitConfig gitConfig;
     private GitHelper gitHelper;
 
     @Before
     public void setup() throws IOException {
-        config = mock(GitConfig.class);
-        doReturn("").when(config).getFrom();
-        doReturn(TEST_C).when(config).getTo();
-        doReturn(Pattern.compile(GitConfig.DEFAULT_TAG_PATTERN)).when(config).getTagPattern();
-        doReturn("./").when(config).getCloneDir();
+        config = mock(ProjectConfig.class);
+        gitConfig = mock(GitConfig.class);
+        doReturn(gitConfig).when(config).getGitConfig();
+        doReturn("").when(gitConfig).getFrom();
+        doReturn(TEST_C).when(gitConfig).getTo();
+        doReturn(Pattern.compile(GitConfig.DEFAULT_TAG_PATTERN)).when(gitConfig).getTagPattern();
+        doReturn("./").when(gitConfig).getCloneDir();
         gitHelper = new GitHelper(config);
     }
 
     @Test
     public void testGetTagShouldFailOutsideRepo() throws Exception {
-        doReturn(tempFolder.newFolder().getAbsolutePath()).when(config).getCloneDir();
+        doReturn(tempFolder.newFolder().getAbsolutePath()).when(gitConfig).getCloneDir();
         try {
             new GitHelper(config).getVersionTags();
             fail("Expected failure");
@@ -69,11 +73,11 @@ public class GitHelperTest {
     @Ignore("Need to decide if I want version limiting here or not")
     @Test
     public void testGetVersionTagsWithFantasyVersion() throws Exception {
-        doReturn(Pattern.compile("(0\\..*)")).when(config).getTagPattern();
+        doReturn(Pattern.compile("(0\\..*)")).when(gitConfig).getTagPattern();
         GitHelper gitHelper = new GitHelper(config);
-        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.99", config.getTagPattern()).stream()
-                .map(Util::getTagName)
-                .collect(Collectors.toList());
+        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.99", gitConfig.getTagPattern()).stream()
+                                     .map(Util::getTagName)
+                                     .collect(Collectors.toList());
         assertEquals(Arrays.asList("0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"),
                 tags);
     }
@@ -86,27 +90,27 @@ public class GitHelperTest {
 
     @Test
     public void testGetVersionTagsWithRefs() throws Exception {
-        List<String> tags = gitHelper.getVersionTags("8449d26", "2bf464ebf", config.getTagPattern()).stream()
-                .map(Util::getTagName)
-                .collect(Collectors.toList());
+        List<String> tags = gitHelper.getVersionTags("8449d26", "2bf464ebf", gitConfig.getTagPattern()).stream()
+                                     .map(Util::getTagName)
+                                     .collect(Collectors.toList());
         assertEquals(Arrays.asList("0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"),
                 tags);
     }
 
     @Test
     public void testGetVersionTags() throws Exception {
-        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.3", config.getTagPattern()).stream()
-                .map(Util::getTagName)
-                .collect(Collectors.toList());
+        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.3", gitConfig.getTagPattern()).stream()
+                                     .map(Util::getTagName)
+                                     .collect(Collectors.toList());
         assertEquals(Arrays.asList("0.0.0", "0.0.1", "0.0.2", "0.0.3", "v0.0.3"),
                 tags);
     }
 
     @Test
     public void testGetVersionTagsSubset() throws Exception {
-        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.2", config.getTagPattern()).stream()
-                .map(Util::getTagName)
-                .collect(Collectors.toList());
+        List<String> tags = gitHelper.getVersionTags("0.0.0", "0.0.2", gitConfig.getTagPattern()).stream()
+                                     .map(Util::getTagName)
+                                     .collect(Collectors.toList());
         assertEquals(Arrays.asList("0.0.0", "0.0.1", "0.0.2"),
                 tags);
     }

@@ -36,8 +36,8 @@ public class GithubLabelsConfig {
         validateKeys(map);
         GithubLabelsConfig config = new GithubLabelsConfig();
 
-        config.required = (map.getOrDefault(REQUIRED, "").toString());
-        config.versionPrefix = map.getOrDefault(VERSION_PREFIX, "").toString();
+        config.required = (map.getOrDefault(REQUIRED, config.required).toString());
+        config.versionPrefix = map.getOrDefault(VERSION_PREFIX, config.versionPrefix).toString();
         try {
             config.excludeUnlabeled = (Boolean) map.getOrDefault(EXCLUDE_UNLABELED, config.excludeUnlabeled);
         } catch (ClassCastException e) {

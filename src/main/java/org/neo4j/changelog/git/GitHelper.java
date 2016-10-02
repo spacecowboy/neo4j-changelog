@@ -11,14 +11,19 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.neo4j.changelog.Change;
 import org.neo4j.changelog.Util;
+import org.neo4j.changelog.config.GitCommitConfig;
 import org.neo4j.changelog.config.GitConfig;
+import org.neo4j.changelog.config.ProjectConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -28,15 +33,18 @@ import java.util.stream.Collectors;
  * Miscellaneous utility functions related to Git specific things.
  */
 public class GitHelper {
+    private static final String GITHUB_COMMIT_LINK = "https://github.com/%s/%s/commit/%s";
     static Pattern VERSION_TAG_PATTERN = Pattern.compile("^v?[\\d\\.]+");
     private final Git git;
     private final Repository repo;
     private final GitConfig config;
     private final String fromRef;
     private final String toRef;
+    private final ProjectConfig globalConfig;
 
-    public GitHelper(@Nonnull GitConfig config) throws IOException {
-        this.config = config;
+    public GitHelper(@Nonnull ProjectConfig globalConfig) throws IOException {
+        this.globalConfig = globalConfig;
+        this.config = globalConfig.getGitConfig();
         this.git = getGit(Paths.get(config.getCloneDir()));
         this.repo = git.getRepository();
 
@@ -261,6 +269,15 @@ public class GitHelper {
         return null;*/
     }
 
+    @Nullable
+    public RevCommit getRevCommitFromString(@Nonnull String sha) throws IOException {
+        ObjectId commit = getCommitFromString(sha);
+        if (commit == null) {
+            return null;
+        }
+        return new RevWalk(repo).parseCommit(commit);
+    }
+
     @Nonnull
     public String getFirstVersionOf(@Nonnull String commit,
                                     @Nonnull List<Ref> versionTags,
@@ -297,5 +314,75 @@ public class GitHelper {
 
     public boolean isAncestorOfFromRef(@Nonnull String commit) {
         return isAncestorOf(commit, fromRef);
+    }
+
+    public Change convertToChange(@Nonnull GitCommitConfig commit,
+                                  @Nonnull List<Ref> versionTags,
+                                  @Nonnull String nextHeader) {
+        try {
+            final RevCommit revCommit = getRevCommitFromString(commit.getSha());
+            if (revCommit == null) {
+                throw new NullPointerException("Could not find a commit for: " + commit.getSha());
+            }
+            final String firstVersion = getFirstVersionOf(commit.getSha(), versionTags, nextHeader);
+            final String text;
+            if (commit.getText().isEmpty()) {
+                // First line of commit message
+                text = revCommit.getShortMessage();
+            } else {
+                text = commit.getText();
+            }
+
+            List<String> additions = new ArrayList<>();
+
+            if (globalConfig.getGithubConfig().hasUserAndRepo()) {
+                // Can format links to commits
+                additions.add(String.format("[%s](%s)", revCommit.abbreviate(7).name(),
+                        formatCommitLink(globalConfig.getGithubConfig().getUser(),
+                                globalConfig.getGithubConfig().getRepo(),
+                                revCommit.getId().name())));
+            } else {
+                // Can't make links to commits
+                additions.add(revCommit.abbreviate(7).name());
+            }
+
+            if (config.getCommitsConfig().getIncludeAuthor()) {
+                additions.add(String.format("(%s <%s>)",
+                        revCommit.getAuthorIdent().getName(),
+                        revCommit.getAuthorIdent().getEmailAddress()));
+            }
+
+            final String changeText = Util.formatChangeText(text, additions);
+
+            return new Change() {
+                @Override
+                public int getSortingNumber() {
+                    return revCommit.getCommitTime();
+                }
+
+                @Nonnull
+                @Override
+                public List<String> getLabels() {
+                    return Collections.singletonList(commit.getCategory());
+                }
+
+                @Nonnull
+                @Override
+                public String getVersion() {
+                    return firstVersion;
+                }
+
+                @Override
+                public String toString() {
+                    return changeText;
+                }
+            };
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String formatCommitLink(@Nonnull String user, @Nonnull String repo, @Nonnull String sha) {
+        return String.format(GITHUB_COMMIT_LINK, user, repo, sha);
     }
 }

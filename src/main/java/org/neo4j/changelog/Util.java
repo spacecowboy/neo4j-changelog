@@ -5,12 +5,43 @@ import org.neo4j.changelog.git.GitHelper;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Some utilities
  */
 public class Util {
+
+@Nonnull
+    public static String formatChangeText(@Nonnull String msg, @Nonnull List<String> additions) {
+        return formatChangeText(msg, additions.toArray(new String[additions.size()]));
+    }
+
+    @Nonnull
+    public static String formatChangeText(@Nonnull String msg, @Nonnull String... firstLineAdditions) {
+        // In case of multiple lines
+        String[] lines = msg.trim().split("\n");
+
+        String firstLine = lines[0];
+        // Indent rest of the lines
+        String rest = Arrays.stream(lines).skip(1).reduce("", (r, l) -> {
+            if (r.isEmpty()) {
+                return "    " + l;
+            }
+            return String.join("\n    ", r, l);
+        });
+
+        String changeText = firstLine;
+
+        for (String addition: firstLineAdditions) {
+            changeText = String.join(" ", changeText.trim(), addition);
+        }
+
+        // Join first line and rest with paragraph space
+        return String.join("\n\n", changeText, rest).trim();
+    }
 
     @Nonnull
     public static Comparator<Ref> getGitRefSorter(GitHelper gitHelper) {

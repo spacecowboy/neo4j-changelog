@@ -90,4 +90,8 @@ public class GithubConfig {
     public boolean getIncludeAuthor() {
         return includeAuthor;
     }
+
+    public boolean hasUserAndRepo() {
+        return !user.isEmpty() && !repo.isEmpty();
+    }
 }

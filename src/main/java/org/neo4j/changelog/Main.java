@@ -15,6 +15,7 @@ import org.neo4j.changelog.github.GitHubHelper;
 import org.neo4j.changelog.github.PullRequest;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class Main {
     }
 
     private void generateChangelog() throws IOException, GitAPIException {
-        GitHelper gitHelper = new GitHelper(config.getGitConfig());
+        GitHelper gitHelper = new GitHelper(config);
 
         System.out.println("Checking for tags...");
         List<Ref> versionTags = gitHelper.getVersionTagsForChangelog();
@@ -52,6 +53,26 @@ public class Main {
 
         System.out.println("Categories to generate log with: " + String.join(", ", categories));
         ChangeLog changeLog = new ChangeLog(versionTags, config.getNextHeader(), categories);
+
+        // Add specified commits to changelog
+        System.out.println("Adding specified commits to changelog");
+        config.getGitConfig().getCommitsConfig().getCommits().stream()
+              .filter(c -> gitHelper.isAncestorOfToRef(c.getSha()) &&
+                      !gitHelper.isAncestorOfFromRef(c.getSha()))
+              .filter(c -> {
+                  if (c.getVersionFilter().isEmpty() ||
+                          config.getGitConfig().getCommitsConfig().getVersionPrefix().isEmpty()) {
+                      return true;
+                  }
+                  for (String version : c.getVersionFilter()) {
+                      if (config.getGitConfig().getCommitsConfig().getVersionPrefix().startsWith(version)) {
+                          return true;
+                      }
+                  }
+                  return false;
+              })
+              .map(c -> gitHelper.convertToChange(c, versionTags, config.getNextHeader()))
+              .forEach(changeLog::addToChangeLog);
 
         // Add project pull requests to changelog
         List<PullRequest> pullRequests = getPullRequests(config.getGithubConfig());
@@ -74,7 +95,7 @@ public class Main {
     private void addSubprojectChanges(List<Ref> orgVersionTags, ChangeLog changeLog) throws IOException, GitAPIException {
         for (ProjectConfig subProjectConfig: config.getSubProjects()) {
             System.out.println("Subproject: " + subProjectConfig.getName());
-            GitHelper gitHelper = new GitHelper(subProjectConfig.getGitConfig());
+            GitHelper gitHelper = new GitHelper(subProjectConfig);
 
             System.out.println("Checking for tags...");
             List<Ref> subTags = gitHelper.getVersionTagsForChangelog();
@@ -94,6 +115,7 @@ public class Main {
         }
     }
 
+    @Nullable
     private Change subChange(PullRequest pr, ProjectConfig subProjectConfig, GitHelper gitHelper,
                              List<Ref> subTags, List<Ref> orgVersionTags) {
         final Pattern pattern = subProjectConfig.getGitConfig().getTagPattern();

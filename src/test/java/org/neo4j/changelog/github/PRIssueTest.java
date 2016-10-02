@@ -150,20 +150,38 @@ public class PRIssueTest {
     }
 
     @Test
-    public void bahtest() throws Exception {
+    public void indentsMultiLineParagraphsTest() throws Exception {
         String clFirstLine = "Created new github.labels section";
-        String clRest = "   - Moved version_prefix and required to new section\n" +
-                "   - exclude: a list of labels which define forbidden labels\n" +
-                "   - include: a list of labels which denote labels to use for changelog inclusion\n" +
-                "   - exclude_unlabeled: a boolean designating if unlabeled PRs can show up in the change log\n" +
-                "   - github.labels.category_map: a section where you can define mappings from github labels to change log categories";
+        String clRest = "- Moved version_prefix and required to new section\n" +
+                "- exclude: a list of labels which define forbidden labels\n" +
+                "- include: a list of labels which denote labels to use for changelog inclusion\n" +
+                "- exclude_unlabeled: a boolean designating if unlabeled PRs can show up in the change log\n" +
+                "- github.labels.category_map: a section where you can define mappings from github labels to change log categories";
+        String clRestIndented = "    - Moved version_prefix and required to new section\n" +
+                "    - exclude: a list of labels which define forbidden labels\n" +
+                "    - include: a list of labels which denote labels to use for changelog inclusion\n" +
+                "    - exclude_unlabeled: a boolean designating if unlabeled PRs can show up in the change log\n" +
+                "    - github.labels.category_map: a section where you can define mappings from github labels to change log categories";
         String clText = clFirstLine + "\n" + clRest;
         PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
                 "balb lba\n" +
                 "changelog: " + clText);
 
         assertTrue(pr.getLabelFilter().isEmpty());
-        assertEquals(clFirstLine + " [\\#1](http://test.com/link)\n" + clRest, pr.getChangeText());
+        assertEquals(clFirstLine + " [\\#1](http://test.com/link)\n\n" + clRestIndented, pr.getChangeText());
+    }
+
+    @Test
+    public void indentsTwoLine() throws Exception {
+        String clFirstLine = "Created new github.labels section";
+        String clSecondLine = "- Moved version_prefix and required to new section";
+        String clText = clFirstLine + "\n" + clSecondLine;
+        PRIssue pr = getPrIssue(1, "title", "Blab la\n" +
+                "balb lba\n" +
+                "changelog: " + clText);
+
+        assertTrue(pr.getLabelFilter().isEmpty());
+        assertEquals(clFirstLine + " [\\#1](http://test.com/link)\n\n    " + clSecondLine, pr.getChangeText());
     }
 
     @Test
