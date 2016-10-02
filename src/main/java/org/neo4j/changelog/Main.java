@@ -58,7 +58,6 @@ public class Main {
         // Add specified commits to changelog
         List<GitCommitConfig> commits = config.getGitConfig().getCommitsConfig().getCommits();
 
-
         if (commits.isEmpty()) {
             System.out.println("Skipping git commits since none were specified");
         } else {
@@ -113,6 +112,34 @@ public class Main {
             System.out.println("Sub tags:");
             subTags.forEach(t -> System.out.println(Util.getTagName(t)));
 
+            // GIT
+            List<GitCommitConfig> commits = subProjectConfig.getGitConfig().getCommitsConfig().getCommits();
+
+            if (commits.isEmpty()) {
+                System.out.println("Skipping git commits since none were specified");
+            } else {
+                System.out.println("Adding specified commits to changelog");
+                commits.stream()
+                       .filter(c -> gitHelper.isAncestorOfToRef(c.getSha()) &&
+                               !gitHelper.isAncestorOfFromRef(c.getSha()))
+                       .filter(c -> {
+                           if (c.getVersionFilter().isEmpty() ||
+                                   subProjectConfig.getGitConfig().getCommitsConfig().getVersionPrefix().isEmpty()) {
+                               return true;
+                           }
+                           for (String version : c.getVersionFilter()) {
+                               if (subProjectConfig.getGitConfig().getCommitsConfig().getVersionPrefix().startsWith(version)) {
+                                   return true;
+                               }
+                           }
+                           return false;
+                       })
+                       .map(c -> subChange(c, subProjectConfig, gitHelper, subTags, orgVersionTags))
+                       .filter(c -> c != null)
+                       .forEach(changeLog::addToChangeLog);
+            }
+
+            // GITHUB
             List<PullRequest> pullRequests = getPullRequests(subProjectConfig.getGithubConfig());
 
             if (!pullRequests.isEmpty()) {
@@ -125,6 +152,31 @@ public class Main {
                             .forEach(changeLog::addToChangeLog);
             }
         }
+    }
+
+    @Nullable
+    private Change subChange(GitCommitConfig commitConfig, ProjectConfig subProjectConfig, GitHelper gitHelper,
+                             List<Ref> subTags, List<Ref> orgVersionTags) {
+        final Pattern pattern = subProjectConfig.getGitConfig().getTagPattern();
+        final String version = gitHelper.getFirstVersionOf(commitConfig.getSha(), subTags, IGNORE, pattern);
+        if (version.equals(IGNORE) || !pattern.asPredicate().test(version)) {
+            return null;
+        }
+
+        // Get mother pattern
+        Matcher m = pattern.matcher(version);
+        if (!m.matches()) {
+            System.out.println("Did not match pattern: " + version);
+            return null;
+        }
+        final String motherVersion = m.group(1);
+
+        if (!orgVersionTags.stream().filter(t -> motherVersion.equals(Util.getTagName(t))).findAny().isPresent()) {
+            // Tag does not exist in mother project
+            return null;
+        }
+
+        return gitHelper.convertToSubChange(commitConfig, subProjectConfig.getName(), motherVersion);
     }
 
     @Nullable

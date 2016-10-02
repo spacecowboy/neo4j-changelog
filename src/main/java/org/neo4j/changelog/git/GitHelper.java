@@ -316,6 +316,75 @@ public class GitHelper {
         return isAncestorOf(commit, fromRef);
     }
 
+    public Change convertToSubChange(@Nonnull GitCommitConfig commit,
+                                     @Nonnull String category,
+                                     @Nonnull String motherVersion) {
+        try {
+            final RevCommit revCommit = getRevCommitFromString(commit.getSha());
+            if (revCommit == null) {
+                throw new NullPointerException("Could not find a commit for: " + commit.getSha());
+            }
+            final String changeText = getChangeText(commit.getText(), revCommit);
+
+            return new Change() {
+                @Override
+                public int getSortingNumber() {
+                    return revCommit.getCommitTime();
+                }
+
+                @Nonnull
+                @Override
+                public List<String> getLabels() {
+                    return Collections.singletonList(category);
+                }
+
+                @Nonnull
+                @Override
+                public String getVersion() {
+                    return motherVersion;
+                }
+
+                @Override
+                public String toString() {
+                    return changeText;
+                }
+            };
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public String getChangeText(@Nonnull String possibleOverride, @Nonnull RevCommit revCommit) {
+        final String text;
+        if (possibleOverride.isEmpty()) {
+            // First line of commit message
+            text = revCommit.getShortMessage();
+        } else {
+            text = possibleOverride;
+        }
+
+        List<String> additions = new ArrayList<>();
+
+        if (globalConfig.getGithubConfig().hasUserAndRepo()) {
+            // Can format links to commits
+            additions.add(String.format("[%s](%s)", revCommit.abbreviate(7).name(),
+                    formatCommitLink(globalConfig.getGithubConfig().getUser(),
+                            globalConfig.getGithubConfig().getRepo(),
+                            revCommit.getId().name())));
+        } else {
+            // Can't make links to commits
+            additions.add(revCommit.abbreviate(7).name());
+        }
+
+        if (config.getCommitsConfig().getIncludeAuthor()) {
+            additions.add(String.format("(%s <%s>)",
+                    revCommit.getAuthorIdent().getName(),
+                    revCommit.getAuthorIdent().getEmailAddress()));
+        }
+
+        return Util.formatChangeText(text, additions);
+    }
+
     public Change convertToChange(@Nonnull GitCommitConfig commit,
                                   @Nonnull List<Ref> versionTags,
                                   @Nonnull String nextHeader) {
@@ -325,34 +394,7 @@ public class GitHelper {
                 throw new NullPointerException("Could not find a commit for: " + commit.getSha());
             }
             final String firstVersion = getFirstVersionOf(commit.getSha(), versionTags, nextHeader);
-            final String text;
-            if (commit.getText().isEmpty()) {
-                // First line of commit message
-                text = revCommit.getShortMessage();
-            } else {
-                text = commit.getText();
-            }
-
-            List<String> additions = new ArrayList<>();
-
-            if (globalConfig.getGithubConfig().hasUserAndRepo()) {
-                // Can format links to commits
-                additions.add(String.format("[%s](%s)", revCommit.abbreviate(7).name(),
-                        formatCommitLink(globalConfig.getGithubConfig().getUser(),
-                                globalConfig.getGithubConfig().getRepo(),
-                                revCommit.getId().name())));
-            } else {
-                // Can't make links to commits
-                additions.add(revCommit.abbreviate(7).name());
-            }
-
-            if (config.getCommitsConfig().getIncludeAuthor()) {
-                additions.add(String.format("(%s <%s>)",
-                        revCommit.getAuthorIdent().getName(),
-                        revCommit.getAuthorIdent().getEmailAddress()));
-            }
-
-            final String changeText = Util.formatChangeText(text, additions);
+            final String changeText = getChangeText(commit.getText(), revCommit);
 
             return new Change() {
                 @Override
