@@ -1,0 +1,52 @@
+## ----------------------------------------------------------------
+## sample-commits
+##
+## All settings are listed. Non-required options are commented out
+## with their default value. Required options are not commented out
+## and have placeholder values.
+##
+## The file is in TOML-format. See the spec at
+## https://github.com/toml-lang/toml
+## if you have questions about its syntax.
+##
+## ----------------------------------------------------------------
+
+## Set this to true if you want commit authors to be listed in the
+## change log.
+#include_author = false
+
+## A prefix given here is used to exclude commits which list
+## version(s), and none of those versions have this prefix. For
+## example, if a commit lists "2.3" and "3.0" as its versions, and
+## this config gives "3.1" as its version prefix, then that commit is
+## not listed in the change log.  By default (empty string) versions
+## are ignored.
+#version_prefix = ""
+
+## Commits are listed in a list called `commits`. This is a shorthand
+## syntax to add to that list.
+#[[commits]]
+
+## Commit SHA. Can be full or abbreviated.
+## Required.
+sha = "abc1234"
+
+## Category to sort change under
+#category = ""
+
+## List of strings which denote which version to include the change
+## in. See also `version_prefix`.
+#version_filter = []
+
+## Text to put in the change log. By default (empty string) the first
+## line of the commit message is used. You can specify multi-line text
+## by using triple quotes. For example:
+##
+## text = """
+## This is a multi-line message
+##
+## * with a list which
+## * will be rendered as
+## * a sub list of the change
+## """
+#text = ""

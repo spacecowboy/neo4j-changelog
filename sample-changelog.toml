@@ -58,29 +58,32 @@
 ## Example only want the 3.1 versions: (3\\.1\\..+)
 #tag_pattern = "(.+)"
 
+## You can specify commits to be included in the change log in this
+## file. Please see `sample-commits.toml` for syntax.
+#commits_file = ""
+
 ## Settings related to github go in this section
-[github]
+#[github]
 ## It is highly recommended to specify a github token for talking to
 ## the Github API with. Otherwise you will be subject to heavy
 ## throttling, daily limits, etc. You can get generate one at
 ## https://github.com/settings/tokens.
 #token = ""
 
-## Set this to true if you with PR authors to be listed in the change
-## log along with the PR link.
+## Set this to true if you want PR authors to be listed in the change
+## log.
 #include_author = false
 
 ## Combined to form the url where pull requests are fetched from
-## Required
-user = "neo4j"
-repo = "neo4j"
+#user = ""
+#repo = ""
 
 ## Settings related to github labels go in this section
 #[github.labels]
 ## A prefix given here is used to exclude PRs which list version(s),
 ## and none of those versions have this prefix. For example, if a PR
 ## is tagged with "2.3" and "3.0", and this config gives "3.1" as its
-## versionprefix, then that PR is not listed in the change log.  By
+## version prefix, then that PR is not listed in the change log.  By
 ## default (empty string) PR version tags are ignored.
 #version_prefix = ""
 
@@ -134,13 +137,16 @@ repo = "neo4j"
 ## Git SHA/tag/branch/name which will mark the end of the change log.
 #to = "HEAD"
 
+## File specifying possible commits to include in log. See
+## `sample-commits.toml`.
+#commits_file = ""
+
 ## Just like main github settings, a subproject requires github
 ## settings to go under a github-section
 #[subprojects.cyphershell.github]
 ## Combined to form the url where pull requests are fetched from
-## Required
-#user = "neo4j"
-#repo = "cypher-shell"
+#user = ""
+#repo = ""
 
 #[subprojects.cyphershell.github.labels]
 #version_prefix = ""
