@@ -19,7 +19,7 @@ public class GitConfig {
     private String from = "";
     private String to = "HEAD";
     private Pattern tagPattern = Pattern.compile(DEFAULT_TAG_PATTERN);
-    private String commitsFile = "commits.toml";
+    private String commitsFile = "";
     private GitCommitsConfig commitsConfig = new GitCommitsConfig();
 
     public static GitConfig from(@Nonnull Map<String, Object> map) {

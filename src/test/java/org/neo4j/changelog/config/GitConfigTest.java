@@ -24,7 +24,7 @@ public class GitConfigTest {
         assertEquals("HEAD", c.getTo());
         assertEquals("", c.getFrom());
         assertEquals("./", c.getCloneDir());
-        assertEquals("commits.toml", c.getCommitsFile());
+        assertEquals("", c.getCommitsFile());
         assertEquals(GitConfig.DEFAULT_TAG_PATTERN, c.getTagPattern().toString());
         assertEquals(Collections.EMPTY_LIST, c.getCommitsConfig().getCommits());
     }
@@ -36,7 +36,7 @@ public class GitConfigTest {
         assertEquals("HEAD", c.getTo());
         assertEquals("", c.getFrom());
         assertEquals("./", c.getCloneDir());
-        assertEquals("commits.toml", c.getCommitsFile());
+        assertEquals("", c.getCommitsFile());
         assertEquals(GitConfig.DEFAULT_TAG_PATTERN, c.getTagPattern().toString());
         assertEquals(Collections.EMPTY_LIST, c.getCommitsConfig().getCommits());
     }
