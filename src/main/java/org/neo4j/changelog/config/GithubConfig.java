@@ -19,20 +19,15 @@ public class GithubConfig {
     private boolean includeAuthor = false;
     private GithubLabelsConfig labels = new GithubLabelsConfig();
 
+    public GithubConfig() {
+    }
+
     public static GithubConfig from(@Nonnull Map<String, Object> map) {
         validateKeys(map);
         GithubConfig githubConfig = new GithubConfig();
 
         githubConfig.user = (map.getOrDefault(USER, "").toString());
-        if (githubConfig.user.isEmpty()) {
-            throw new IllegalArgumentException("Missing 'user' in [github] config");
-        }
-
         githubConfig.repo = (map.getOrDefault(REPO, "").toString());
-        if (githubConfig.repo.isEmpty()) {
-            throw new IllegalArgumentException("Missing 'repo' in [github] config");
-        }
-
         githubConfig.token = (map.getOrDefault(TOKEN, "").toString());
 
         try {

@@ -7,6 +7,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.neo4j.changelog.config.ConfigReader;
+import org.neo4j.changelog.config.GitCommitConfig;
 import org.neo4j.changelog.config.GithubConfig;
 import org.neo4j.changelog.config.GithubLabelsConfig;
 import org.neo4j.changelog.config.ProjectConfig;
@@ -55,35 +56,44 @@ public class Main {
         ChangeLog changeLog = new ChangeLog(versionTags, config.getNextHeader(), categories);
 
         // Add specified commits to changelog
-        System.out.println("Adding specified commits to changelog");
-        config.getGitConfig().getCommitsConfig().getCommits().stream()
-              .filter(c -> gitHelper.isAncestorOfToRef(c.getSha()) &&
-                      !gitHelper.isAncestorOfFromRef(c.getSha()))
-              .filter(c -> {
-                  if (c.getVersionFilter().isEmpty() ||
-                          config.getGitConfig().getCommitsConfig().getVersionPrefix().isEmpty()) {
-                      return true;
-                  }
-                  for (String version : c.getVersionFilter()) {
-                      if (config.getGitConfig().getCommitsConfig().getVersionPrefix().startsWith(version)) {
-                          return true;
-                      }
-                  }
-                  return false;
-              })
-              .map(c -> gitHelper.convertToChange(c, versionTags, config.getNextHeader()))
-              .forEach(changeLog::addToChangeLog);
+        List<GitCommitConfig> commits = config.getGitConfig().getCommitsConfig().getCommits();
+
+
+        if (commits.isEmpty()) {
+            System.out.println("Skipping git commits since none were specified");
+        } else {
+            System.out.println("Adding specified commits to changelog");
+            commits.stream()
+                   .filter(c -> gitHelper.isAncestorOfToRef(c.getSha()) &&
+                           !gitHelper.isAncestorOfFromRef(c.getSha()))
+                   .filter(c -> {
+                       if (c.getVersionFilter().isEmpty() ||
+                               config.getGitConfig().getCommitsConfig().getVersionPrefix().isEmpty()) {
+                           return true;
+                       }
+                       for (String version : c.getVersionFilter()) {
+                           if (config.getGitConfig().getCommitsConfig().getVersionPrefix().startsWith(version)) {
+                               return true;
+                           }
+                       }
+                       return false;
+                   })
+                   .map(c -> gitHelper.convertToChange(c, versionTags, config.getNextHeader()))
+                   .forEach(changeLog::addToChangeLog);
+        }
 
         // Add project pull requests to changelog
         List<PullRequest> pullRequests = getPullRequests(config.getGithubConfig());
 
-        System.out.println("Adding relevant PRs to changelog");
-        pullRequests.stream()
-                    .filter(pr -> gitHelper.isAncestorOfToRef(pr.getCommit()) &&
-                            !gitHelper.isAncestorOfFromRef(pr.getCommit()))
-                    .map(pr -> GitHubHelper.convertToChange(pr,
-                            gitHelper.getFirstVersionOf(pr.getCommit(), versionTags, config.getNextHeader())))
-                    .forEach(changeLog::addToChangeLog);
+        if (!pullRequests.isEmpty()) {
+            System.out.println("Adding relevant PRs to changelog");
+            pullRequests.stream()
+                        .filter(pr -> gitHelper.isAncestorOfToRef(pr.getCommit()) &&
+                                !gitHelper.isAncestorOfFromRef(pr.getCommit()))
+                        .map(pr -> GitHubHelper.convertToChange(pr,
+                                gitHelper.getFirstVersionOf(pr.getCommit(), versionTags, config.getNextHeader())))
+                        .forEach(changeLog::addToChangeLog);
+        }
 
         // Add sub project pull requests to changelog
         addSubprojectChanges(versionTags, changeLog);
@@ -105,13 +115,15 @@ public class Main {
 
             List<PullRequest> pullRequests = getPullRequests(subProjectConfig.getGithubConfig());
 
-            System.out.println("Adding relevant PRs to changelog");
-            pullRequests.stream()
-                        .filter(pr -> gitHelper.isAncestorOfToRef(pr.getCommit()) &&
-                                !gitHelper.isAncestorOfFromRef(pr.getCommit()))
-                        .map(pr -> subChange(pr, subProjectConfig, gitHelper, subTags, orgVersionTags))
-                        .filter(pr -> pr != null)
-                        .forEach(changeLog::addToChangeLog);
+            if (!pullRequests.isEmpty()) {
+                System.out.println("Adding relevant PRs to changelog");
+                pullRequests.stream()
+                            .filter(pr -> gitHelper.isAncestorOfToRef(pr.getCommit()) &&
+                                    !gitHelper.isAncestorOfFromRef(pr.getCommit()))
+                            .map(pr -> subChange(pr, subProjectConfig, gitHelper, subTags, orgVersionTags))
+                            .filter(pr -> pr != null)
+                            .forEach(changeLog::addToChangeLog);
+            }
         }
     }
 
@@ -167,6 +179,12 @@ public class Main {
         String repo = config.getRepo();
         String token = config.getToken();
         GithubLabelsConfig labels = config.getLabels();
+
+        if (user.isEmpty() || repo.isEmpty()) {
+            System.out.println("Skipping pull requests since no github user/repo defined.");
+            return Collections.emptyList();
+        }
+
         System.out.printf("Fetching pull requests from github.com/%s/%s\n", user,
                 repo);
         GitHubHelper gitHubHelper = new GitHubHelper(token, user, repo, config.getIncludeAuthor(), labels);

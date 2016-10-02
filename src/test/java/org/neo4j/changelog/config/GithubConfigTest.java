@@ -28,15 +28,23 @@ public class GithubConfigTest {
     }
 
     @Test
+    public void testDefault() throws Exception {
+        GithubConfig c = new GithubConfig();
+
+        assertEquals("", c.getUser());
+        assertEquals("", c.getRepo());
+        assertEquals("", c.getToken());
+        assertEquals(false, c.getIncludeAuthor());
+    }
+
+    @Test
     public void testMinimum() throws Exception {
         Map<String, Object> minSettings = new HashMap<>();
-        minSettings.put("user", "jonas");
-        minSettings.put("repo", "git");
 
         GithubConfig c = GithubConfig.from(minSettings);
 
-        assertEquals("jonas", c.getUser());
-        assertEquals("git", c.getRepo());
+        assertEquals("", c.getUser());
+        assertEquals("", c.getRepo());
         assertEquals("", c.getToken());
         assertEquals(false, c.getIncludeAuthor());
     }
@@ -44,31 +52,11 @@ public class GithubConfigTest {
     @Test
     public void testSetToken() throws Exception {
         Map minSettings = new HashMap();
-        minSettings.put("user", "jonas");
-        minSettings.put("repo", "git");
 
         GithubConfig c = GithubConfig.from(minSettings);
 
         assertEquals("", c.getToken());
         c.setToken("bob");
         assertEquals("bob", c.getToken());
-    }
-
-    @Test
-    public void testMissingUser() throws Exception {
-        exception.expectMessage("Missing 'user' in [github] config");
-        Map minSettings = new HashMap();
-        minSettings.put("repo", "git");
-
-        GithubConfig.from(minSettings);
-    }
-
-    @Test
-    public void testMissingRepo() throws Exception {
-        exception.expectMessage("Missing 'repo' in [github] config");
-        Map minSettings = new HashMap();
-        minSettings.put("user", "jonas");
-
-        GithubConfig.from(minSettings);
     }
 }

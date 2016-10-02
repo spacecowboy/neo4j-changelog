@@ -90,17 +90,6 @@ public class ProjectConfigTest {
     }
 
     @Test
-    public void missingGitHubSection() throws Exception {
-        exception.expectMessage("Missing [github] section");
-
-        StringBuilder tml = new StringBuilder()
-                .append("[git]\n")
-                .append("to = 'abc'\n");
-
-        ProjectConfig.from(Toml.read(tml.toString()));
-    }
-
-    @Test
     public void gitHubNotASection() throws Exception {
         exception.expectMessage("Expected 'github' to be a section but found something else");
 
@@ -142,11 +131,8 @@ public class ProjectConfigTest {
         ProjectConfig.from(Toml.read(tml.toString()));
     }
 
-
     @Test
     public void testEmptySubProject() throws Exception {
-        exception.expectMessage("In [subprojects.woho]\nMissing [github] section");
-
         StringBuilder tml = new StringBuilder()
                 .append("[github]\n")
                 .append("user = 'jonas'\n")
@@ -155,7 +141,7 @@ public class ProjectConfigTest {
                 .append("to = 'abc'\n")
                 .append("[subprojects.woho]\n");
 
-        ProjectConfig.from(Toml.read(tml.toString()));
+        ProjectConfig.from(Toml.read(tml.toString())).getSubProjects().get(0).getGithubConfig();
     }
 
     @Test
