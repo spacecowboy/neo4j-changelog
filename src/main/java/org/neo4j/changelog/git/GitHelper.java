@@ -282,16 +282,6 @@ public class GitHelper {
     public String getFirstVersionOf(@Nonnull String commit,
                                     @Nonnull List<Ref> versionTags,
                                     @Nonnull String fallback) {
-        return getFirstVersionOf(commit, versionTags, fallback, Pattern.compile("(.+)"));
-    }
-
-    @Nonnull
-    public String getFirstVersionOf(@Nonnull String commit,
-                                    @Nonnull List<Ref> versionTags,
-                                    @Nonnull String fallback,
-                                    @Nonnull Pattern pattern) {
-        versionTags.sort(Util.getGitRefSorter(this));
-
         for (Ref tag : versionTags) {
             if (isAncestorOf(commit, tag.getName())) {
                 return getTagName(tag);
