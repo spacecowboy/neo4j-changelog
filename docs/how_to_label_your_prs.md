@@ -6,7 +6,7 @@ see what changed in a given version.
 If you have a change which you think might be relevant for the change
 log, this document explains how to get it included.
 
-## Getting a PR into the changelog at all
+## Getting a PR into the neo4j changelog at all
 
 The first step is to add the `changelog`-label on your PR on
 Github. Only PRs with this label are downloaded and considered for
@@ -41,6 +41,7 @@ config given to the tool). These top level categories are:
 - Metrics
 - Server
 - Config
+- Bolt Server
 
 (these are defined by what you enter in the tool config)
 
@@ -101,25 +102,71 @@ The tool looks for a line starting with *changelog* or *cl* (case
 insensitive). Inside the brackets, versions and labels can be added.
 The number of spaces do not matter.
 
-## Meta-data reference
+## Setting even more descriptive changelog text
 
 It is also possible to specify the title and label via the *changelog*
-line in the description.
+line in the description. You can use multiple lines, code snippets,
+and even bullet points.
 
-As before though, the PR must have the *changelog* label. This is
-ALWAYS required.
+The first line is used as the "title" of the change. This line will
+have a link to the PR appended to it.
 
-The complete line is specified as follows:
+The following lines are copied verbatim into the changelog, except
+that they are indendented, so that they are properly formatted within
+the bullet point.
+
+Consider first these two PR descriptions:
+
+![Just a hard line break](https://raw.githubusercontent.com/spacecowboy/neo4j-changelog/master/docs/CompactMultiline.png)
+
+![With a space](https://raw.githubusercontent.com/spacecowboy/neo4j-changelog/master/docs/SpacedMultiline.png)
+
+Both have a *hard line break* after the "title". The second one also
+adds an empty line after the title. Both are however rendered the
+same:
+
+![Resulting output](https://raw.githubusercontent.com/spacecowboy/neo4j-changelog/master/docs/MultilineResult.png)
+
+As another example, consider this which contains a sub list of bullet points:
+
+![PR with bullet points](https://raw.githubusercontent.com/spacecowboy/neo4j-changelog/master/docs/BulletPR.png)
+
+That text is written like this
+
+```
+changelog: Enhance execution guard to be applicable for all transactions
+
+* Added `dbms.transaction.timeout` configuration option
+* Allow starting transaction with custom timeout
+* Deprecated `unsupported.dbms.executiontime_limit.time` configuration option
+* Deprecated `unsupported.dbms.executiontime_limit.enabled` configuration option
+* Renamed `dbms.transaction_timeout` configuration option to `dbms.rest.transaction.idle_timeout`
+```
+
+And the resulting list in the change log is properly rendered as a sub list:
+
+![Bullet point rendering](https://raw.githubusercontent.com/spacecowboy/neo4j-changelog/master/docs/ResultBulletPR.png)
+
+## Meta-data reference
+
+The complete format is specified as follows:
 
 ```
 changelog|cl [optional,VeRSIons,and,category] Optional overriding title
+
+And lines which follow will ALSO be included in the
+changelog and they will be properly indented to be
+formatted correctly.
+
+Yes, all following lines...
 ```
 
 * The line must start with either *changelog* or *cl* (case doesn't matter)
 * This is optionally followed by brackets `[ ]` containing a comma
   separated list of versions and/or category. See below.
 * This is optionally followed by a String which override the PR title
-  in the change log. (case DOES matter)
+  in the change log. This String can be many lines. It will be all the
+  remaining text of the description. (case DOES matter)
 
 The comma separated list of versions and/or category
 
