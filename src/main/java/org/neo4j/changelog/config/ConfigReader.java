@@ -15,11 +15,18 @@ public class ConfigReader {
 
     public static ProjectConfig parseConfig(@Nonnull String configPath) throws IOException {
         Map<String, Object> toml = readConfig(configPath);
-        return ProjectConfig.from(toml);
+        ProjectConfig config = ProjectConfig.from(toml);
+
+        File commitsFile = new File(config.getGitConfig().getCommitsFile());
+        if (commitsFile.isFile() && commitsFile.canRead()) {
+            Map<String, Object> commitToml = readConfig(commitsFile.getPath());
+            config.getGitConfig().setCommitsConfig(GitCommitsConfig.from(commitToml));
+        }
+        return config;
     }
 
     @Nonnull
-    static Map<String, Object> readConfig(@Nullable String configPath) throws IOException {
+    private static Map<String, Object> readConfig(@Nullable String configPath) throws IOException {
         if (configPath == null || configPath.isEmpty()) {
             configPath = "changelog.toml";
         }

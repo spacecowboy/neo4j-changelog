@@ -1,73 +1,63 @@
 package org.neo4j.changelog;
 
 import org.eclipse.jgit.lib.Ref;
+import org.neo4j.changelog.git.GitHelper;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Comparator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
 /**
  * Some utilities
  */
 public class Util {
-    public static boolean isSameMajorMinorVersion(@Nonnull String v1, @Nonnull String v2) {
-        if (v1.startsWith("v")) {
-            v1 = v1.substring(1);
-        }
-        if (v2.startsWith("v")) {
-            v2 = v2.substring(1);
-        }
 
-        String[] first = v1.split("\\.");
-        String[] second = v2.split("\\.");
-
-        return first.length >= 2 && second.length >= 2 && first[0].equals(second[0]) && first[1].equals(second[1]);
+@Nonnull
+    public static String formatChangeText(@Nonnull String msg, @Nonnull List<String> additions) {
+        return formatChangeText(msg, additions.toArray(new String[additions.size()]));
     }
 
-    public static boolean versionLiesBetween(@Nonnull String version, @Nonnull String from, @Nonnull String to) {
-        if (SemanticCompare(from, to) > 0) {
-            throw new IllegalArgumentException("From must be Less or Equal than To");
+    @Nonnull
+    public static String formatChangeText(@Nonnull String msg, @Nonnull String... firstLineAdditions) {
+        // In case of multiple lines
+        String[] lines = msg.trim().split("\n");
+
+        String firstLine = lines[0];
+        // Indent rest of the lines
+        String rest = Arrays.stream(lines).skip(1).reduce("", (r, l) -> {
+            if (r.isEmpty()) {
+                return "    " + l;
+            }
+            return String.join("\n    ", r, l);
+        });
+
+        String changeText = firstLine;
+
+        for (String addition: firstLineAdditions) {
+            changeText = String.join(" ", changeText.trim(), addition);
         }
-        return SemanticCompare(version, from) >= 0 && SemanticCompare(version, to) <= 0;
+
+        // Join first line and rest with paragraph space
+        return String.join("\n\n", changeText, rest).trim();
     }
 
-    /**
-     * Indicate sort order of two Refs according to semantic versioning rules
-     */
-    public static int SemanticCompare(@Nonnull Ref ref1, @Nonnull Ref ref2) {
-        return SemanticCompare(getTagName(ref1), getTagName(ref2));
-    }
-
-    /**
-     * Indicate sort order of two versions according to semantic versioning rules.
-     *
-     * v1.0.0 is considered equivalent to 1.0.0
-     */
-    public static int SemanticCompare(@Nonnull String semanticVersion1, @Nonnull String semanticVersion2) {
-        SemanticVersion v1;
-        try {
-            v1 = asSemanticVersion(semanticVersion1);
-        } catch (IllegalArgumentException e) {
-            v1 = null;
-        }
-
-        SemanticVersion v2;
-        try {
-            v2 = asSemanticVersion(semanticVersion2);
-        } catch (IllegalArgumentException e) {
-            v2 = null;
-        }
-
-        if (v1 == null && v2 == null) {
-            throw new IllegalArgumentException("At least ONE of the arguments must be a semantic version");
-        } else if (v1 == null) {
-            return 1;
-        } else if (v2 == null) {
-            return -1;
-        } else {
-            return v1.compareTo(v2);
-        }
+    @Nonnull
+    public static Comparator<Ref> getGitRefSorter(GitHelper gitHelper) {
+        return (ref1, ref2) -> {
+            try {
+                if (gitHelper.getCommitFromString(ref1.getName()).equals(gitHelper.getCommitFromString(ref2.getName()))) {
+                    return 0;
+                } else if (gitHelper.isAncestorOf(ref1.getName(), ref2.getName())) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            } catch (IOException | NullPointerException e) {
+                throw new RuntimeException(e);
+            }
+        };
     }
 
     @Nonnull
@@ -87,24 +77,7 @@ public class Util {
     }
 
     @Nonnull
-    public static Comparator<Ref> SemanticComparator(Pattern pattern) {
-        //return Util::SemanticCompare;
-        return (ref1, ref2) -> {
-            Matcher m1 = pattern.matcher(Util.getTagName(ref1));
-            if (!m1.matches()) {
-                throw new IllegalArgumentException("Could not compare order for: " + Util.getTagName(ref1));
-            }
-            Matcher m2 = pattern.matcher(Util.getTagName(ref2));
-            if (!m2.matches()) {
-                throw new IllegalArgumentException("Could not compare order for: " + Util.getTagName(ref2));
-            }
-
-            return Util.SemanticCompare(m1.group(1), m2.group(1));
-        };
-    }
-
-    @Nonnull
-    public static SemanticVersion asSemanticVersion(@Nonnull String version) throws IllegalArgumentException {
+    static SemanticVersion asSemanticVersion(@Nonnull String version) throws IllegalArgumentException {
         String[] parts = splitSemanticVersion(version);
 
         try {

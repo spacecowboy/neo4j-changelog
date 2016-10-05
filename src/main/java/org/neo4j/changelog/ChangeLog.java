@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 public class ChangeLog {
 
-    private static final String VERSION_FMT = "\n### %s\n\n";
-    private static final String CATEGORY_FMT = "\n#### %s\n\n";
+    private static final String VERSION_FMT = "\n## %s\n\n";
+    private static final String CATEGORY_FMT = "\n### %s\n\n";
     private static final String CHANGE_FMT = "- %s\n";
     private final Map<String, Map<String, List<Change>>> versions = new HashMap<>();
     private final ArrayList<String> tags = new ArrayList<>();
@@ -32,10 +32,11 @@ public class ChangeLog {
         this.categories.addAll(categories);
 
         this.tags.addAll(tags.stream().map(Util::getTagName).collect(Collectors.toList()));
-        this.tags.sort((t1, t2) -> -Util.SemanticCompare(t1, t2));
         if (nextHeader != null && !this.tags.contains(nextHeader)) {
-            this.tags.add(0, nextHeader);
+            this.tags.add(nextHeader);
         }
+        // Reverse the list of tags
+        Collections.reverse(this.tags);
     }
 
     public void addToChangeLog(@Nonnull Change change) {

@@ -147,13 +147,13 @@ public class ChangeLogTest {
     }
 
     private static final String SIMPLE_CHANGELOG =
-            "\n### 1.0.0\n\n" +
-            "\n#### Kernel\n\n" +
+            "\n## 1.0.0\n\n" +
+            "\n### Kernel\n\n" +
             "- Add a kernel [#1]\n" +
             "- Fix the kernel [#3]\n" +
-            "\n#### Cypher\n\n" +
+            "\n### Cypher\n\n" +
             "- Add a query language [#4]\n" +
-            "\n#### Misc\n\n" +
+            "\n### Misc\n\n" +
             "- Added a changelog [#2]\n";
 
     Ref v100 = new Ref() {

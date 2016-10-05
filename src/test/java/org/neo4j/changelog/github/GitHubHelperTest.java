@@ -17,25 +17,25 @@ public class GitHubHelperTest {
     public void prWithNoFilterIsAlwaysIncluded() throws Exception {
         PullRequest pr = PullRequest();
 
-        assertTrue(GitHubHelper.isIncluded(pr, "1.2.3"));
-        assertTrue(GitHubHelper.isIncluded(pr, "2.3.4"));
-        assertTrue(GitHubHelper.isIncluded(pr, "3.4.5"));
-        assertTrue(GitHubHelper.isIncluded(pr, "4.5.6"));
+        assertTrue(GitHubHelper.isIncludedInVersion(pr, "1.2.3"));
+        assertTrue(GitHubHelper.isIncludedInVersion(pr, "2.3.4"));
+        assertTrue(GitHubHelper.isIncludedInVersion(pr, "3.4.5"));
+        assertTrue(GitHubHelper.isIncludedInVersion(pr, "4.5.6"));
     }
 
     @Test
     public void prWithFilterIsIncluded() throws Exception {
         PullRequest pr = FilteredPullRequest("1.0", "1.1", "2", "3.4");
 
-        assertTrue(GitHubHelper.isIncluded(pr, "1.0"));
-        assertTrue(GitHubHelper.isIncluded(pr, "1.1"));
-        assertTrue(GitHubHelper.isIncluded(pr, "2.2"));
-        assertTrue(GitHubHelper.isIncluded(pr, "2.3"));
-        assertTrue(GitHubHelper.isIncluded(pr, "3.4"));
+        assertTrue(GitHubHelper.isIncludedInVersion(pr, "1.0"));
+        assertTrue(GitHubHelper.isIncludedInVersion(pr, "1.1"));
+        assertTrue(GitHubHelper.isIncludedInVersion(pr, "2.2"));
+        assertTrue(GitHubHelper.isIncludedInVersion(pr, "2.3"));
+        assertTrue(GitHubHelper.isIncludedInVersion(pr, "3.4"));
 
-        assertFalse(GitHubHelper.isIncluded(pr, "3.5"));
-        assertFalse(GitHubHelper.isIncluded(pr, "3.6"));
-        assertFalse(GitHubHelper.isIncluded(pr, "4.0"));
+        assertFalse(GitHubHelper.isIncludedInVersion(pr, "3.5"));
+        assertFalse(GitHubHelper.isIncludedInVersion(pr, "3.6"));
+        assertFalse(GitHubHelper.isIncludedInVersion(pr, "4.0"));
     }
 
     private PullRequest FilteredPullRequest(String... versions) {

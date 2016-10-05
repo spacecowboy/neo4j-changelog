@@ -2,11 +2,13 @@ package org.neo4j.changelog.github;
 
 import org.neo4j.changelog.Change;
 import org.neo4j.changelog.Util;
+import org.neo4j.changelog.config.GithubLabelsConfig;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.OptionalInt;
@@ -24,23 +26,25 @@ public class GitHubHelper {
     private final GitHubService service;
     private final String user;
     private final String repo;
-    private final String requiredLabel;
-    private final String versionPrefix;
+    @Nonnull
+    private final GithubLabelsConfig labels;
+    private final boolean includeAuthor;
 
-    public GitHubHelper(@Nonnull String token, @Nonnull String user, @Nonnull String repo,
-                        @Nonnull String requiredLabel, @Nonnull String versionPrefix) {
+    public GitHubHelper(@Nonnull String token, @Nonnull String user, @Nonnull String repo, boolean includeAuthor,
+                        @Nonnull GithubLabelsConfig labels) {
         service = GitHubService.GetService(token);
         this.user = user;
         this.repo = repo;
-        this.requiredLabel = requiredLabel;
-        this.versionPrefix = versionPrefix;
+        this.labels = labels;
+        this.includeAuthor = includeAuthor;
 
-        if (!versionPrefix.isEmpty() && !Util.isSemanticVersion(versionPrefix)) {
-            throw new IllegalArgumentException("versionprefix is not a semantic version: '" + versionPrefix + "'");
+        if (!labels.getVersionPrefix().isEmpty() && !Util.isSemanticVersion(labels.getVersionPrefix())) {
+            throw new IllegalArgumentException("version_prefix is not a semantic version: '"
+                    + labels.getVersionPrefix() + "'");
         }
     }
 
-    public static boolean isIncluded(@Nonnull PullRequest pr, @Nonnull String changelogVersion) {
+    public static boolean isIncludedInVersion(@Nonnull PullRequest pr, @Nonnull String changelogVersion) {
         // Special case if no filter, then always true
         if (pr.getVersionFilter().isEmpty() || changelogVersion.isEmpty()) {
             return true;
@@ -87,14 +91,27 @@ public class GitHubHelper {
         System.out.println("Fetched " + issues.size() + " issues");
 
         return issues.parallelStream()
-                // Only consider pull requests, not issues
-                .filter(i -> i.pull_request != null)
-                .map(issue -> {
-                    GitHubService.PR pr = getPr(issue.number);
-                    return new PRIssue(issue, pr);
-                })
-                .filter(pr -> isIncluded(pr, versionPrefix))
-                .collect(Collectors.toList());
+                     // Only consider pull requests, not issues
+                     .filter(i -> i.pull_request != null)
+                     // Can not have any of the exclusion labels
+                     .filter(i -> Collections.disjoint(labels.getExclude(),
+                             i.labels.stream().map(l -> l.name).collect(Collectors.toList())))
+                     // Can only be unlabeled if that is allowed
+                     .filter(i -> !(labels.getExcludeUnlabeled() && i.labels.isEmpty()))
+                     // Must contain one of the inclusion labels
+                     .filter(i -> {
+                         // either the no inclusion labels have been specified
+                         return labels.getInclude().isEmpty() ||
+                                 // or one of the labels are present in the inclusion list
+                                 !Collections.disjoint(labels.getInclude(),
+                                         i.labels.stream().map(l -> l.name).collect(Collectors.toList()));
+                     })
+                     .map(issue -> {
+                         GitHubService.PR pr = getPr(issue.number);
+                         return new PRIssue(issue, pr, labels.getCategoryMap(), includeAuthor);
+                     })
+                     .filter(pr -> isIncludedInVersion(pr, labels.getVersionPrefix()))
+                     .collect(Collectors.toList());
     }
 
     @Nonnull
@@ -129,7 +146,7 @@ public class GitHubHelper {
     @Nonnull
     private Response<List<GitHubService.Issue>> listChangeLogIssues(int page) {
         try {
-            Call<List<GitHubService.Issue>> call = service.listChangeLogIssues(user, repo, requiredLabel, page);
+            Call<List<GitHubService.Issue>> call = service.listChangeLogIssues(user, repo, labels.getRequired(), page);
             Response<List<GitHubService.Issue>> response = call.execute();
             if (response.isSuccessful()) {
                 return response;

@@ -1,10 +1,12 @@
 package org.neo4j.changelog.github;
 
 
+import org.neo4j.changelog.Util;
+
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -21,6 +23,8 @@ public class PRIssue implements PullRequest {
     final String title;
     final String body;
     final String html_url;
+    private final String username;
+    private final String userlink;
     final String merged_at;
     final String head;
     final String base;
@@ -28,23 +32,33 @@ public class PRIssue implements PullRequest {
     private ArrayList<String> versionFilter = null;
     private ArrayList<String> labelFilter = null;
     private String changeText = null;
+    private final boolean includeAuthor;
 
-    public PRIssue(int number, String title, String body, String html_url, String merged_at,
-                   String head, String base, List<String> labels) {
+    public PRIssue(int number, String title, String body, String html_url, String username, String userlink,
+                   String merged_at, String head, String base, List<String> labels, boolean includeAuthor) {
 
         this.number = number;
         this.title = title;
         this.body = body;
         this.html_url = html_url;
+        this.username = username;
+        this.userlink = userlink;
         this.merged_at = merged_at;
         this.head = head;
         this.base = base;
         this.labels = labels;
+        this.includeAuthor = includeAuthor;
     }
 
-    public PRIssue(GitHubService.Issue issue, GitHubService.PR pr) {
-        this(pr.number, pr.title, pr.body, pr.html_url, pr.merged_at, pr.head.sha, pr.base.sha,
-                issue.labels.stream().map(l -> l.name).collect(Collectors.toList()));
+    public PRIssue(@Nonnull GitHubService.Issue issue, @Nonnull GitHubService.PR pr,
+                   @Nonnull Map<String, String> categoryMap, boolean includeAuthor) {
+        this(pr.number, pr.title, pr.body, pr.html_url, issue.user.login, issue.user.html_url,
+                pr.merged_at, pr.head.sha, pr.base.sha,
+                issue.labels.stream()
+                            .map(l -> l.name)
+                            .map(l -> categoryMap.getOrDefault(l, l))
+                            .collect(Collectors.toList()),
+                includeAuthor);
     }
 
     @Override
@@ -71,15 +85,18 @@ public class PRIssue implements PullRequest {
     @Override
     public List<String> getVersionFilter() {
         if (versionFilter == null) {
-            parseMetaData();
+            parseMetaData(includeAuthor);
         }
         return versionFilter;
     }
 
-    private void parseMetaData() {
+    private void parseMetaData(boolean includeAuthor) {
         versionFilter = new ArrayList<>();
         labelFilter = new ArrayList<>();
         changeText = addLink(title);
+        if (includeAuthor) {
+            changeText = addAuthor(changeText);
+        }
 
         Matcher matcher = CHANGELOG_PATTERN.matcher(body);
         if (matcher.find()) {
@@ -92,8 +109,14 @@ public class PRIssue implements PullRequest {
             if (msgMatch.find()) {
                 String msg = msgMatch.group(1);
                 if (!msg.trim().isEmpty()) {
-                    // In case of multiple lines, only use first one
-                    changeText = addLink(msg.split("\n")[0]);
+                    if (includeAuthor) {
+                        changeText = Util.formatChangeText(msg,
+                                String.format("[\\#%d](%s)", number, html_url),
+                                String.format("([%s](%s))", username, userlink));
+                    } else {
+                        changeText = Util.formatChangeText(msg,
+                                String.format("[\\#%d](%s)", number, html_url));
+                    }
                 }
             }
 
@@ -126,20 +149,24 @@ public class PRIssue implements PullRequest {
     @Override
     public String getChangeText() {
         if (changeText == null) {
-            parseMetaData();
+            parseMetaData(includeAuthor);
         }
         return changeText;
     }
 
     String addLink(@Nonnull String text) {
-        return String.format("%s [#%d](%s)", text.trim(), number, html_url);
+        return String.format("%s [\\#%d](%s)", text.trim(), number, html_url);
+    }
+
+    String addAuthor(@Nonnull String text) {
+        return String.format("%s ([%s](%s))", text.trim(), username, userlink);
     }
 
     @Nonnull
     @Override
     public ArrayList<String> getLabelFilter() {
         if (labelFilter == null) {
-            parseMetaData();
+            parseMetaData(includeAuthor);
         }
         return labelFilter;
     }
