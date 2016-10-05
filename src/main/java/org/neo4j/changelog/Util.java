@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * Some utilities
@@ -43,12 +44,20 @@ public class Util {
         return String.join("\n\n", changeText, rest).trim();
     }
 
+    private static final BiFunction<Ref, Ref, Integer> doesNotMatter = (r1, r2) -> 0;
+
     @Nonnull
     public static Comparator<Ref> getGitRefSorter(GitHelper gitHelper) {
+        return getGitRefSorter(gitHelper, doesNotMatter);
+    }
+
+    @Nonnull
+    public static Comparator<Ref> getGitRefSorter(@Nonnull GitHelper gitHelper,
+                                                  @Nonnull BiFunction<Ref, Ref, Integer> tieBreaker) {
         return (ref1, ref2) -> {
             try {
                 if (gitHelper.getCommitFromString(ref1.getName()).equals(gitHelper.getCommitFromString(ref2.getName()))) {
-                    return 0;
+                    return tieBreaker.apply(ref1, ref2);
                 } else if (gitHelper.isAncestorOf(ref1.getName(), ref2.getName())) {
                     return -1;
                 } else {

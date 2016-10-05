@@ -101,6 +101,17 @@ public class Main {
         changeLog.write(new File(config.getOutputPath()).toPath());
     }
 
+    @Nullable
+    private String firstGroup(@Nonnull Pattern pattern, @Nonnull String text) {
+        Matcher m = pattern.matcher(text);
+
+        if (!m.matches()) {
+            return null;
+        }
+
+        return m.group(1);
+    }
+
     private void addSubprojectChanges(List<Ref> orgVersionTags, ChangeLog changeLog) throws IOException, GitAPIException {
         for (ProjectConfig subProjectConfig: config.getSubProjects()) {
             System.out.println("Subproject: " + subProjectConfig.getName());
@@ -108,6 +119,21 @@ public class Main {
 
             System.out.println("Checking for tags...");
             List<Ref> subTags = gitHelper.getVersionTagsForChangelog();
+            // Sort them
+            final Pattern tagPattern = subProjectConfig.getGitConfig().getTagPattern();
+            subTags.sort(Util.getGitRefSorter(gitHelper, (tag1, tag2) -> {
+                // Let mother version break the tie
+                for (Ref motherTag: orgVersionTags) {
+                    final String motherVersion = Util.getTagName(motherTag);
+                    if (motherVersion.equals(firstGroup(tagPattern, Util.getTagName(tag1)))) {
+                        return -1;
+                    } else if (motherVersion.equals(firstGroup(tagPattern, Util.getTagName(tag2)))) {
+                        return 1;
+                    }
+                }
+                // Could not find a matching mother tag, order can not be determined
+                return 0;
+            }));
 
             System.out.println("Sub tags:");
             subTags.forEach(t -> System.out.println(Util.getTagName(t)));
@@ -158,7 +184,7 @@ public class Main {
     private Change subChange(GitCommitConfig commitConfig, ProjectConfig subProjectConfig, GitHelper gitHelper,
                              List<Ref> subTags, List<Ref> orgVersionTags) {
         final Pattern pattern = subProjectConfig.getGitConfig().getTagPattern();
-        final String version = gitHelper.getFirstVersionOf(commitConfig.getSha(), subTags, IGNORE, pattern);
+        final String version = gitHelper.getFirstVersionOf(commitConfig.getSha(), subTags, IGNORE);
         if (version.equals(IGNORE) || !pattern.asPredicate().test(version)) {
             return null;
         }
@@ -183,7 +209,7 @@ public class Main {
     private Change subChange(PullRequest pr, ProjectConfig subProjectConfig, GitHelper gitHelper,
                              List<Ref> subTags, List<Ref> orgVersionTags) {
         final Pattern pattern = subProjectConfig.getGitConfig().getTagPattern();
-        final String version = gitHelper.getFirstVersionOf(pr.getCommit(), subTags, IGNORE, pattern);
+        final String version = gitHelper.getFirstVersionOf(pr.getCommit(), subTags, IGNORE);
         if (version.equals(IGNORE) || !pattern.asPredicate().test(version)) {
             return null;
         }
