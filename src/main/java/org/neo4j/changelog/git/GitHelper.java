@@ -255,18 +255,8 @@ public class GitHelper {
 
     @Nullable
     public ObjectId getCommitFromString(@Nonnull String base) throws IOException {
-        // Try raw commit first
-        return repo.resolve(base);
-        /*
-        try {
-            return ObjectId.fromString(base);
-        } catch (InvalidObjectIdException e) {
-            Ref ref = repo.findRef(base);
-            if (ref != null) {
-                return ref.getObjectId();
-            }
-        }
-        return null;*/
+        // ^0 ensures that the id is a commit. Annotated tags have their own ids.
+        return repo.resolve(base + "^0");
     }
 
     @Nullable

@@ -61,6 +61,15 @@ public class GitHelperTest {
     }
 
     @Test
+    public void testAnnotatedTagResolvesToCommit() throws Exception {
+        GitHelper gitHelper = new GitHelper(config);
+
+        assertEquals("Annotated tag should resolve to its actual commit",
+                "83018c673c0b85d0bbfb036f582ff4412b5ab173",
+                gitHelper.getCommitFromString("annotation-test").getName());
+    }
+
+    @Test
     public void testGetTagShouldSucceedInRepo() throws Exception {
         GitHelper gitHelper = new GitHelper(config);
         List<Ref> tags = gitHelper.getVersionTags();
