@@ -51,6 +51,10 @@ dependencies {
   testCompile "org.mockito:mockito-core:1.9.5"
 }
 
+tasks.withType(JavaCompile) {
+   options.incremental = true
+}
+
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.11'
+  gradleVersion = '3.4'
 }

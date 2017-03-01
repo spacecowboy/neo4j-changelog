@@ -39,7 +39,7 @@
 ## then simply specify "to=upstream/branch2" or something, and
 ## generate a change log for the entire branch2 history.
 ##
-## Default value is is the project root commit.
+## Default value is the project root commit.
 #from = ""
 
 ## Git SHA/tag/branch/name which will mark the end of the change log.

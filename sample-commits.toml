@@ -29,7 +29,7 @@
 
 ## Commit SHA. Can be full or abbreviated.
 ## Required.
-sha = "abc1234"
+#sha = "abc1234"
 
 ## Category to sort change under
 #category = ""
